@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Revelio Romandie</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; }
+        
+        /* Header */
+        .header { background: #1e3a5f; color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .avatar { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .notification { position: relative; cursor: pointer; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        
+        /* Navigation */
+        .nav { background: #1e3a5f; padding: 0 1.5rem; display: flex; gap: 0.25rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .nav-tab { padding: 0.75rem 1rem; color: rgba(255,255,255,0.7); cursor: pointer; border: none; background: none; font-size: 0.875rem; border-radius: 0.5rem 0.5rem 0 0; transition: all 0.2s; }
+        .nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-tab.active { background: white; color: #1e3a5f; font-weight: 600; }
+        
+        /* Main */
+        .main { padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
+        
+        /* KPI Cards */
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .kpi-card { background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid #e5e7eb; }
+        .kpi-card.blue { background: #eff6ff; border-color: #bfdbfe; }
+        .kpi-card.yellow { background: #fefce8; border-color: #fef08a; }
+        .kpi-card.green { background: #f0fdf4; border-color: #bbf7d0; }
+        .kpi-card.purple { background: #faf5ff; border-color: #e9d5ff; }
+        .kpi-label { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
+        .kpi-value { font-size: 1.75rem; font-weight: 700; color: #1f2937; }
+        
+        /* Cards */
+        .card { background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem; }
+        .card-title { font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem; }
+        
+        /* Grid layouts */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        
+        /* Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9fafb; padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; font-size: 0.875rem; }
+        tr:hover { background: #f9fafb; }
+        
+        /* Status badges */
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-orange { background: #ffedd5; color: #9a3412; }
+        .badge-purple { background: #f3e8ff; color: #7c3aed; }
+        .badge-red { background: #fee2e2; color: #dc2626; }
+        
+        /* Buttons */
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-primary { background: #1e3a5f; color: white; }
+        .btn-primary:hover { background: #152a45; }
+        .btn-icon { padding: 0.5rem; background: none; border: none; cursor: pointer; color: #6b7280; border-radius: 0.375rem; }
+        .btn-icon:hover { background: #f3f4f6; }
+        .btn-icon.blue:hover { background: #eff6ff; color: #2563eb; }
+        .btn-icon.green:hover { background: #f0fdf4; color: #16a34a; }
+        .btn-icon.purple:hover { background: #faf5ff; color: #9333ea; }
+        
+        /* Progress bar */
+        .progress { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; width: 60px; }
+        .progress-bar { height: 100%; border-radius: 4px; }
+        .progress-bar.green { background: #22c55e; }
+        .progress-bar.yellow { background: #eab308; }
+        .progress-bar.red { background: #ef4444; }
+        
+        /* Tasks */
+        .task-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid; }
+        .task-item.urgent { background: #fef2f2; border-color: #ef4444; }
+        .task-item.important { background: #fff7ed; border-color: #f97316; }
+        .task-item.normal { background: #fefce8; border-color: #eab308; }
+        .task-item.done { background: #f0fdf4; border-color: #22c55e; opacity: 0.6; }
+        .task-checkbox { width: 18px; height: 18px; cursor: pointer; margin-top: 2px; }
+        .task-content { flex: 1; }
+        .task-title { font-size: 0.875rem; font-weight: 500; }
+        .task-title.done { text-decoration: line-through; color: #9ca3af; }
+        .task-meta { font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem; }
+        
+        /* Activity */
+        .activity-item { display: flex; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+        .activity-item:hover { background: #f9fafb; }
+        .activity-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem; }
+        .activity-icon.email { background: #3b82f6; }
+        .activity-icon.call { background: #22c55e; }
+        .activity-icon.meeting { background: #8b5cf6; }
+        .activity-content { flex: 1; }
+        .activity-title { font-size: 0.875rem; font-weight: 500; }
+        .activity-desc { font-size: 0.75rem; color: #6b7280; }
+        .activity-date { font-size: 0.7rem; color: #9ca3af; }
+        .activity-status { font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; }
+        .activity-status.positive { background: #dcfce7; color: #166534; }
+        .activity-status.waiting { background: #fef9c3; color: #854d0e; }
+        
+        /* Chart placeholder */
+        .chart-placeholder { height: 200px; display: flex; align-items: flex-end; gap: 0.5rem; padding: 1rem 0; }
+        .chart-bar { flex: 1; border-radius: 4px 4px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 20px; }
+        .chart-bar-inner { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.3s; }
+        .chart-label { font-size: 0.65rem; color: #6b7280; margin-top: 0.5rem; text-align: center; }
+        .chart-value { font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 0.25rem; }
+        
+        /* Funnel */
+        .funnel { display: flex; flex-direction: column; gap: 0.5rem; }
+        .funnel-item { display: flex; align-items: center; gap: 1rem; }
+        .funnel-label { width: 120px; font-size: 0.8rem; color: #374151; }
+        .funnel-bar { flex: 1; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: white; }
+        
+        /* Toolbar */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .search-box { position: relative; }
+        .search-box input { padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; width: 250px; }
+        .search-box input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; }
+        .filter-select { padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; margin-left: 0.75rem; }
+        
+        /* Templates */
+        .template-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .template-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; transition: background 0.2s; }
+        .template-item:hover { background: #eff6ff; }
+        .template-item span { font-size: 0.875rem; }
+        
+        /* Sidebar */
+        .sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 380px; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.1); z-index: 100; transform: translateX(100%); transition: transform 0.3s; }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border-bottom: 1px solid #e5e7eb; }
+        .sidebar-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #9ca3af; }
+        .sidebar-close:hover { color: #374151; }
+        .sidebar-content { padding: 1.25rem; }
+        .sidebar-section { margin-bottom: 1.25rem; }
+        .sidebar-label { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; }
+        .sidebar-value { font-size: 0.9375rem; color: #111827; }
+        .sidebar-value a { color: #2563eb; text-decoration: none; }
+        .sidebar-value a:hover { text-decoration: underline; }
+        .sidebar-actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+        .sidebar-actions .btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.625rem; }
+        .btn-blue { background: #2563eb; color: white; }
+        .btn-blue:hover { background: #1d4ed8; }
+        .btn-green { background: #16a34a; color: white; }
+        .btn-green:hover { background: #15803d; }
+        
+        /* Footer */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #f3f4f6; border-top: 1px solid #e5e7eb; padding: 0.5rem 1.5rem; display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; }
+        
+        /* Responsive */
+        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { 
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); } 
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .nav { overflow-x: auto; }
+        }
+        
+        /* Hidden sections */
+        .section { display: none; }
+        .section.active { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>🎯 CRM REVELIO ROMANDIE</h1>
+        <div class="header-right">
+            <div class="notification">
+                🔔
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="avatar">MW</div>
+            <span style="font-size: 0.875rem;">Michel Woupeyi</span>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav class="nav">
+        <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="nav-tab" data-tab="pipeline">🎯 Pipeline</button>
+        <button class="nav-tab" data-tab="tasks">✅ Tâches</button>
+        <button class="nav-tab" data-tab="templates">📝 Templates</button>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active">
+            <!-- KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Total Prospects</div>
+                    <div class="kpi-value">156</div>
+                </div>
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Nouveaux</div>
+                    <div class="kpi-value">42</div>
+                </div>
+                <div class="kpi-card yellow">
+                    <div class="kpi-label">En Contact</div>
+                    <div class="kpi-value">38</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Qualifiés</div>
+                    <div class="kpi-value">25</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-label">Négociation</div>
+                    <div class="kpi-value">12</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Pipeline CHF</div>
+                    <div class="kpi-value">580K</div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <!-- Pipeline Chart -->
+                <div class="card">
+                    <div class="card-title">📊 Pipeline par Statut</div>
+                    <div class="chart-placeholder">
+                        <div class="chart-bar">
+                            <div class="chart-value">42</div>
+                            <div class="chart-bar-inner" style="height: 140px; background: #bfdbfe;"></div>
+                            <div class="chart-label">Nouveau</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-value">28</div>
+                            <div class="chart-bar-inner" style="height: 95px; background: #fef08a;"></div>
+                            <div class="chart-label">Contacté</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-value">25</div>
+                            <div class="chart-bar-inner" style="height: 85px; background: #bbf7d0;"></div>
+                            <div class="chart-label">Qualifié</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-value">18</div>
+                            <div class="chart-bar-inner" style="height: 60px; background: #fed7aa;"></div>
+                            <div class="chart-label">Proposition</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-value">12</div>
+                            <div class="chart-bar-inner" style="height: 40px; background: #e9d5ff;"></div>
+                            <div class="chart-label">Négo</div>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="chart-value">8</div>
+                            <div class="chart-bar-inner" style="height: 28px; background: #86efac;"></div>
+                            <div class="chart-label">Gagné</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Funnel -->
+                <div class="card">
+                    <div class="card-title">📈 Funnel de Conversion</div>
+                    <div class="funnel">
+                        <div class="funnel-item">
+                            <span class="funnel-label">🆕 Nouveau</span>
+                            <div class="funnel-bar" style="width: 100%; background: #93c5fd;">42</div>
+                        </div>
+                        <div class="funnel-item">
+                            <span class="funnel-label">📧 Contacté</span>
+                            <div class="funnel-bar" style="width: 67%; background: #fde047;">28</div>
+                        </div>
+                        <div class="funnel-item">
+                            <span class="funnel-label">✅ Qualifié</span>
+                            <div class="funnel-bar" style="width: 60%; background: #86efac;">25</div>
+                        </div>
+                        <div class="funnel-item">
+                            <span class="funnel-label">📋 Proposition</span>
+                            <div class="funnel-bar" style="width: 43%; background: #fdba74;">18</div>
+                        </div>
+                        <div class="funnel-item">
+                            <span class="funnel-label">🤝 Négociation</span>
+                            <div class="funnel-bar" style="width: 29%; background: #c4b5fd;">12</div>
+                        </div>
+                        <div class="funnel-item">
+                            <span class="funnel-label">🎉 Gagné</span>
+                            <div class="funnel-bar" style="width: 19%; background: #4ade80;">8</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <!-- Tasks -->
+                <div class="card">
+                    <div class="card-title">⚠️ Tâches à Faire</div>
+                    <div class="task-item urgent">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📧 Envoyer Email 1 - Architectes</div>
+                            <div class="task-meta">04/03/2026 • Email</div>
+                        </div>
+                    </div>
+                    <div class="task-item urgent">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📞 Appeler SINEF SA</div>
+                            <div class="task-meta">05/03/2026 • Appel</div>
+                        </div>
+                    </div>
+                    <div class="task-item important">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📋 Préparer proposition Planzer</div>
+                            <div class="task-meta">07/03/2026 • Proposition</div>
+                        </div>
+                    </div>
+                    <div class="task-item normal">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">💼 Post LinkedIn - Projet ASTRA</div>
+                            <div class="task-meta">06/03/2026 • LinkedIn</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activities -->
+                <div class="card">
+                    <div class="card-title">📧 Activités Récentes</div>
+                    <div class="activity-item">
+                        <div class="activity-icon email">✉️</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Migros Vaud</div>
+                            <div class="activity-desc">Envoi proposition finale</div>
+                            <div class="activity-date">03/03/2026</div>
+                        </div>
+                        <span class="activity-status waiting">En attente</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon call">📞</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Planzer Penthalaz</div>
+                            <div class="activity-desc">Discussion technique PV</div>
+                            <div class="activity-date">02/03/2026</div>
+                        </div>
+                        <span class="activity-status positive">Positif</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon meeting">📅</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Naef Immobilier</div>
+                            <div class="activity-desc">Présentation offre</div>
+                            <div class="activity-date">01/03/2026</div>
+                        </div>
+                        <span class="activity-status positive">Intéressé</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- PIPELINE -->
+        <section id="pipeline" class="section">
+            <div class="toolbar">
+                <div style="display: flex; align-items: center;">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Rechercher..." id="searchInput">
+                    </div>
+                    <select class="filter-select" id="segmentFilter">
+                        <option value="all">Tous les segments</option>
+                        <option value="Architecte">Architecte</option>
+                        <option value="Promoteur">Promoteur</option>
+                        <option value="STEP">STEP</option>
+                        <option value="Distribution">Distribution</option>
+                        <option value="Transport">Transport</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">+ Nouveau Prospect</button>
+            </div>
+            
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="table-container">
+                    <table id="prospectsTable">
+                        <thead>
+                            <tr>
+                                <th>Entreprise</th>
+                                <th>Contact</th>
+                                <th>Statut</th>
+                                <th>Segment</th>
+                                <th>Canton</th>
+                                <th>Valeur</th>
+                                <th>Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="prospect-row" data-id="1" data-segment="STEP">
+                                <td>
+                                    <strong>SINEF SA</strong><br>
+                                    <span style="color: #6b7280; font-size: 0.8rem;">step.fribourg@sinef.ch</span>
+                                </td>
+                                <td>Direction</td>
+                                <td><span class="badge badge-blue">Nouveau</span></td>
+                                <td>STEP</td>
+                                <td>FR</td>
+                                <td><strong>85'000 CHF</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="progress"><div class="progress-bar green" style="width: 85%;"></div></div>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">85</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-icon blue" title="Email">✉️</button>
+                                    <button class="btn-icon green" title="Appeler">📞</button>
+                                    <button class="btn-icon purple" title="RDV">📅</button>
+                                </td>
+                            </tr>
+                            <tr class="prospect-row" data-id="2" data-segment="Architecte">
+                                <td>
+                                    <strong>CCHE Lausanne SA</strong><br>
+                                    <span style="color: #6b7280; font-size: 0.8rem;">lausanne@cche.ch</span>
+                                </td>
+                                <td>-</td>
+                                <td><span class="badge badge-yellow">Contacté</span></td>
+                                <td>Architecte</td>
+                                <td>VD</td>
+                                <td><strong>45'000 CHF</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="progress"><div class="progress-bar yellow" style="width: 72%;"></div></div>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">72</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-icon blue" title="Email">✉️</button>
+                                    <button class="btn-icon green" title="Appeler">📞</button>
+                                    <button class="btn-icon purple" title="RDV">📅</button>
+                                </td>
+                            </tr>
+                            <tr class="prospect-row" data-id="3" data-segment="Transport">
+                                <td>
+                                    <strong>Planzer Penthalaz</strong><br>
+                                    <span style="color: #6b7280; font-size: 0.8rem;">penthalaz@planzer.ch</span>
+                                </td>
+                                <td>-</td>
+                                <td><span class="badge badge-green">Qualifié</span></td>
+                                <td>Transport</td>
+                                <td>VD</td>
+                                <td><strong>120'000 CHF</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="progress"><div class="progress-bar green" style="width: 90%;"></div></div>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">90</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-icon blue" title="Email">✉️</button>
+                                    <button class="btn-icon green" title="Appeler">📞</button>
+                                    <button class="btn-icon purple" title="RDV">📅</button>
+                                </td>
+                            </tr>
+                            <tr class="prospect-row" data-id="4" data-segment="Promoteur">
+                                <td>
+                                    <strong>Naef Immobilier</strong><br>
+                                    <span style="color: #6b7280; font-size: 0.8rem;">geneve@naef.ch</span>
+                                </td>
+                                <td>-</td>
+                                <td><span class="badge badge-orange">Proposition</span></td>
+                                <td>Promoteur</td>
+                                <td>GE</td>
+                                <td><strong>95'000 CHF</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="progress"><div class="progress-bar green" style="width: 88%;"></div></div>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">88</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-icon blue" title="Email">✉️</button>
+                                    <button class="btn-icon green" title="Appeler">📞</button>
+                                    <button class="btn-icon purple" title="RDV">📅</button>
+                                </td>
+                            </tr>
+                            <tr class="prospect-row" data-id="5" data-segment="Distribution">
+                                <td>
+                                    <strong>Migros Vaud</strong><br>
+                                    <span style="color: #6b7280; font-size: 0.8rem;">info@migros-vaud.ch</span>
+                                </td>
+                                <td>-</td>
+                                <td><span class="badge badge-purple">Négociation</span></td>
+                                <td>Distribution</td>
+                                <td>VD</td>
+                                <td><strong>180'000 CHF</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="progress"><div class="progress-bar green" style="width: 95%;"></div></div>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">95</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-icon blue" title="Email">✉️</button>
+                                    <button class="btn-icon green" title="Appeler">📞</button>
+                                    <button class="btn-icon purple" title="RDV">📅</button>
+                                </td>
+                            </tr>
+                            <tr class="prospect-row" data-id="6" data-segment="STEP">
+                                <td>
+                                    <strong>STEP Pensier</strong><br>
+                                    <span style="color: #6b7280; font-size: 0.8rem;">exploitation@steppensier.ch</span>
+                                </td>
+                                <td>Pascal Lottaz</td>
+                                <td><span class="badge badge-blue">Nouveau</span></td>
+                                <td>STEP</td>
+                                <td>FR</td>
+                                <td><strong>55'000 CHF</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div class="progress"><div class="progress-bar yellow" style="width: 70%;"></div></div>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">70</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-icon blue" title="Email">✉️</button>
+                                    <button class="btn-icon green" title="Appeler">📞</button>
+                                    <button class="btn-icon purple" title="RDV">📅</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- TASKS -->
+        <section id="tasks" class="section">
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="width: 12px; height: 12px; background: #ef4444; border-radius: 50%;"></span>
+                        À Faire (5)
+                    </div>
+                    <div class="task-item urgent">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📧 Envoyer Email 1 - Architectes</div>
+                            <div class="task-meta">04/03/2026 • Email</div>
+                        </div>
+                    </div>
+                    <div class="task-item urgent">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📞 Appeler SINEF SA</div>
+                            <div class="task-meta">05/03/2026 • Appel • SINEF SA</div>
+                        </div>
+                    </div>
+                    <div class="task-item important">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📋 Préparer proposition Planzer</div>
+                            <div class="task-meta">07/03/2026 • Proposition</div>
+                        </div>
+                    </div>
+                    <div class="task-item normal">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">🔄 Relance promoteurs J+7</div>
+                            <div class="task-meta">10/03/2026 • Relance</div>
+                        </div>
+                    </div>
+                    <div class="task-item normal">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">💼 Post LinkedIn - Projet ASTRA</div>
+                            <div class="task-meta">06/03/2026 • LinkedIn</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="width: 12px; height: 12px; background: #f97316; border-radius: 50%;"></span>
+                        Urgent (2)
+                    </div>
+                    <div class="task-item urgent">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📧 Envoyer Email 1 - Architectes</div>
+                            <div class="task-meta">04/03/2026</div>
+                        </div>
+                    </div>
+                    <div class="task-item urgent">
+                        <input type="checkbox" class="task-checkbox">
+                        <div class="task-content">
+                            <div class="task-title">📞 Appeler SINEF SA</div>
+                            <div class="task-meta">05/03/2026</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="width: 12px; height: 12px; background: #22c55e; border-radius: 50%;"></span>
+                        Terminé (2)
+                    </div>
+                    <div class="task-item done">
+                        <input type="checkbox" class="task-checkbox" checked>
+                        <div class="task-content">
+                            <div class="task-title done">✅ Créer CRM Excel</div>
+                            <div class="task-meta">01/03/2026</div>
+                        </div>
+                    </div>
+                    <div class="task-item done">
+                        <input type="checkbox" class="task-checkbox" checked>
+                        <div class="task-content">
+                            <div class="task-title done">✅ Enrichir base STEP</div>
+                            <div class="task-meta">02/03/2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- TEMPLATES -->
+        <section id="templates" class="section">
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title">📧 Templates Email</div>
+                    <div class="template-list">
+                        <div class="template-item"><span>Email 1 - Architectes</span><span>→</span></div>
+                        <div class="template-item"><span>Email 1 - Promoteurs</span><span>→</span></div>
+                        <div class="template-item"><span>Email 1 - STEP</span><span>→</span></div>
+                        <div class="template-item"><span>Email Relance J+5</span><span>→</span></div>
+                        <div class="template-item"><span>Proposition commerciale</span><span>→</span></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💼 Posts LinkedIn</div>
+                    <div class="template-list">
+                        <div class="template-item"><span>Post Projet livré</span><span>→</span></div>
+                        <div class="template-item"><span>Post Expertise technique</span><span>→</span></div>
+                        <div class="template-item"><span>Message de connexion</span><span>→</span></div>
+                        <div class="template-item"><span>InMail prospection</span><span>→</span></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📰 Newsletters</div>
+                    <div class="template-list">
+                        <div class="template-item"><span>Newsletter mensuelle</span><span>→</span></div>
+                        <div class="template-item"><span>Annonce projet</span><span>→</span></div>
+                        <div class="template-item"><span>Vœux fin d'année</span><span>→</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 id="sidebarTitle">Détails</h3>
+            <button class="sidebar-close" onclick="closeSidebar()">×</button>
+        </div>
+        <div class="sidebar-content">
+            <div id="sidebarBadge" style="margin-bottom: 1rem;"></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Segment</div>
+                    <div class="sidebar-value" id="sidebarSegment">-</div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Canton</div>
+                    <div class="sidebar-value" id="sidebarCanton">-</div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Valeur</div>
+                    <div class="sidebar-value" id="sidebarValeur">-</div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Score</div>
+                    <div class="sidebar-value" id="sidebarScore">-</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Email</div>
+                <div class="sidebar-value"><a href="#" id="sidebarEmail">-</a></div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-label">Téléphone</div>
+                <div class="sidebar-value"><a href="#" id="sidebarTel">-</a></div>
+            </div>
+            
+            <div class="sidebar-actions">
+                <button class="btn btn-blue">✉️ Email</button>
+                <button class="btn btn-green">📞 Appeler</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <span>CRM Revelio Romandie • Michel Woupeyi • Emch+Berger Revelio AG</span>
+        <span>Version Web 1.0</span>
+    </footer>
+    
+    <script>
+        // Tab navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Prospect data
+        const prospects = {
+            1: { name: 'SINEF SA', email: 'step.fribourg@sinef.ch', tel: '+41 26 350 11 11', segment: 'STEP', canton: 'FR', valeur: '85\'000 CHF', score: '85/100', statut: 'Nouveau', badgeClass: 'badge-blue' },
+            2: { name: 'CCHE Lausanne SA', email: 'lausanne@cche.ch', tel: '+41 21 321 44 66', segment: 'Architecte', canton: 'VD', valeur: '45\'000 CHF', score: '72/100', statut: 'Contacté', badgeClass: 'badge-yellow' },
+            3: { name: 'Planzer Penthalaz', email: 'penthalaz@planzer.ch', tel: '+41 21 802 64 64', segment: 'Transport', canton: 'VD', valeur: '120\'000 CHF', score: '90/100', statut: 'Qualifié', badgeClass: 'badge-green' },
+            4: { name: 'Naef Immobilier', email: 'geneve@naef.ch', tel: '-', segment: 'Promoteur', canton: 'GE', valeur: '95\'000 CHF', score: '88/100', statut: 'Proposition', badgeClass: 'badge-orange' },
+            5: { name: 'Migros Vaud', email: 'info@migros-vaud.ch', tel: '-', segment: 'Distribution', canton: 'VD', valeur: '180\'000 CHF', score: '95/100', statut: 'Négociation', badgeClass: 'badge-purple' },
+            6: { name: 'STEP Pensier', email: 'exploitation@steppensier.ch', tel: '+41 26 684 34 13', segment: 'STEP', canton: 'FR', valeur: '55\'000 CHF', score: '70/100', statut: 'Nouveau', badgeClass: 'badge-blue' }
+        };
+        
+        // Row click -> open sidebar
+        document.querySelectorAll('.prospect-row').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-icon')) return;
+                const id = row.dataset.id;
+                const p = prospects[id];
+                document.getElementById('sidebarTitle').textContent = p.name;
+                document.getElementById('sidebarBadge').innerHTML = `<span class="badge ${p.badgeClass}">${p.statut}</span>`;
+                document.getElementById('sidebarSegment').textContent = p.segment;
+                document.getElementById('sidebarCanton').textContent = p.canton;
+                document.getElementById('sidebarValeur').textContent = p.valeur;
+                document.getElementById('sidebarScore').textContent = p.score;
+                document.getElementById('sidebarEmail').textContent = p.email;
+                document.getElementById('sidebarEmail').href = 'mailto:' + p.email;
+                document.getElementById('sidebarTel').textContent = p.tel;
+                document.getElementById('sidebarTel').href = 'tel:' + p.tel;
+                document.getElementById('sidebar').classList.add('open');
+            });
+        });
+        
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+        
+        // Filter
+        document.getElementById('segmentFilter').addEventListener('change', (e) => {
+            const val = e.target.value;
+            document.querySelectorAll('.prospect-row').forEach(row => {
+                if (val === 'all' || row.dataset.segment === val) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            document.querySelectorAll('.prospect-row').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(val) ? '' : 'none';
+            });
+        });
+        
+        // Task checkboxes
+        document.querySelectorAll('.task-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const item = e.target.closest('.task-item');
+                const title = item.querySelector('.task-title');
+                if (e.target.checked) {
+                    item.classList.remove('urgent', 'important', 'normal');
+                    item.classList.add('done');
+                    title.classList.add('done');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
