@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Revelio Romandie</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2d5a8a;
+            --secondary: #3b82f6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); }
+        
+        /* Header */
+        .header { background: var(--primary); color: white; padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .header h1 { font-size: 1.125rem; display: flex; align-items: center; gap: 0.5rem; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .header-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; position: relative; }
+        .header-btn:hover { background: rgba(255,255,255,0.2); }
+        .badge-count { position: absolute; top: -4px; right: -4px; background: var(--danger); font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .user-menu { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.5rem; }
+        .user-menu:hover { background: rgba(255,255,255,0.1); }
+        .avatar { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
+        
+        /* Navigation */
+        .nav { background: var(--primary); padding: 0 1.5rem; display: flex; gap: 0.25rem; border-top: 1px solid rgba(255,255,255,0.1); overflow-x: auto; }
+        .nav-tab { padding: 0.625rem 1rem; color: rgba(255,255,255,0.7); cursor: pointer; border: none; background: none; font-size: 0.8125rem; border-radius: 0.5rem 0.5rem 0 0; transition: all 0.2s; white-space: nowrap; }
+        .nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-tab.active { background: white; color: var(--primary); font-weight: 600; }
+        
+        /* Main */
+        .main { padding: 1.5rem; max-width: 1600px; margin: 0 auto; padding-bottom: 4rem; }
+        
+        /* Cards */
+        .card { background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid var(--gray-200); margin-bottom: 1rem; }
+        .card-title { font-size: 0.9375rem; font-weight: 600; color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        
+        /* KPIs */
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .kpi-card { background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--gray-200); }
+        .kpi-card.blue { background: #eff6ff; border-color: #bfdbfe; }
+        .kpi-card.yellow { background: #fefce8; border-color: #fef08a; }
+        .kpi-card.green { background: #f0fdf4; border-color: #bbf7d0; }
+        .kpi-card.purple { background: #faf5ff; border-color: #e9d5ff; }
+        .kpi-card.orange { background: #fff7ed; border-color: #fed7aa; }
+        .kpi-label { font-size: 0.6875rem; color: var(--gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.375rem; }
+        .kpi-value { font-size: 1.5rem; font-weight: 700; color: var(--gray-800); }
+        
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        
+        /* Tables */
+        .table-container { overflow-x: auto; margin: -1.25rem; margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--gray-50); padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; text-transform: uppercase; color: var(--gray-500); font-weight: 600; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; }
+        td { padding: 0.625rem 1rem; border-bottom: 1px solid var(--gray-100); font-size: 0.8125rem; }
+        tr:hover { background: var(--gray-50); }
+        tr.clickable { cursor: pointer; }
+        
+        /* Badges */
+        .badge { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 500; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-orange { background: #ffedd5; color: #9a3412; }
+        .badge-purple { background: #f3e8ff; color: #7c3aed; }
+        .badge-red { background: #fee2e2; color: #dc2626; }
+        .badge-gray { background: #f3f4f6; color: #374151; }
+        
+        /* Buttons */
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.375rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-secondary { background: white; color: var(--gray-700); border-color: var(--gray-300); }
+        .btn-secondary:hover { background: var(--gray-50); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        .btn-icon { padding: 0.375rem; background: none; border: none; cursor: pointer; color: var(--gray-400); border-radius: 0.375rem; }
+        .btn-icon:hover { background: var(--gray-100); color: var(--gray-600); }
+        
+        /* Forms */
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--gray-700); margin-bottom: 0.375rem; }
+        .form-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; transition: all 0.2s; }
+        .form-input:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .form-select { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; background: white; }
+        .form-textarea { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: white; border-radius: 0.75rem; width: 100%; max-width: 600px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-lg { max-width: 800px; }
+        .modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.0625rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-400); line-height: 1; }
+        .modal-close:hover { color: var(--gray-600); }
+        .modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 0.5rem; }
+        
+        /* Sidebar */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 90; display: none; }
+        .sidebar-overlay.open { display: block; }
+        .sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; background: white; z-index: 100; transform: translateX(100%); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; background: var(--gray-50); }
+        .sidebar-header h3 { font-size: 1rem; font-weight: 600; }
+        .sidebar-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+        .sidebar-section { margin-bottom: 1.25rem; }
+        .sidebar-label { font-size: 0.6875rem; color: var(--gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem; }
+        .sidebar-value { font-size: 0.875rem; color: var(--gray-800); }
+        .sidebar-value a { color: var(--secondary); text-decoration: none; }
+        .sidebar-value a:hover { text-decoration: underline; }
+        .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--gray-200); }
+        
+        /* Tabs inside content */
+        .tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--gray-200); margin-bottom: 1rem; }
+        .tab { padding: 0.625rem 1rem; font-size: 0.8125rem; color: var(--gray-500); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+        .tab:hover { color: var(--gray-700); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Progress */
+        .progress { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 3px; transition: width 0.3s; }
+        .progress-bar.green { background: var(--success); }
+        .progress-bar.yellow { background: var(--warning); }
+        .progress-bar.red { background: var(--danger); }
+        
+        /* Tasks */
+        .task-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 3px solid; background: var(--gray-50); }
+        .task-item.urgent { border-color: var(--danger); background: #fef2f2; }
+        .task-item.important { border-color: var(--warning); background: #fffbeb; }
+        .task-item.normal { border-color: var(--secondary); background: #eff6ff; }
+        .task-item.done { border-color: var(--success); background: #f0fdf4; opacity: 0.7; }
+        .task-checkbox { width: 16px; height: 16px; margin-top: 2px; cursor: pointer; }
+        .task-content { flex: 1; }
+        .task-title { font-size: 0.8125rem; font-weight: 500; color: var(--gray-800); }
+        .task-title.done { text-decoration: line-through; color: var(--gray-400); }
+        .task-meta { font-size: 0.6875rem; color: var(--gray-500); margin-top: 0.25rem; }
+        
+        /* Template cards */
+        .template-card { border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 1rem; cursor: pointer; transition: all 0.2s; }
+        .template-card:hover { border-color: var(--secondary); background: #eff6ff; }
+        .template-card h4 { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .template-card p { font-size: 0.75rem; color: var(--gray-500); }
+        
+        /* Notifications dropdown */
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: 100%; right: 0; margin-top: 0.5rem; background: white; border-radius: 0.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 320px; display: none; z-index: 60; }
+        .dropdown-menu.open { display: block; }
+        .dropdown-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-200); font-weight: 600; font-size: 0.875rem; display: flex; justify-content: space-between; align-items: center; }
+        .dropdown-item { padding: 0.75rem 1rem; display: flex; gap: 0.75rem; cursor: pointer; border-bottom: 1px solid var(--gray-100); }
+        .dropdown-item:hover { background: var(--gray-50); }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; flex-shrink: 0; }
+        .dropdown-content { flex: 1; }
+        .dropdown-content strong { font-size: 0.8125rem; display: block; }
+        .dropdown-content span { font-size: 0.75rem; color: var(--gray-500); }
+        
+        /* Office integration cards */
+        .office-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .office-card { background: white; border: 1px solid var(--gray-200); border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .office-card:hover { border-color: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .office-card.connected { border-color: var(--success); background: #f0fdf4; }
+        .office-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .office-card h4 { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .office-card p { font-size: 0.6875rem; color: var(--gray-500); }
+        .office-status { font-size: 0.6875rem; margin-top: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 9999px; display: inline-block; }
+        .office-status.connected { background: #dcfce7; color: #166534; }
+        .office-status.disconnected { background: #fee2e2; color: #dc2626; }
+        
+        /* Offers section */
+        .offer-card { border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 1rem; margin-bottom: 0.75rem; }
+        .offer-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .offer-number { font-weight: 600; color: var(--primary); }
+        .offer-amount { font-size: 1.125rem; font-weight: 700; color: var(--success); }
+        .offer-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; font-size: 0.75rem; }
+        .offer-detail label { color: var(--gray-500); display: block; }
+        .offer-detail span { color: var(--gray-800); font-weight: 500; }
+        
+        /* Calendar */
+        .calendar-event { display: flex; gap: 0.75rem; padding: 0.75rem; border-left: 3px solid var(--secondary); background: #eff6ff; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.5rem; }
+        .calendar-time { font-size: 0.75rem; font-weight: 600; color: var(--primary); min-width: 60px; }
+        .calendar-info h5 { font-size: 0.8125rem; font-weight: 500; }
+        .calendar-info p { font-size: 0.6875rem; color: var(--gray-500); }
+        
+        /* Footer */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--gray-200); padding: 0.5rem 1.5rem; display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--gray-500); z-index: 40; }
+        
+        /* Charts */
+        .chart-bar-container { display: flex; align-items: flex-end; gap: 0.5rem; height: 180px; padding-top: 1rem; }
+        .chart-bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .chart-bar-value { font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .chart-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; }
+        .chart-bar-label { font-size: 0.625rem; color: var(--gray-500); margin-top: 0.5rem; text-align: center; }
+        
+        /* Funnel */
+        .funnel-item { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+        .funnel-label { width: 100px; font-size: 0.75rem; color: var(--gray-600); }
+        .funnel-bar { height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 600; color: white; transition: width 0.3s; }
+        
+        /* Responsive */
+        @media (max-width: 1200px) { 
+            .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+            .office-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) { 
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); } 
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+            .sidebar { width: 100%; }
+        }
+        
+        .hidden { display: none !important; }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        /* Notes */
+        .note-item { background: #fefce8; border-left: 3px solid #eab308; padding: 0.75rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.5rem; }
+        .note-date { font-size: 0.6875rem; color: var(--gray-500); margin-bottom: 0.25rem; }
+        .note-text { font-size: 0.8125rem; color: var(--gray-700); }
+        
+        /* Switch toggle */
+        .switch { position: relative; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--gray-300); border-radius: 24px; transition: 0.3s; }
+        .switch-slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+        .switch input:checked + .switch-slider { background: var(--success); }
+        .switch input:checked + .switch-slider:before { transform: translateX(20px); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>🎯 CRM REVELIO ROMANDIE</h1>
+        <div class="header-right">
+            <!-- Notifications -->
+            <div class="dropdown">
+                <button class="header-btn" onclick="toggleDropdown('notifDropdown')">
+                    🔔
+                    <span class="badge-count" id="notifCount">3</span>
+                </button>
+                <div class="dropdown-menu" id="notifDropdown">
+                    <div class="dropdown-header">
+                        <span>Notifications</span>
+                        <button class="btn btn-sm btn-secondary" onclick="markAllRead()">Tout marquer lu</button>
+                    </div>
+                    <div id="notifList">
+                        <div class="dropdown-item" onclick="openTask(1)">
+                            <div class="dropdown-icon" style="background:#fee2e2;">⚠️</div>
+                            <div class="dropdown-content">
+                                <strong>Tâche urgente</strong>
+                                <span>Appeler SINEF SA - Échéance aujourd'hui</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="dropdown-icon" style="background:#dcfce7;">✅</div>
+                            <div class="dropdown-content">
+                                <strong>Réponse reçue</strong>
+                                <span>Migros Vaud a répondu à votre proposition</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="dropdown-icon" style="background:#dbeafe;">📅</div>
+                            <div class="dropdown-content">
+                                <strong>RDV demain</strong>
+                                <span>Planzer Penthalaz - 10:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Menu -->
+            <div class="dropdown">
+                <div class="user-menu" onclick="toggleDropdown('userDropdown')">
+                    <div class="avatar">MW</div>
+                    <span style="font-size: 0.8125rem;" id="userName">Michel Woupeyi</span>
+                    <span style="font-size: 0.75rem;">▼</span>
+                </div>
+                <div class="dropdown-menu" id="userDropdown" style="min-width: 200px;">
+                    <div class="dropdown-item" onclick="openModal('settingsModal')">
+                        <span>⚙️</span>
+                        <div class="dropdown-content"><strong data-lang="settings">Paramètres</strong></div>
+                    </div>
+                    <div class="dropdown-item" onclick="openModal('profileModal')">
+                        <span>👤</span>
+                        <div class="dropdown-content"><strong data-lang="profile">Mon profil</strong></div>
+                    </div>
+                    <div class="dropdown-item" onclick="openModal('officeModal')">
+                        <span>📎</span>
+                        <div class="dropdown-content"><strong data-lang="integrations">Intégrations Office</strong></div>
+                    </div>
+                    <div class="dropdown-item" style="border-top: 1px solid var(--gray-200);">
+                        <span>🚪</span>
+                        <div class="dropdown-content"><strong data-lang="logout">Déconnexion</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav class="nav">
+        <button class="nav-tab active" data-tab="dashboard">📊 <span data-lang="nav_dashboard">Dashboard</span></button>
+        <button class="nav-tab" data-tab="pipeline">🎯 <span data-lang="nav_pipeline">Pipeline</span></button>
+        <button class="nav-tab" data-tab="contacts">👥 <span data-lang="nav_contacts">Contacts</span></button>
+        <button class="nav-tab" data-tab="offers">📋 <span data-lang="nav_offers">Offres</span></button>
+        <button class="nav-tab" data-tab="tasks">✅ <span data-lang="nav_tasks">Tâches</span></button>
+        <button class="nav-tab" data-tab="calendar">📅 <span data-lang="nav_calendar">Calendrier</span></button>
+        <button class="nav-tab" data-tab="templates">📝 <span data-lang="nav_templates">Templates</span></button>
+        <button class="nav-tab" data-tab="office">🔗 <span data-lang="nav_office">Office 365</span></button>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active">
+            <div class="kpi-grid">
+                <div class="kpi-card blue">
+                    <div class="kpi-label" data-lang="kpi_total">Total Prospects</div>
+                    <div class="kpi-value" id="kpiTotal">0</div>
+                </div>
+                <div class="kpi-card blue">
+                    <div class="kpi-label" data-lang="kpi_new">Nouveaux</div>
+                    <div class="kpi-value" id="kpiNew">0</div>
+                </div>
+                <div class="kpi-card yellow">
+                    <div class="kpi-label" data-lang="kpi_contact">En Contact</div>
+                    <div class="kpi-value" id="kpiContact">0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label" data-lang="kpi_qualified">Qualifiés</div>
+                    <div class="kpi-value" id="kpiQualified">0</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-label" data-lang="kpi_negotiation">Négociation</div>
+                    <div class="kpi-value" id="kpiNegotiation">0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label" data-lang="kpi_pipeline">Pipeline CHF</div>
+                    <div class="kpi-value" id="kpiPipeline">0</div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">📊 <span data-lang="chart_pipeline">Pipeline par Statut</span></div>
+                    <div class="chart-bar-container" id="pipelineChart"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📈 <span data-lang="chart_funnel">Funnel de Conversion</span></div>
+                    <div id="funnelChart"></div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">⚠️ <span data-lang="tasks_todo">Tâches à Faire</span></div>
+                    <div id="dashboardTasks"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📅 <span data-lang="upcoming_rdv">Prochains RDV</span></div>
+                    <div id="dashboardCalendar"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- PIPELINE -->
+        <section id="pipeline" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);">🔍</span>
+                        <input type="text" id="searchPipeline" placeholder="Rechercher..." class="form-input" style="padding-left: 2.25rem; width: 250px;">
+                    </div>
+                    <select id="filterSegment" class="form-select" style="width: auto;">
+                        <option value="all" data-lang="filter_all">Tous les segments</option>
+                        <option value="Architecte">Architecte</option>
+                        <option value="Promoteur">Promoteur</option>
+                        <option value="STEP">STEP</option>
+                        <option value="Distribution">Distribution</option>
+                        <option value="Transport">Transport</option>
+                    </select>
+                    <select id="filterStatus" class="form-select" style="width: auto;">
+                        <option value="all" data-lang="filter_all_status">Tous les statuts</option>
+                        <option value="Nouveau">Nouveau</option>
+                        <option value="Contacté">Contacté</option>
+                        <option value="Qualifié">Qualifié</option>
+                        <option value="Proposition">Proposition</option>
+                        <option value="Négociation">Négociation</option>
+                        <option value="Gagné">Gagné</option>
+                        <option value="Perdu">Perdu</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('addProspectModal')">+ <span data-lang="btn_new_prospect">Nouveau Prospect</span></button>
+            </div>
+            
+            <div class="card" style="padding: 0;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-lang="th_company">Entreprise</th>
+                                <th data-lang="th_contact">Contact</th>
+                                <th data-lang="th_status">Statut</th>
+                                <th data-lang="th_segment">Segment</th>
+                                <th data-lang="th_canton">Canton</th>
+                                <th data-lang="th_value">Valeur</th>
+                                <th>Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pipelineTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CONTACTS -->
+        <section id="contacts" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.125rem; font-weight: 600;">👥 <span data-lang="contacts_title">Gestion des Contacts</span></h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="openModal('importModal')">📥 <span data-lang="btn_import">Importer</span></button>
+                    <button class="btn btn-secondary" onclick="exportContacts()">📤 <span data-lang="btn_export">Exporter</span></button>
+                    <button class="btn btn-primary" onclick="openModal('addProspectModal')">+ <span data-lang="btn_add_contact">Ajouter Contact</span></button>
+                </div>
+            </div>
+            
+            <div class="card" style="padding: 0;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th data-lang="th_company">Entreprise</th>
+                                <th data-lang="th_name">Nom</th>
+                                <th>Email</th>
+                                <th data-lang="th_phone">Téléphone</th>
+                                <th data-lang="th_segment">Segment</th>
+                                <th data-lang="th_canton">Canton</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- OFFERS -->
+        <section id="offers" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.125rem; font-weight: 600;">📋 <span data-lang="offers_title">Gestion des Offres</span></h2>
+                <button class="btn btn-primary" onclick="openModal('addOfferModal')">+ <span data-lang="btn_new_offer">Nouvelle Offre</span></button>
+            </div>
+            
+            <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="kpi-card blue">
+                    <div class="kpi-label" data-lang="offers_total">Total Offres</div>
+                    <div class="kpi-value" id="offersTotal">0</div>
+                </div>
+                <div class="kpi-card yellow">
+                    <div class="kpi-label" data-lang="offers_pending">En attente</div>
+                    <div class="kpi-value" id="offersPending">0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label" data-lang="offers_won">Gagnées</div>
+                    <div class="kpi-value" id="offersWon">0</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label" data-lang="offers_value">Valeur Gagnée</div>
+                    <div class="kpi-value" id="offersValue">0 CHF</div>
+                </div>
+            </div>
+            
+            <div class="card" style="padding: 0;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-lang="th_offer_num">N° Offre</th>
+                                <th data-lang="th_account_num">N° Compte</th>
+                                <th data-lang="th_company">Entreprise</th>
+                                <th data-lang="th_service">Prestation</th>
+                                <th data-lang="th_amount">Montant</th>
+                                <th data-lang="th_created">Créée le</th>
+                                <th data-lang="th_sent">Envoyée le</th>
+                                <th data-lang="th_status">Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="offersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- TASKS -->
+        <section id="tasks" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.125rem; font-weight: 600;">✅ <span data-lang="tasks_title">Gestion des Tâches</span></h2>
+                <button class="btn btn-primary" onclick="openModal('addTaskModal')">+ <span data-lang="btn_new_task">Nouvelle Tâche</span></button>
+            </div>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title"><span style="color: var(--danger);">●</span> <span data-lang="tasks_todo">À Faire</span> (<span id="tasksTodoCount">0</span>)</div>
+                    <div id="tasksTodo"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span style="color: var(--warning);">●</span> <span data-lang="tasks_urgent">Urgent</span> (<span id="tasksUrgentCount">0</span>)</div>
+                    <div id="tasksUrgent"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><span style="color: var(--success);">●</span> <span data-lang="tasks_done">Terminé</span> (<span id="tasksDoneCount">0</span>)</div>
+                    <div id="tasksDone"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CALENDAR -->
+        <section id="calendar" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.125rem; font-weight: 600;">📅 <span data-lang="calendar_title">Calendrier & RDV</span></h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="syncOutlook()">🔄 <span data-lang="btn_sync_outlook">Sync Outlook</span></button>
+                    <button class="btn btn-primary" onclick="openModal('addEventModal')">+ <span data-lang="btn_new_rdv">Nouveau RDV</span></button>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title">📅 <span data-lang="today_events">Aujourd'hui</span></div>
+                    <div id="todayEvents"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📆 <span data-lang="upcoming_events">À venir</span></div>
+                    <div id="upcomingEvents"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- TEMPLATES -->
+        <section id="templates" class="section">
+            <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">📝 <span data-lang="templates_title">Templates & Contenus</span></h2>
+            
+            <div class="tabs">
+                <button class="tab active" data-subtab="emails">📧 Emails</button>
+                <button class="tab" data-subtab="linkedin">💼 LinkedIn</button>
+                <button class="tab" data-subtab="newsletters">📰 Newsletters</button>
+            </div>
+            
+            <div id="emails" class="tab-content active">
+                <div class="grid-3" id="emailTemplates"></div>
+            </div>
+            
+            <div id="linkedin" class="tab-content">
+                <div class="grid-3" id="linkedinTemplates"></div>
+            </div>
+            
+            <div id="newsletters" class="tab-content">
+                <div class="grid-3" id="newsletterTemplates"></div>
+            </div>
+        </section>
+        
+        <!-- OFFICE 365 -->
+        <section id="office" class="section">
+            <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">🔗 <span data-lang="office_title">Intégrations Office 365</span></h2>
+            
+            <div class="office-grid" id="officeApps"></div>
+            
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-title">🤖 <span data-lang="ai_automation">Automatisation IA</span></div>
+                <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;" data-lang="ai_desc">Configurez des automatisations intelligentes pour vos tâches récurrentes.</p>
+                
+                <div class="grid-2">
+                    <div class="template-card" onclick="openModal('automationModal')">
+                        <h4>📧 Email automatique après RDV</h4>
+                        <p>Envoi d'un email de suivi 24h après chaque RDV</p>
+                    </div>
+                    <div class="template-card" onclick="openModal('automationModal')">
+                        <h4>🔔 Rappel de relance</h4>
+                        <p>Notification si pas de réponse après 5 jours</p>
+                    </div>
+                    <div class="template-card" onclick="openModal('automationModal')">
+                        <h4>📊 Rapport hebdomadaire</h4>
+                        <p>Génération automatique du rapport pipeline</p>
+                    </div>
+                    <div class="template-card" onclick="openModal('automationModal')">
+                        <h4>✅ Création de tâche</h4>
+                        <p>Tâche automatique à chaque nouveau prospect</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <span>CRM Revelio Romandie • Emch+Berger Revelio AG</span>
+        <span id="footerVersion">Version 2.0</span>
+    </footer>
+    
+    <!-- MODALS -->
+    
+    <!-- Add Prospect Modal -->
+    <div class="modal-overlay" id="addProspectModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>➕ <span data-lang="modal_add_prospect">Ajouter un Prospect</span></h3>
+                <button class="modal-close" onclick="closeModal('addProspectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="prospectForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_company">Entreprise *</label>
+                            <input type="text" class="form-input" name="entreprise" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_contact">Contact</label>
+                            <input type="text" class="form-input" name="contact">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-input" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_phone">Téléphone</label>
+                            <input type="tel" class="form-input" name="tel">
+                        </div>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_segment">Segment</label>
+                            <select class="form-select" name="segment">
+                                <option value="Architecte">Architecte</option>
+                                <option value="Promoteur">Promoteur</option>
+                                <option value="STEP">STEP</option>
+                                <option value="Distribution">Distribution</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_canton">Canton</label>
+                            <select class="form-select" name="canton">
+                                <option value="VD">VD</option>
+                                <option value="GE">GE</option>
+                                <option value="VS">VS</option>
+                                <option value="FR">FR</option>
+                                <option value="NE">NE</option>
+                                <option value="JU">JU</option>
+                                <option value="BE">BE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_value">Valeur estimée (CHF)</label>
+                            <input type="number" class="form-input" name="valeur" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_notes">Notes</label>
+                        <textarea class="form-textarea" name="notes" placeholder="Notes sur ce prospect..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addProspectModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-primary" onclick="saveProspect()" data-lang="btn_save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📥 <span data-lang="modal_import">Importer des Contacts</span></h3>
+                <button class="modal-close" onclick="closeModal('importModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 2rem; border: 2px dashed var(--gray-300); border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="font-size: 2rem; margin-bottom: 0.5rem;">📄</p>
+                    <p style="margin-bottom: 1rem;" data-lang="import_drag">Glissez un fichier Excel ici ou</p>
+                    <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()" data-lang="btn_choose_file">Choisir un fichier</button>
+                </div>
+                <div class="card" style="background: var(--gray-50);">
+                    <div class="card-title">📋 <span data-lang="import_template">Template d'import</span></div>
+                    <p style="font-size: 0.8125rem; color: var(--gray-600); margin-bottom: 0.75rem;" data-lang="import_template_desc">Téléchargez le template Excel pour importer vos contacts correctement.</p>
+                    <button class="btn btn-secondary" onclick="downloadTemplate()">⬇️ <span data-lang="btn_download_template">Télécharger le template</span></button>
+                </div>
+                <div id="importPreview" style="margin-top: 1rem; display: none;">
+                    <div class="card-title" data-lang="import_preview">Aperçu de l'import</div>
+                    <div id="importPreviewContent"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('importModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-success" onclick="processImport()" id="btnImport" disabled data-lang="btn_import_now">Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Offer Modal -->
+    <div class="modal-overlay" id="addOfferModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>📋 <span data-lang="modal_add_offer">Nouvelle Offre</span></h3>
+                <button class="modal-close" onclick="closeModal('addOfferModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="offerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_account_num">N° Compte</label>
+                            <input type="text" class="form-input" name="accountNum" id="offerAccountNum" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_offer_num">N° Offre</label>
+                            <input type="text" class="form-input" name="offerNum" id="offerNum" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_prospect">Prospect *</label>
+                        <select class="form-select" name="prospectId" id="offerProspect" required onchange="updateAccountNum()">
+                            <option value="">-- Sélectionner --</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_service_type">Type de prestation</label>
+                            <select class="form-select" name="serviceType">
+                                <option value="Étude de faisabilité">Étude de faisabilité</option>
+                                <option value="Conception PV">Conception PV</option>
+                                <option value="Suivi de chantier">Suivi de chantier</option>
+                                <option value="Audit énergétique">Audit énergétique</option>
+                                <option value="Conseil technique">Conseil technique</option>
+                                <option value="Projet clé en main">Projet clé en main</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_amount">Montant (CHF) *</label>
+                            <input type="number" class="form-input" name="amount" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_created_date">Date de création</label>
+                            <input type="date" class="form-input" name="createdDate" id="offerCreatedDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_sent_date">Date d'envoi</label>
+                            <input type="date" class="form-input" name="sentDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_notes">Notes</label>
+                        <textarea class="form-textarea" name="notes" placeholder="Détails de l'offre..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addOfferModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-primary" onclick="saveOffer()" data-lang="btn_save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Task Modal -->
+    <div class="modal-overlay" id="addTaskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>✅ <span data-lang="modal_add_task">Nouvelle Tâche</span></h3>
+                <button class="modal-close" onclick="closeModal('addTaskModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_task_title">Titre *</label>
+                        <input type="text" class="form-input" name="title" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_due_date">Date échéance</label>
+                            <input type="date" class="form-input" name="dueDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_priority">Priorité</label>
+                            <select class="form-select" name="priority">
+                                <option value="urgent">🔴 Urgent</option>
+                                <option value="important">🟠 Important</option>
+                                <option value="normal" selected>🟡 Normal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_category">Catégorie</label>
+                        <select class="form-select" name="category">
+                            <option value="Email">📧 Email</option>
+                            <option value="Appel">📞 Appel</option>
+                            <option value="RDV">📅 RDV</option>
+                            <option value="Proposition">📋 Proposition</option>
+                            <option value="Relance">🔄 Relance</option>
+                            <option value="LinkedIn">💼 LinkedIn</option>
+                            <option value="Autre">📝 Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_linked_prospect">Prospect lié</label>
+                        <select class="form-select" name="prospectId" id="taskProspect">
+                            <option value="">-- Aucun --</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addTaskModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-primary" onclick="saveTask()" data-lang="btn_save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Event Modal -->
+    <div class="modal-overlay" id="addEventModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📅 <span data-lang="modal_add_event">Nouveau RDV</span></h3>
+                <button class="modal-close" onclick="closeModal('addEventModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_event_title">Titre *</label>
+                        <input type="text" class="form-input" name="title" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_date">Date</label>
+                            <input type="date" class="form-input" name="date">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-lang="field_time">Heure</label>
+                            <input type="time" class="form-input" name="time">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_location">Lieu</label>
+                        <input type="text" class="form-input" name="location">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-lang="field_linked_prospect">Prospect lié</label>
+                        <select class="form-select" name="prospectId" id="eventProspect">
+                            <option value="">-- Aucun --</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+                        <label class="switch">
+                            <input type="checkbox" name="syncOutlook" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                        <span style="font-size: 0.875rem;" data-lang="sync_to_outlook">Synchroniser avec Outlook</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addEventModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-primary" onclick="saveEvent()" data-lang="btn_save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>⚙️ <span data-lang="modal_settings">Paramètres</span></h3>
+                <button class="modal-close" onclick="closeModal('settingsModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_language">Langue / Sprache</label>
+                    <select class="form-select" id="languageSelect" onchange="changeLanguage(this.value)">
+                        <option value="fr">🇫🇷 Français</option>
+                        <option value="de">🇩🇪 Deutsch</option>
+                    </select>
+                </div>
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--gray-200);">
+                <h4 style="font-size: 0.9375rem; margin-bottom: 1rem;" data-lang="change_password">Changer le mot de passe</h4>
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_current_password">Mot de passe actuel</label>
+                    <input type="password" class="form-input" id="currentPassword">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_new_password">Nouveau mot de passe</label>
+                    <input type="password" class="form-input" id="newPassword">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_confirm_password">Confirmer le mot de passe</label>
+                    <input type="password" class="form-input" id="confirmPassword">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('settingsModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-primary" onclick="saveSettings()" data-lang="btn_save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>👤 <span data-lang="modal_profile">Mon Profil</span></h3>
+                <button class="modal-close" onclick="closeModal('profileModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_fullname">Nom complet</label>
+                    <input type="text" class="form-input" id="profileName" value="Michel Woupeyi">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="profileEmail" value="m.woupeyi@revelio.ch">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_phone">Téléphone</label>
+                    <input type="tel" class="form-input" id="profilePhone" value="+41 79 932 62 01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-lang="field_company">Entreprise</label>
+                    <input type="text" class="form-input" id="profileCompany" value="Emch+Berger Revelio AG" readonly>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('profileModal')" data-lang="btn_cancel">Annuler</button>
+                <button class="btn btn-primary" onclick="saveProfile()" data-lang="btn_save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Office Integration Modal -->
+    <div class="modal-overlay" id="officeModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>📎 <span data-lang="modal_office">Intégrations Office 365</span></h3>
+                <button class="modal-close" onclick="closeModal('officeModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem; color: var(--gray-600);" data-lang="office_modal_desc">Connectez vos applications Microsoft Office pour une intégration complète.</p>
+                <div class="office-grid" id="officeModalApps"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('officeModal')" data-lang="btn_close">Fermer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Template View Modal -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="templateModalTitle">Template</h3>
+                <button class="modal-close" onclick="closeModal('templateModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="templateModalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('templateModal')" data-lang="btn_close">Fermer</button>
+                <button class="btn btn-primary" onclick="copyTemplate()" data-lang="btn_copy">📋 Copier</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prospect Detail Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="prospectSidebar">
+        <div class="sidebar-header">
+            <h3 id="sidebarTitle">Détails</h3>
+            <button class="modal-close" onclick="closeSidebar()">×</button>
+        </div>
+        <div class="sidebar-body">
+            <div id="sidebarBadge" style="margin-bottom: 1rem;"></div>
+            
+            <div class="tabs" style="margin-bottom: 1rem;">
+                <button class="tab active" data-sidebartab="info">Infos</button>
+                <button class="tab" data-sidebartab="notes">Notes</button>
+                <button class="tab" data-sidebartab="offers">Offres</button>
+            </div>
+            
+            <div id="sidebarInfo" class="tab-content active">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="sidebar-section">
+                        <div class="sidebar-label" data-lang="field_segment">Segment</div>
+                        <div class="sidebar-value" id="sidebarSegment">-</div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-label" data-lang="field_canton">Canton</div>
+                        <div class="sidebar-value" id="sidebarCanton">-</div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-label" data-lang="field_value">Valeur</div>
+                        <div class="sidebar-value" id="sidebarValeur">-</div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-label">Score</div>
+                        <div class="sidebar-value" id="sidebarScore">-</div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Email</div>
+                    <div class="sidebar-value"><a href="#" id="sidebarEmail">-</a></div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label" data-lang="field_phone">Téléphone</div>
+                    <div class="sidebar-value"><a href="#" id="sidebarTel">-</a></div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label" data-lang="field_account_num">N° Compte</div>
+                    <div class="sidebar-value" id="sidebarAccount">-</div>
+                </div>
+            </div>
+            
+            <div id="sidebarNotes" class="tab-content">
+                <button class="btn btn-sm btn-primary" onclick="addNote()" style="margin-bottom: 1rem;">+ <span data-lang="btn_add_note">Ajouter une note</span></button>
+                <div id="sidebarNotesList"></div>
+            </div>
+            
+            <div id="sidebarOffers" class="tab-content">
+                <button class="btn btn-sm btn-primary" onclick="openModal('addOfferModal')" style="margin-bottom: 1rem;">+ <span data-lang="btn_new_offer">Nouvelle offre</span></button>
+                <div id="sidebarOffersList"></div>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="sendEmail()">✉️ Email</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="makeCall()">📞 <span data-lang="btn_call">Appeler</span></button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================================
+        // DATA STORAGE
+        // ============================================================
+        let prospects = JSON.parse(localStorage.getItem('crm_prospects')) || [
+            { id: 1, entreprise: 'SINEF SA', contact: 'Direction', email: 'step.fribourg@sinef.ch', tel: '+41 26 350 11 11', statut: 'Nouveau', segment: 'STEP', canton: 'FR', valeur: 85000, score: 85, accountNum: 'ACC-001', notes: [] },
+            { id: 2, entreprise: 'CCHE Lausanne SA', contact: '', email: 'lausanne@cche.ch', tel: '+41 21 321 44 66', statut: 'Contacté', segment: 'Architecte', canton: 'VD', valeur: 45000, score: 72, accountNum: 'ACC-002', notes: [] },
+            { id: 3, entreprise: 'Planzer Penthalaz', contact: '', email: 'penthalaz@planzer.ch', tel: '+41 21 802 64 64', statut: 'Qualifié', segment: 'Transport', canton: 'VD', valeur: 120000, score: 90, accountNum: 'ACC-003', notes: [] },
+            { id: 4, entreprise: 'Naef Immobilier', contact: '', email: 'geneve@naef.ch', tel: '', statut: 'Proposition', segment: 'Promoteur', canton: 'GE', valeur: 95000, score: 88, accountNum: 'ACC-004', notes: [] },
+            { id: 5, entreprise: 'Migros Vaud', contact: '', email: 'info@migros-vaud.ch', tel: '', statut: 'Négociation', segment: 'Distribution', canton: 'VD', valeur: 180000, score: 95, accountNum: 'ACC-005', notes: [] },
+            { id: 6, entreprise: 'STEP Pensier', contact: 'Pascal Lottaz', email: 'exploitation@steppensier.ch', tel: '+41 26 684 34 13', statut: 'Nouveau', segment: 'STEP', canton: 'FR', valeur: 55000, score: 70, accountNum: 'ACC-006', notes: [] }
+        ];
+        
+        let offers = JSON.parse(localStorage.getItem('crm_offers')) || [
+            { id: 1, offerNum: 'OFF-2026-001', accountNum: 'ACC-003', prospectId: 3, serviceType: 'Étude de faisabilité', amount: 12000, createdDate: '2026-02-15', sentDate: '2026-02-18', status: 'Envoyée', notes: '' },
+            { id: 2, offerNum: 'OFF-2026-002', accountNum: 'ACC-005', prospectId: 5, serviceType: 'Projet clé en main', amount: 180000, createdDate: '2026-02-20', sentDate: '2026-02-22', status: 'En négociation', notes: '' }
+        ];
+        
+        let tasks = JSON.parse(localStorage.getItem('crm_tasks')) || [
+            { id: 1, title: 'Envoyer Email 1 - Architectes', dueDate: '2026-03-04', priority: 'urgent', category: 'Email', prospectId: null, done: false },
+            { id: 2, title: 'Appeler SINEF SA', dueDate: '2026-03-05', priority: 'urgent', category: 'Appel', prospectId: 1, done: false },
+            { id: 3, title: 'Préparer proposition Planzer', dueDate: '2026-03-07', priority: 'important', category: 'Proposition', prospectId: 3, done: false },
+            { id: 4, title: 'Relance promoteurs J+7', dueDate: '2026-03-10', priority: 'normal', category: 'Relance', prospectId: null, done: false },
+            { id: 5, title: 'Post LinkedIn - Projet ASTRA', dueDate: '2026-03-06', priority: 'normal', category: 'LinkedIn', prospectId: null, done: false }
+        ];
+        
+        let events = JSON.parse(localStorage.getItem('crm_events')) || [
+            { id: 1, title: 'RDV Planzer Penthalaz', date: '2026-03-05', time: '10:00', location: 'Penthalaz', prospectId: 3 },
+            { id: 2, title: 'Présentation Migros Vaud', date: '2026-03-07', time: '14:00', location: 'Lausanne', prospectId: 5 },
+            { id: 3, title: 'Call SINEF SA', date: '2026-03-04', time: '15:30', location: 'Teams', prospectId: 1 }
+        ];
+        
+        let currentLanguage = localStorage.getItem('crm_language') || 'fr';
+        let selectedProspectId = null;
+        
+        const officeApps = [
+            { id: 'outlook', name: 'Outlook', icon: '📧', desc: 'Email & Calendrier', connected: true },
+            { id: 'word', name: 'Word', icon: '📝', desc: 'Documents', connected: true },
+            { id: 'excel', name: 'Excel', icon: '📊', desc: 'Tableurs', connected: true },
+            { id: 'powerpoint', name: 'PowerPoint', icon: '📽️', desc: 'Présentations', connected: false },
+            { id: 'teams', name: 'Teams', icon: '💬', desc: 'Communication', connected: true },
+            { id: 'loop', name: 'Loop', icon: '🔄', desc: 'Collaboration', connected: false },
+            { id: 'onedrive', name: 'OneDrive', icon: '☁️', desc: 'Stockage', connected: true },
+            { id: 'copilot', name: 'Copilot', icon: '🤖', desc: 'IA Assistant', connected: false }
+        ];
+        
+        const templates = {
+            emails: [
+                { id: 1, name: 'Email 1 - Architectes', segment: 'Architecte', subject: 'Optimisez vos projets avec l\'intégration PV', content: 'Bonjour <<Prénom>>,\n\nEn tant que Chef de projet photovoltaïque chez Emch+Berger Revelio AG, j\'accompagne les bureaux d\'architecture dans l\'intégration PV dès la phase de conception.\n\nNotre valeur ajoutée:\n• Études de faisabilité intégrées\n• Analyses d\'éblouissement et simulations 3D\n• Solutions BIPV esthétiques\n\nCordialement,\nMichel Woupeyi' },
+                { id: 2, name: 'Email 1 - Promoteurs', segment: 'Promoteur', subject: 'Valorisez vos projets immobiliers avec le PV', content: 'Bonjour <<Prénom>>,\n\nNous accompagnons les promoteurs romands dans l\'intégration solaire:\n• Faisabilité PV dès l\'avant-projet\n• Solutions RCP/ZEV clé en main\n• Optimisation des rendements\n\nCordialement,\nMichel Woupeyi' },
+                { id: 3, name: 'Email 1 - STEP', segment: 'STEP', subject: 'Potentiel solaire de vos installations d\'épuration', content: 'Bonjour,\n\nLes stations d\'épuration disposent d\'un potentiel PV considérable:\n• Grandes surfaces disponibles\n• Consommation élevée (autoconsommation optimale)\n\nPouvons-nous échanger?\n\nMichel Woupeyi' },
+                { id: 4, name: 'Email Relance J+5', segment: 'Tous', subject: 'Suite: Intégration PV pour <<Entreprise>>', content: 'Bonjour <<Prénom>>,\n\nJe me permets de revenir vers vous concernant mon message précédent.\n\nAvez-vous des projets en développement où le solaire pourrait être intégré?\n\nCordialement,\nMichel Woupeyi' },
+                { id: 5, name: 'Proposition commerciale', segment: 'Tous', subject: 'Proposition - <<Entreprise>>', content: 'Bonjour <<Prénom>>,\n\nSuite à notre échange, veuillez trouver ci-joint notre proposition pour votre projet.\n\nJe reste à disposition pour toute question.\n\nCordialement,\nMichel Woupeyi' }
+            ],
+            linkedin: [
+                { id: 1, name: 'Post Projet livré', content: '🔆 Fier de partager notre dernière réalisation!\n\nNous avons accompagné [CLIENT] dans leur installation de [X] kWc.\n\n📊 Chiffres clés:\n✅ Production: [X] MWh/an\n✅ Réduction CO2: [X] tonnes\n✅ ROI: [X] ans\n\n#Photovoltaïque #EnergieRenouvelable #Suisse' },
+                { id: 2, name: 'Post Expertise', content: '💡 Le saviez-vous?\n\nL\'intégration du PV dès la conception permet de:\n\n1️⃣ Optimiser l\'orientation\n2️⃣ Intégrer esthétiquement (BIPV)\n3️⃣ Réduire les coûts\n4️⃣ Maximiser l\'autoconsommation\n\nUne question? Je suis là! 💬\n\n#Architecture #Photovoltaïque' },
+                { id: 3, name: 'Message de connexion', content: 'Bonjour [Prénom],\n\nJe suis Michel Woupeyi, Chef de projet PV chez Emch+Berger Revelio AG.\n\nVotre parcours chez [ENTREPRISE] m\'intéresse particulièrement.\n\nAu plaisir d\'échanger!\n\nMichel' },
+                { id: 4, name: 'InMail prospection', content: 'Bonjour [Prénom],\n\nJ\'ai vu que [ENTREPRISE] développe des projets [TYPE] en Romandie.\n\nEmch+Berger Revelio AG accompagne les acteurs comme vous:\n• Études de faisabilité\n• Solutions clé en main\n• Conseil indépendant\n\n15 minutes pour en discuter?\n\nMichel Woupeyi' }
+            ],
+            newsletters: [
+                { id: 1, name: 'Newsletter mensuelle', content: '📰 NEWSLETTER - [MOIS] 2026\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n📌 ACTUALITÉ DU MOIS\n[Titre et description]\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n📌 PROJET DU MOIS\n🏢 Client: [Nom]\n⚡ Puissance: [X] kWc\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n📌 CONSEIL TECHNIQUE\n[Astuce du mois]\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\nMichel Woupeyi\n+41 79 932 62 01' },
+                { id: 2, name: 'Annonce projet', content: '🎉 NOUVEAU PROJET LIVRÉ!\n\nNous sommes fiers d\'annoncer la mise en service de [PROJET].\n\n📍 Lieu: [Localité]\n⚡ Puissance: [X] kWc\n📈 Production: [X] MWh/an\n\nMerci à [CLIENT] pour sa confiance!\n\nMichel Woupeyi' }
+            ]
+        };
+        
+        const translations = {
+            fr: {
+                nav_dashboard: 'Dashboard', nav_pipeline: 'Pipeline', nav_contacts: 'Contacts', nav_offers: 'Offres', nav_tasks: 'Tâches', nav_calendar: 'Calendrier', nav_templates: 'Templates', nav_office: 'Office 365',
+                kpi_total: 'Total Prospects', kpi_new: 'Nouveaux', kpi_contact: 'En Contact', kpi_qualified: 'Qualifiés', kpi_negotiation: 'Négociation', kpi_pipeline: 'Pipeline CHF',
+                settings: 'Paramètres', profile: 'Mon profil', integrations: 'Intégrations Office', logout: 'Déconnexion',
+                btn_new_prospect: 'Nouveau Prospect', btn_import: 'Importer', btn_export: 'Exporter', btn_add_contact: 'Ajouter Contact', btn_new_offer: 'Nouvelle Offre', btn_new_task: 'Nouvelle Tâche', btn_new_rdv: 'Nouveau RDV', btn_sync_outlook: 'Sync Outlook',
+                btn_cancel: 'Annuler', btn_save: 'Enregistrer', btn_close: 'Fermer', btn_copy: 'Copier', btn_call: 'Appeler', btn_add_note: 'Ajouter une note', btn_download_template: 'Télécharger le template', btn_choose_file: 'Choisir un fichier', btn_import_now: 'Importer',
+                field_company: 'Entreprise', field_contact: 'Contact', field_phone: 'Téléphone', field_segment: 'Segment', field_canton: 'Canton', field_value: 'Valeur estimée (CHF)', field_notes: 'Notes',
+                field_account_num: 'N° Compte', field_offer_num: 'N° Offre', field_prospect: 'Prospect', field_service_type: 'Type de prestation', field_amount: 'Montant (CHF)', field_created_date: 'Date de création', field_sent_date: 'Date d\'envoi',
+                field_task_title: 'Titre', field_due_date: 'Date échéance', field_priority: 'Priorité', field_category: 'Catégorie', field_linked_prospect: 'Prospect lié',
+                field_event_title: 'Titre', field_date: 'Date', field_time: 'Heure', field_location: 'Lieu',
+                field_language: 'Langue', field_current_password: 'Mot de passe actuel', field_new_password: 'Nouveau mot de passe', field_confirm_password: 'Confirmer le mot de passe', field_fullname: 'Nom complet',
+                change_password: 'Changer le mot de passe', sync_to_outlook: 'Synchroniser avec Outlook',
+                th_company: 'Entreprise', th_contact: 'Contact', th_status: 'Statut', th_segment: 'Segment', th_canton: 'Canton', th_value: 'Valeur', th_name: 'Nom', th_phone: 'Téléphone',
+                th_offer_num: 'N° Offre', th_account_num: 'N° Compte', th_service: 'Prestation', th_amount: 'Montant', th_created: 'Créée le', th_sent: 'Envoyée le',
+                tasks_todo: 'À Faire', tasks_urgent: 'Urgent', tasks_done: 'Terminé', upcoming_rdv: 'Prochains RDV', today_events: 'Aujourd\'hui', upcoming_events: 'À venir',
+                contacts_title: 'Gestion des Contacts', offers_title: 'Gestion des Offres', tasks_title: 'Gestion des Tâches', calendar_title: 'Calendrier & RDV', templates_title: 'Templates & Contenus', office_title: 'Intégrations Office 365',
+                offers_total: 'Total Offres', offers_pending: 'En attente', offers_won: 'Gagnées', offers_value: 'Valeur Gagnée',
+                chart_pipeline: 'Pipeline par Statut', chart_funnel: 'Funnel de Conversion',
+                modal_add_prospect: 'Ajouter un Prospect', modal_import: 'Importer des Contacts', modal_add_offer: 'Nouvelle Offre', modal_add_task: 'Nouvelle Tâche', modal_add_event: 'Nouveau RDV', modal_settings: 'Paramètres', modal_profile: 'Mon Profil', modal_office: 'Intégrations Office 365',
+                import_drag: 'Glissez un fichier Excel ici ou', import_template: 'Template d\'import', import_template_desc: 'Téléchargez le template Excel pour importer vos contacts correctement.', import_preview: 'Aperçu de l\'import',
+                filter_all: 'Tous les segments', filter_all_status: 'Tous les statuts',
+                ai_automation: 'Automatisation IA', ai_desc: 'Configurez des automatisations intelligentes pour vos tâches récurrentes.',
+                office_modal_desc: 'Connectez vos applications Microsoft Office pour une intégration complète.'
+            },
+            de: {
+                nav_dashboard: 'Dashboard', nav_pipeline: 'Pipeline', nav_contacts: 'Kontakte', nav_offers: 'Angebote', nav_tasks: 'Aufgaben', nav_calendar: 'Kalender', nav_templates: 'Vorlagen', nav_office: 'Office 365',
+                kpi_total: 'Gesamt Prospects', kpi_new: 'Neu', kpi_contact: 'In Kontakt', kpi_qualified: 'Qualifiziert', kpi_negotiation: 'Verhandlung', kpi_pipeline: 'Pipeline CHF',
+                settings: 'Einstellungen', profile: 'Mein Profil', integrations: 'Office-Integrationen', logout: 'Abmelden',
+                btn_new_prospect: 'Neuer Prospect', btn_import: 'Importieren', btn_export: 'Exportieren', btn_add_contact: 'Kontakt hinzufügen', btn_new_offer: 'Neues Angebot', btn_new_task: 'Neue Aufgabe', btn_new_rdv: 'Neuer Termin', btn_sync_outlook: 'Outlook Sync',
+                btn_cancel: 'Abbrechen', btn_save: 'Speichern', btn_close: 'Schließen', btn_copy: 'Kopieren', btn_call: 'Anrufen', btn_add_note: 'Notiz hinzufügen', btn_download_template: 'Vorlage herunterladen', btn_choose_file: 'Datei auswählen', btn_import_now: 'Importieren',
+                field_company: 'Unternehmen', field_contact: 'Kontakt', field_phone: 'Telefon', field_segment: 'Segment', field_canton: 'Kanton', field_value: 'Geschätzter Wert (CHF)', field_notes: 'Notizen',
+                field_account_num: 'Konto-Nr.', field_offer_num: 'Angebots-Nr.', field_prospect: 'Prospect', field_service_type: 'Leistungsart', field_amount: 'Betrag (CHF)', field_created_date: 'Erstellungsdatum', field_sent_date: 'Versanddatum',
+                field_task_title: 'Titel', field_due_date: 'Fälligkeitsdatum', field_priority: 'Priorität', field_category: 'Kategorie', field_linked_prospect: 'Verknüpfter Prospect',
+                field_event_title: 'Titel', field_date: 'Datum', field_time: 'Uhrzeit', field_location: 'Ort',
+                field_language: 'Sprache', field_current_password: 'Aktuelles Passwort', field_new_password: 'Neues Passwort', field_confirm_password: 'Passwort bestätigen', field_fullname: 'Vollständiger Name',
+                change_password: 'Passwort ändern', sync_to_outlook: 'Mit Outlook synchronisieren',
+                th_company: 'Unternehmen', th_contact: 'Kontakt', th_status: 'Status', th_segment: 'Segment', th_canton: 'Kanton', th_value: 'Wert', th_name: 'Name', th_phone: 'Telefon',
+                th_offer_num: 'Angebots-Nr.', th_account_num: 'Konto-Nr.', th_service: 'Leistung', th_amount: 'Betrag', th_created: 'Erstellt am', th_sent: 'Gesendet am',
+                tasks_todo: 'Zu erledigen', tasks_urgent: 'Dringend', tasks_done: 'Erledigt', upcoming_rdv: 'Nächste Termine', today_events: 'Heute', upcoming_events: 'Kommend',
+                contacts_title: 'Kontaktverwaltung', offers_title: 'Angebotsverwaltung', tasks_title: 'Aufgabenverwaltung', calendar_title: 'Kalender & Termine', templates_title: 'Vorlagen & Inhalte', office_title: 'Office 365 Integrationen',
+                offers_total: 'Angebote gesamt', offers_pending: 'Ausstehend', offers_won: 'Gewonnen', offers_value: 'Gewonnener Wert',
+                chart_pipeline: 'Pipeline nach Status', chart_funnel: 'Conversion Trichter',
+                modal_add_prospect: 'Prospect hinzufügen', modal_import: 'Kontakte importieren', modal_add_offer: 'Neues Angebot', modal_add_task: 'Neue Aufgabe', modal_add_event: 'Neuer Termin', modal_settings: 'Einstellungen', modal_profile: 'Mein Profil', modal_office: 'Office 365 Integrationen',
+                import_drag: 'Excel-Datei hierher ziehen oder', import_template: 'Import-Vorlage', import_template_desc: 'Laden Sie die Excel-Vorlage herunter.', import_preview: 'Import-Vorschau',
+                filter_all: 'Alle Segmente', filter_all_status: 'Alle Status',
+                ai_automation: 'KI-Automatisierung', ai_desc: 'Konfigurieren Sie intelligente Automatisierungen für Ihre wiederkehrenden Aufgaben.',
+                office_modal_desc: 'Verbinden Sie Ihre Microsoft Office-Anwendungen für eine vollständige Integration.'
+            }
+        };
+        
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initNavigation();
+            initSubTabs();
+            initSidebarTabs();
+            initFilters();
+            initFileUpload();
+            applyLanguage();
+            renderAll();
+        });
+        
+        function renderAll() {
+            renderKPIs();
+            renderPipelineChart();
+            renderFunnelChart();
+            renderPipelineTable();
+            renderContactsTable();
+            renderOffersTable();
+            renderTasks();
+            renderCalendar();
+            renderTemplates();
+            renderOfficeApps();
+            renderDashboardTasks();
+            renderDashboardCalendar();
+            populateProspectSelects();
+        }
+        
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function initNavigation() {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                    closeAllDropdowns();
+                });
+            });
+        }
+        
+        function initSubTabs() {
+            document.querySelectorAll('.tabs .tab[data-subtab]').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const parent = tab.closest('.section');
+                    parent.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+                    parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.subtab).classList.add('active');
+                });
+            });
+        }
+        
+        function initSidebarTabs() {
+            document.querySelectorAll('.tab[data-sidebartab]').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab[data-sidebartab]').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('#prospectSidebar .tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById('sidebar' + tab.dataset.sidebartab.charAt(0).toUpperCase() + tab.dataset.sidebartab.slice(1)).classList.add('active');
+                });
+            });
+        }
+        
+        function initFilters() {
+            document.getElementById('searchPipeline').addEventListener('input', filterPipeline);
+            document.getElementById('filterSegment').addEventListener('change', filterPipeline);
+            document.getElementById('filterStatus').addEventListener('change', filterPipeline);
+        }
+        
+        function initFileUpload() {
+            const fileInput = document.getElementById('importFile');
+            if (fileInput) {
+                fileInput.addEventListener('change', handleFileSelect);
+            }
+        }
+        
+        // ============================================================
+        // DROPDOWNS
+        // ============================================================
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isOpen = dropdown.classList.contains('open');
+            closeAllDropdowns();
+            if (!isOpen) dropdown.classList.add('open');
+        }
+        
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('open'));
+        }
+        
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) closeAllDropdowns();
+        });
+        
+        // ============================================================
+        // MODALS
+        // ============================================================
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+            closeAllDropdowns();
+            
+            if (id === 'addOfferModal') {
+                document.getElementById('offerNum').value = 'OFF-2026-' + String(offers.length + 1).padStart(3, '0');
+                document.getElementById('offerCreatedDate').value = new Date().toISOString().split('T')[0];
+            }
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+        
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        function openSidebar(prospectId) {
+            selectedProspectId = prospectId;
+            const p = prospects.find(x => x.id === prospectId);
+            if (!p) return;
+            
+            document.getElementById('sidebarTitle').textContent = p.entreprise;
+            document.getElementById('sidebarBadge').innerHTML = `<span class="badge ${getStatusBadgeClass(p.statut)}">${p.statut}</span>`;
+            document.getElementById('sidebarSegment').textContent = p.segment;
+            document.getElementById('sidebarCanton').textContent = p.canton;
+            document.getElementById('sidebarValeur').textContent = p.valeur.toLocaleString() + ' CHF';
+            document.getElementById('sidebarScore').textContent = p.score + '/100';
+            document.getElementById('sidebarEmail').textContent = p.email;
+            document.getElementById('sidebarEmail').href = 'mailto:' + p.email;
+            document.getElementById('sidebarTel').textContent = p.tel || '-';
+            document.getElementById('sidebarTel').href = p.tel ? 'tel:' + p.tel : '#';
+            document.getElementById('sidebarAccount').textContent = p.accountNum || '-';
+            
+            renderSidebarNotes(p);
+            renderSidebarOffers(p);
+            
+            document.getElementById('sidebarOverlay').classList.add('open');
+            document.getElementById('prospectSidebar').classList.add('open');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebarOverlay').classList.remove('open');
+            document.getElementById('prospectSidebar').classList.remove('open');
+            selectedProspectId = null;
+        }
+        
+        function renderSidebarNotes(p) {
+            const container = document.getElementById('sidebarNotesList');
+            if (!p.notes || p.notes.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-400); font-size: 0.8125rem;">Aucune note</p>';
+                return;
+            }
+            container.innerHTML = p.notes.map(note => `
+                <div class="note-item">
+                    <div class="note-date">${note.date}</div>
+                    <div class="note-text">${note.text}</div>
+                </div>
+            `).join('');
+        }
+        
+        function renderSidebarOffers(p) {
+            const container = document.getElementById('sidebarOffersList');
+            const prospectOffers = offers.filter(o => o.prospectId === p.id);
+            if (prospectOffers.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-400); font-size: 0.8125rem;">Aucune offre</p>';
+                return;
+            }
+            container.innerHTML = prospectOffers.map(o => `
+                <div class="offer-card">
+                    <div class="offer-header">
+                        <span class="offer-number">${o.offerNum}</span>
+                        <span class="badge ${getOfferStatusBadgeClass(o.status)}">${o.status}</span>
+                    </div>
+                    <div class="offer-amount">${o.amount.toLocaleString()} CHF</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">${o.serviceType}</div>
+                </div>
+            `).join('');
+        }
+        
+        // ============================================================
+        // KPIs
+        // ============================================================
+        function renderKPIs() {
+            const stats = {
+                total: prospects.length,
+                nouveau: prospects.filter(p => p.statut === 'Nouveau').length,
+                contact: prospects.filter(p => ['Contacté'].includes(p.statut)).length,
+                qualified: prospects.filter(p => p.statut === 'Qualifié').length,
+                negotiation: prospects.filter(p => ['Proposition', 'Négociation'].includes(p.statut)).length,
+                pipeline: prospects.filter(p => p.statut !== 'Perdu').reduce((sum, p) => sum + p.valeur, 0)
+            };
+            
+            document.getElementById('kpiTotal').textContent = stats.total;
+            document.getElementById('kpiNew').textContent = stats.nouveau;
+            document.getElementById('kpiContact').textContent = stats.contact;
+            document.getElementById('kpiQualified').textContent = stats.qualified;
+            document.getElementById('kpiNegotiation').textContent = stats.negotiation;
+            document.getElementById('kpiPipeline').textContent = (stats.pipeline / 1000).toFixed(0) + 'K';
+            
+            // Offers KPIs
+            document.getElementById('offersTotal').textContent = offers.length;
+            document.getElementById('offersPending').textContent = offers.filter(o => ['Envoyée', 'En négociation'].includes(o.status)).length;
+            document.getElementById('offersWon').textContent = offers.filter(o => o.status === 'Acceptée').length;
+            document.getElementById('offersValue').textContent = offers.filter(o => o.status === 'Acceptée').reduce((sum, o) => sum + o.amount, 0).toLocaleString() + ' CHF';
+        }
+        
+        // ============================================================
+        // CHARTS
+        // ============================================================
+        function renderPipelineChart() {
+            const data = [
+                { label: 'Nouveau', value: prospects.filter(p => p.statut === 'Nouveau').length, color: '#93c5fd' },
+                { label: 'Contacté', value: prospects.filter(p => p.statut === 'Contacté').length, color: '#fde047' },
+                { label: 'Qualifié', value: prospects.filter(p => p.statut === 'Qualifié').length, color: '#86efac' },
+                { label: 'Proposition', value: prospects.filter(p => p.statut === 'Proposition').length, color: '#fdba74' },
+                { label: 'Négo', value: prospects.filter(p => p.statut === 'Négociation').length, color: '#c4b5fd' },
+                { label: 'Gagné', value: prospects.filter(p => p.statut === 'Gagné').length, color: '#4ade80' }
+            ];
+            const maxVal = Math.max(...data.map(d => d.value), 1);
+            
+            document.getElementById('pipelineChart').innerHTML = data.map(d => `
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar-value">${d.value}</div>
+                    <div class="chart-bar" style="height: ${(d.value / maxVal) * 140}px; background: ${d.color};"></div>
+                    <div class="chart-bar-label">${d.label}</div>
+                </div>
+            `).join('');
+        }
+        
+        function renderFunnelChart() {
+            const data = [
+                { label: '🆕 Nouveau', value: prospects.filter(p => p.statut === 'Nouveau').length, color: '#93c5fd' },
+                { label: '📧 Contacté', value: prospects.filter(p => p.statut === 'Contacté').length, color: '#fde047' },
+                { label: '✅ Qualifié', value: prospects.filter(p => p.statut === 'Qualifié').length, color: '#86efac' },
+                { label: '📋 Proposition', value: prospects.filter(p => p.statut === 'Proposition').length, color: '#fdba74' },
+                { label: '🤝 Négociation', value: prospects.filter(p => p.statut === 'Négociation').length, color: '#c4b5fd' },
+                { label: '🎉 Gagné', value: prospects.filter(p => p.statut === 'Gagné').length, color: '#4ade80' }
+            ];
+            const maxVal = Math.max(...data.map(d => d.value), 1);
+            
+            document.getElementById('funnelChart').innerHTML = data.map(d => `
+                <div class="funnel-item">
+                    <span class="funnel-label">${d.label}</span>
+                    <div class="funnel-bar" style="width: ${(d.value / maxVal) * 100}%; background: ${d.color};">${d.value}</div>
+                </div>
+            `).join('');
+        }
+        
+        // ============================================================
+        // TABLES
+        // ============================================================
+        function renderPipelineTable() {
+            const tbody = document.getElementById('pipelineTable');
+            tbody.innerHTML = prospects.map(p => `
+                <tr class="clickable" onclick="openSidebar(${p.id})">
+                    <td>
+                        <strong>${p.entreprise}</strong><br>
+                        <span style="color: var(--gray-500); font-size: 0.75rem;">${p.email}</span>
+                    </td>
+                    <td>${p.contact || '-'}</td>
+                    <td><span class="badge ${getStatusBadgeClass(p.statut)}">${p.statut}</span></td>
+                    <td>${p.segment}</td>
+                    <td>${p.canton}</td>
+                    <td><strong>${p.valeur.toLocaleString()} CHF</strong></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="progress" style="width: 50px;">
+                                <div class="progress-bar ${p.score >= 80 ? 'green' : p.score >= 60 ? 'yellow' : 'red'}" style="width: ${p.score}%;"></div>
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--gray-500);">${p.score}</span>
+                        </div>
+                    </td>
+                    <td onclick="event.stopPropagation();">
+                        <button class="btn-icon" onclick="sendEmailTo(${p.id})" title="Email">✉️</button>
+                        <button class="btn-icon" onclick="callProspect(${p.id})" title="Appeler">📞</button>
+                        <button class="btn-icon" onclick="scheduleRdv(${p.id})" title="RDV">📅</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderContactsTable() {
+            const tbody = document.getElementById('contactsTable');
+            tbody.innerHTML = prospects.map(p => `
+                <tr class="clickable" onclick="openSidebar(${p.id})">
+                    <td>${p.accountNum || '-'}</td>
+                    <td><strong>${p.entreprise}</strong></td>
+                    <td>${p.contact || '-'}</td>
+                    <td><a href="mailto:${p.email}">${p.email}</a></td>
+                    <td>${p.tel || '-'}</td>
+                    <td>${p.segment}</td>
+                    <td>${p.canton}</td>
+                    <td onclick="event.stopPropagation();">
+                        <button class="btn-icon" onclick="editProspect(${p.id})" title="Modifier">✏️</button>
+                        <button class="btn-icon" onclick="deleteProspect(${p.id})" title="Supprimer">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderOffersTable() {
+            const tbody = document.getElementById('offersTable');
+            tbody.innerHTML = offers.map(o => {
+                const prospect = prospects.find(p => p.id === o.prospectId);
+                return `
+                    <tr>
+                        <td><strong>${o.offerNum}</strong></td>
+                        <td>${o.accountNum}</td>
+                        <td>${prospect ? prospect.entreprise : '-'}</td>
+                        <td>${o.serviceType}</td>
+                        <td><strong>${o.amount.toLocaleString()} CHF</strong></td>
+                        <td>${formatDate(o.createdDate)}</td>
+                        <td>${o.sentDate ? formatDate(o.sentDate) : '-'}</td>
+                        <td><span class="badge ${getOfferStatusBadgeClass(o.status)}">${o.status}</span></td>
+                        <td>
+                            <button class="btn-icon" onclick="editOffer(${o.id})" title="Modifier">✏️</button>
+                            <button class="btn-icon" onclick="updateOfferStatus(${o.id})" title="Statut">📊</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // ============================================================
+        // TASKS
+        // ============================================================
+        function renderTasks() {
+            const todo = tasks.filter(t => !t.done);
+            const urgent = tasks.filter(t => !t.done && t.priority === 'urgent');
+            const done = tasks.filter(t => t.done);
+            
+            document.getElementById('tasksTodoCount').textContent = todo.length;
+            document.getElementById('tasksUrgentCount').textContent = urgent.length;
+            document.getElementById('tasksDoneCount').textContent = done.length;
+            
+            document.getElementById('tasksTodo').innerHTML = todo.map(t => renderTaskItem(t)).join('');
+            document.getElementById('tasksUrgent').innerHTML = urgent.map(t => renderTaskItem(t)).join('');
+            document.getElementById('tasksDone').innerHTML = done.slice(0, 5).map(t => renderTaskItem(t)).join('');
+        }
+        
+        function renderTaskItem(t) {
+            const prospect = t.prospectId ? prospects.find(p => p.id === t.prospectId) : null;
+            return `
+                <div class="task-item ${t.done ? 'done' : t.priority}">
+                    <input type="checkbox" class="task-checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
+                    <div class="task-content">
+                        <div class="task-title ${t.done ? 'done' : ''}">${t.title}</div>
+                        <div class="task-meta">${formatDate(t.dueDate)} • ${t.category}${prospect ? ' • ' + prospect.entreprise : ''}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderDashboardTasks() {
+            const todo = tasks.filter(t => !t.done).slice(0, 4);
+            document.getElementById('dashboardTasks').innerHTML = todo.map(t => renderTaskItem(t)).join('') || '<p style="color: var(--gray-400);">Aucune tâche</p>';
+        }
+        
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.done = !task.done;
+                saveData();
+                renderTasks();
+                renderDashboardTasks();
+            }
+        }
+        
+        // ============================================================
+        // CALENDAR
+        // ============================================================
+        function renderCalendar() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayEvents = events.filter(e => e.date === today);
+            const upcomingEvents = events.filter(e => e.date > today).slice(0, 5);
+            
+            document.getElementById('todayEvents').innerHTML = todayEvents.map(e => renderEventItem(e)).join('') || '<p style="color: var(--gray-400);">Aucun événement aujourd\'hui</p>';
+            document.getElementById('upcomingEvents').innerHTML = upcomingEvents.map(e => renderEventItem(e)).join('') || '<p style="color: var(--gray-400);">Aucun événement à venir</p>';
+        }
+        
+        function renderDashboardCalendar() {
+            const upcoming = events.slice(0, 3);
+            document.getElementById('dashboardCalendar').innerHTML = upcoming.map(e => renderEventItem(e)).join('') || '<p style="color: var(--gray-400);">Aucun RDV</p>';
+        }
+        
+        function renderEventItem(e) {
+            const prospect = e.prospectId ? prospects.find(p => p.id === e.prospectId) : null;
+            return `
+                <div class="calendar-event">
+                    <div class="calendar-time">${e.time}<br><span style="font-size: 0.6875rem; color: var(--gray-400);">${formatDate(e.date)}</span></div>
+                    <div class="calendar-info">
+                        <h5>${e.title}</h5>
+                        <p>📍 ${e.location || 'Non défini'}${prospect ? ' • ' + prospect.entreprise : ''}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ============================================================
+        // TEMPLATES
+        // ============================================================
+        function renderTemplates() {
+            document.getElementById('emailTemplates').innerHTML = templates.emails.map(t => `
+                <div class="template-card" onclick="viewTemplate('email', ${t.id})">
+                    <h4>📧 ${t.name}</h4>
+                    <p>${t.segment} • ${t.subject.substring(0, 40)}...</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('linkedinTemplates').innerHTML = templates.linkedin.map(t => `
+                <div class="template-card" onclick="viewTemplate('linkedin', ${t.id})">
+                    <h4>💼 ${t.name}</h4>
+                    <p>${t.content.substring(0, 60)}...</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('newsletterTemplates').innerHTML = templates.newsletters.map(t => `
+                <div class="template-card" onclick="viewTemplate('newsletter', ${t.id})">
+                    <h4>📰 ${t.name}</h4>
+                    <p>${t.content.substring(0, 60)}...</p>
+                </div>
+            `).join('');
+        }
+        
+        function viewTemplate(type, id) {
+            let template;
+            if (type === 'email') template = templates.emails.find(t => t.id === id);
+            else if (type === 'linkedin') template = templates.linkedin.find(t => t.id === id);
+            else template = templates.newsletters.find(t => t.id === id);
+            
+            if (!template) return;
+            
+            document.getElementById('templateModalTitle').textContent = template.name;
+            
+            let content = '';
+            if (type === 'email') {
+                content = `<div style="margin-bottom: 1rem;"><strong>Objet:</strong> ${template.subject}</div>`;
+            }
+            content += `<pre style="white-space: pre-wrap; font-family: inherit; background: var(--gray-50); padding: 1rem; border-radius: 0.5rem; font-size: 0.875rem;">${template.content}</pre>`;
+            
+            document.getElementById('templateModalContent').innerHTML = content;
+            window.currentTemplateContent = template.content;
+            openModal('templateModal');
+        }
+        
+        function copyTemplate() {
+            if (window.currentTemplateContent) {
+                navigator.clipboard.writeText(window.currentTemplateContent);
+                alert('Template copié !');
+            }
+        }
+        
+        // ============================================================
+        // OFFICE 365
+        // ============================================================
+        function renderOfficeApps() {
+            const html = officeApps.map(app => `
+                <div class="office-card ${app.connected ? 'connected' : ''}" onclick="toggleOfficeConnection('${app.id}')">
+                    <div class="office-icon">${app.icon}</div>
+                    <h4>${app.name}</h4>
+                    <p>${app.desc}</p>
+                    <span class="office-status ${app.connected ? 'connected' : 'disconnected'}">${app.connected ? '✓ Connecté' : '○ Non connecté'}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('officeApps').innerHTML = html;
+            document.getElementById('officeModalApps').innerHTML = html;
+        }
+        
+        function toggleOfficeConnection(id) {
+            const app = officeApps.find(a => a.id === id);
+            if (app) {
+                app.connected = !app.connected;
+                renderOfficeApps();
+            }
+        }
+        
+        function syncOutlook() {
+            alert('🔄 Synchronisation avec Outlook en cours...\n\n✅ Calendrier synchronisé\n✅ ' + events.length + ' événements importés');
+        }
+        
+        // ============================================================
+        // SAVE FUNCTIONS
+        // ============================================================
+        function saveProspect() {
+            const form = document.getElementById('prospectForm');
+            const formData = new FormData(form);
+            
+            const newProspect = {
+                id: prospects.length + 1,
+                entreprise: formData.get('entreprise'),
+                contact: formData.get('contact'),
+                email: formData.get('email'),
+                tel: formData.get('tel'),
+                segment: formData.get('segment'),
+                canton: formData.get('canton'),
+                valeur: parseInt(formData.get('valeur')) || 0,
+                statut: 'Nouveau',
+                score: 50,
+                accountNum: 'ACC-' + String(prospects.length + 1).padStart(3, '0'),
+                notes: formData.get('notes') ? [{ date: new Date().toLocaleDateString('fr-CH'), text: formData.get('notes') }] : []
+            };
+            
+            prospects.push(newProspect);
+            saveData();
+            closeModal('addProspectModal');
+            form.reset();
+            renderAll();
+        }
+        
+        function saveOffer() {
+            const form = document.getElementById('offerForm');
+            const formData = new FormData(form);
+            
+            const newOffer = {
+                id: offers.length + 1,
+                offerNum: formData.get('offerNum'),
+                accountNum: formData.get('accountNum'),
+                prospectId: parseInt(formData.get('prospectId')),
+                serviceType: formData.get('serviceType'),
+                amount: parseInt(formData.get('amount')) || 0,
+                createdDate: formData.get('createdDate'),
+                sentDate: formData.get('sentDate'),
+                status: 'Brouillon',
+                notes: formData.get('notes')
+            };
+            
+            offers.push(newOffer);
+            
+            // Update prospect status if first offer
+            const prospect = prospects.find(p => p.id === newOffer.prospectId);
+            if (prospect && prospect.statut === 'Qualifié') {
+                prospect.statut = 'Proposition';
+            }
+            
+            saveData();
+            closeModal('addOfferModal');
+            form.reset();
+            renderAll();
+        }
+        
+        function saveTask() {
+            const form = document.getElementById('taskForm');
+            const formData = new FormData(form);
+            
+            const newTask = {
+                id: tasks.length + 1,
+                title: formData.get('title'),
+                dueDate: formData.get('dueDate'),
+                priority: formData.get('priority'),
+                category: formData.get('category'),
+                prospectId: formData.get('prospectId') ? parseInt(formData.get('prospectId')) : null,
+                done: false
+            };
+            
+            tasks.push(newTask);
+            saveData();
+            closeModal('addTaskModal');
+            form.reset();
+            renderAll();
+        }
+        
+        function saveEvent() {
+            const form = document.getElementById('eventForm');
+            const formData = new FormData(form);
+            
+            const newEvent = {
+                id: events.length + 1,
+                title: formData.get('title'),
+                date: formData.get('date'),
+                time: formData.get('time'),
+                location: formData.get('location'),
+                prospectId: formData.get('prospectId') ? parseInt(formData.get('prospectId')) : null
+            };
+            
+            events.push(newEvent);
+            saveData();
+            closeModal('addEventModal');
+            form.reset();
+            renderAll();
+            
+            if (formData.get('syncOutlook')) {
+                alert('📅 RDV ajouté et synchronisé avec Outlook');
+            }
+        }
+        
+        function saveSettings() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            
+            if (newPass && newPass !== confirmPass) {
+                alert('Les mots de passe ne correspondent pas');
+                return;
+            }
+            
+            alert('✅ Paramètres enregistrés');
+            closeModal('settingsModal');
+        }
+        
+        function saveProfile() {
+            const name = document.getElementById('profileName').value;
+            document.getElementById('userName').textContent = name;
+            alert('✅ Profil enregistré');
+            closeModal('profileModal');
+        }
+        
+        function saveData() {
+            localStorage.setItem('crm_prospects', JSON.stringify(prospects));
+            localStorage.setItem('crm_offers', JSON.stringify(offers));
+            localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+            localStorage.setItem('crm_events', JSON.stringify(events));
+        }
+        
+        // ============================================================
+        // NOTES
+        // ============================================================
+        function addNote() {
+            if (!selectedProspectId) return;
+            const text = prompt('Ajouter une note:');
+            if (!text) return;
+            
+            const prospect = prospects.find(p => p.id === selectedProspectId);
+            if (!prospect.notes) prospect.notes = [];
+            prospect.notes.unshift({ date: new Date().toLocaleDateString('fr-CH'), text: text });
+            saveData();
+            renderSidebarNotes(prospect);
+        }
+        
+        // ============================================================
+        // IMPORT/EXPORT
+        // ============================================================
+        function downloadTemplate() {
+            const csv = 'Entreprise,Contact,Email,Telephone,Segment,Canton,Valeur\nExemple SA,Jean Dupont,jean@exemple.ch,+41 21 123 45 67,Architecte,VD,50000';
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'template_import_contacts.csv';
+            a.click();
+        }
+        
+        let importedData = [];
+        
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                importedData = parseCSV(text);
+                
+                if (importedData.length > 0) {
+                    document.getElementById('importPreview').style.display = 'block';
+                    let previewHtml = `<p>📄 <strong>${file.name}</strong> — ${importedData.length} contacts trouvés</p>`;
+                    previewHtml += '<table style="width:100%; font-size: 0.75rem; margin-top: 0.5rem;"><thead><tr>';
+                    previewHtml += '<th>Entreprise</th><th>Contact</th><th>Email</th><th>Segment</th><th>Canton</th></tr></thead><tbody>';
+                    
+                    importedData.slice(0, 5).forEach(row => {
+                        previewHtml += `<tr>
+                            <td>${row.Entreprise || ''}</td>
+                            <td>${row.Contact || ''}</td>
+                            <td>${row.Email || ''}</td>
+                            <td>${row.Segment || ''}</td>
+                            <td>${row.Canton || ''}</td>
+                        </tr>`;
+                    });
+                    
+                    if (importedData.length > 5) {
+                        previewHtml += `<tr><td colspan="5" style="text-align:center; color: var(--gray-500);">... et ${importedData.length - 5} autres contacts</td></tr>`;
+                    }
+                    previewHtml += '</tbody></table>';
+                    
+                    document.getElementById('importPreviewContent').innerHTML = previewHtml;
+                    document.getElementById('btnImport').disabled = false;
+                } else {
+                    document.getElementById('importPreviewContent').innerHTML = '<p style="color: var(--danger);">❌ Aucun contact valide trouvé dans le fichier</p>';
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+        
+        function parseCSV(text) {
+            // Remove BOM if present
+            text = text.replace(/^\uFEFF/, '');
+            
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length < 2) return [];
+            
+            // Parse header
+            const headers = parseCSVLine(lines[0]);
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length >= headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index] ? values[index].trim() : '';
+                    });
+                    // Only add if has email
+                    if (row.Email && row.Email.includes('@')) {
+                        data.push(row);
+                    }
+                }
+            }
+            return data;
+        }
+        
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+        
+        function processImport() {
+            if (importedData.length === 0) {
+                alert('❌ Aucune donnée à importer');
+                return;
+            }
+            
+            let imported = 0;
+            let skipped = 0;
+            const existingEmails = prospects.map(p => p.email.toLowerCase());
+            
+            importedData.forEach(row => {
+                // Check if email already exists
+                if (existingEmails.includes(row.Email.toLowerCase())) {
+                    skipped++;
+                    return;
+                }
+                
+                const newProspect = {
+                    id: prospects.length + 1,
+                    entreprise: row.Entreprise || '',
+                    contact: row.Contact || '',
+                    email: row.Email || '',
+                    tel: row.Telephone || row.Téléphone || '',
+                    segment: row.Segment || 'Autre',
+                    canton: row.Canton || '',
+                    valeur: parseInt(row.Valeur) || 25000,
+                    statut: 'Nouveau',
+                    score: 50,
+                    accountNum: 'ACC-' + String(prospects.length + 1).padStart(3, '0'),
+                    notes: []
+                };
+                
+                prospects.push(newProspect);
+                existingEmails.push(row.Email.toLowerCase());
+                imported++;
+            });
+            
+            saveData();
+            closeModal('importModal');
+            document.getElementById('importFile').value = '';
+            document.getElementById('importPreview').style.display = 'none';
+            importedData = [];
+            
+            renderAll();
+            
+            alert(`✅ Import terminé!\n\n📥 ${imported} contacts importés\n⏭️ ${skipped} doublons ignorés\n\n📊 Total: ${prospects.length} contacts`);
+        }
+        
+        function exportContacts() {
+            let csv = 'ID,Entreprise,Contact,Email,Telephone,Segment,Canton,Valeur,Statut\n';
+            prospects.forEach(p => {
+                csv += `${p.id},"${p.entreprise}","${p.contact}","${p.email}","${p.tel}","${p.segment}","${p.canton}",${p.valeur},"${p.statut}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'export_contacts_crm.csv';
+            a.click();
+        }
+        
+        // ============================================================
+        // FILTERS
+        // ============================================================
+        function filterPipeline() {
+            const search = document.getElementById('searchPipeline').value.toLowerCase();
+            const segment = document.getElementById('filterSegment').value;
+            const status = document.getElementById('filterStatus').value;
+            
+            document.querySelectorAll('#pipelineTable tr').forEach((row, i) => {
+                const p = prospects[i];
+                if (!p) return;
+                
+                const matchSearch = p.entreprise.toLowerCase().includes(search) || p.email.toLowerCase().includes(search);
+                const matchSegment = segment === 'all' || p.segment === segment;
+                const matchStatus = status === 'all' || p.statut === status;
+                
+                row.style.display = matchSearch && matchSegment && matchStatus ? '' : 'none';
+            });
+        }
+        
+        // ============================================================
+        // LANGUAGE
+        // ============================================================
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('crm_language', lang);
+            applyLanguage();
+        }
+        
+        function applyLanguage() {
+            document.getElementById('languageSelect').value = currentLanguage;
+            const trans = translations[currentLanguage];
+            
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.dataset.lang;
+                if (trans[key]) el.textContent = trans[key];
+            });
+        }
+        
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function getStatusBadgeClass(statut) {
+            const classes = {
+                'Nouveau': 'badge-blue',
+                'Contacté': 'badge-yellow',
+                'Qualifié': 'badge-green',
+                'Proposition': 'badge-orange',
+                'Négociation': 'badge-purple',
+                'Gagné': 'badge-green',
+                'Perdu': 'badge-red'
+            };
+            return classes[statut] || 'badge-gray';
+        }
+        
+        function getOfferStatusBadgeClass(status) {
+            const classes = {
+                'Brouillon': 'badge-gray',
+                'Envoyée': 'badge-blue',
+                'En négociation': 'badge-purple',
+                'Acceptée': 'badge-green',
+                'Refusée': 'badge-red'
+            };
+            return classes[status] || 'badge-gray';
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('fr-CH');
+        }
+        
+        function populateProspectSelects() {
+            const qualifiedProspects = prospects.filter(p => ['Qualifié', 'Proposition', 'Négociation'].includes(p.statut));
+            const options = '<option value="">-- Sélectionner --</option>' + qualifiedProspects.map(p => `<option value="${p.id}">${p.entreprise}</option>`).join('');
+            const allOptions = '<option value="">-- Aucun --</option>' + prospects.map(p => `<option value="${p.id}">${p.entreprise}</option>`).join('');
+            
+            document.getElementById('offerProspect').innerHTML = options;
+            document.getElementById('taskProspect').innerHTML = allOptions;
+            document.getElementById('eventProspect').innerHTML = allOptions;
+        }
+        
+        function updateAccountNum() {
+            const prospectId = document.getElementById('offerProspect').value;
+            const prospect = prospects.find(p => p.id === parseInt(prospectId));
+            document.getElementById('offerAccountNum').value = prospect ? prospect.accountNum : '';
+        }
+        
+        // Action functions
+        function sendEmailTo(id) {
+            const p = prospects.find(x => x.id === id);
+            if (p) window.location.href = 'mailto:' + p.email;
+        }
+        
+        function callProspect(id) {
+            const p = prospects.find(x => x.id === id);
+            if (p && p.tel) window.location.href = 'tel:' + p.tel;
+        }
+        
+        function scheduleRdv(id) {
+            selectedProspectId = id;
+            document.getElementById('eventProspect').value = id;
+            openModal('addEventModal');
+        }
+        
+        function sendEmail() {
+            const p = prospects.find(x => x.id === selectedProspectId);
+            if (p) window.location.href = 'mailto:' + p.email;
+        }
+        
+        function makeCall() {
+            const p = prospects.find(x => x.id === selectedProspectId);
+            if (p && p.tel) window.location.href = 'tel:' + p.tel;
+        }
+        
+        function editProspect(id) {
+            alert('Fonction d\'édition - À implémenter');
+        }
+        
+        function deleteProspect(id) {
+            if (confirm('Supprimer ce contact ?')) {
+                prospects = prospects.filter(p => p.id !== id);
+                saveData();
+                renderAll();
+            }
+        }
+        
+        function updateOfferStatus(id) {
+            const statuses = ['Brouillon', 'Envoyée', 'En négociation', 'Acceptée', 'Refusée'];
+            const offer = offers.find(o => o.id === id);
+            if (!offer) return;
+            
+            const newStatus = prompt('Nouveau statut:\n' + statuses.join('\n'), offer.status);
+            if (newStatus && statuses.includes(newStatus)) {
+                offer.status = newStatus;
+                saveData();
+                renderAll();
+            }
+        }
+        
+        function markAllRead() {
+            document.getElementById('notifCount').textContent = '0';
+            document.getElementById('notifCount').style.display = 'none';
+            alert('✅ Toutes les notifications marquées comme lues');
+        }
+        
+        function openTask(id) {
+            closeAllDropdowns();
+            document.querySelector('[data-tab="tasks"]').click();
+        }
+    </script>
+</body>
+</html>
