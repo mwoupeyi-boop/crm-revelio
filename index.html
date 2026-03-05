@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Emch+Berger Revelio AG</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <style>
+        :root { --primary: #1e3a5f; --primary-light: #2d5a8a; --secondary: #3b82f6; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --purple: #8b5cf6; --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); }
+        
+        .header { background: var(--primary); color: white; padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .header h1 { font-size: 1.125rem; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .header-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; position: relative; }
+        .header-btn:hover { background: rgba(255,255,255,0.2); }
+        .badge-count { position: absolute; top: -4px; right: -4px; background: var(--danger); font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .user-menu { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.5rem; }
+        .user-menu:hover { background: rgba(255,255,255,0.1); }
+        .avatar { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        
+        .nav { background: var(--primary); padding: 0 1.5rem; display: flex; gap: 0.25rem; border-top: 1px solid rgba(255,255,255,0.1); overflow-x: auto; }
+        .nav-tab { padding: 0.625rem 1rem; color: rgba(255,255,255,0.7); cursor: pointer; border: none; background: none; font-size: 0.8125rem; border-radius: 0.5rem 0.5rem 0 0; white-space: nowrap; }
+        .nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-tab.active { background: white; color: var(--primary); font-weight: 600; }
+        
+        .main { padding: 1.5rem; max-width: 1700px; margin: 0 auto; padding-bottom: 4rem; }
+        .card { background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid var(--gray-200); margin-bottom: 1rem; }
+        .card-title { font-size: 0.9375rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .kpi-card { background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--gray-200); }
+        .kpi-card.blue { background: #eff6ff; border-color: #bfdbfe; }
+        .kpi-card.yellow { background: #fefce8; border-color: #fef08a; }
+        .kpi-card.green { background: #f0fdf4; border-color: #bbf7d0; }
+        .kpi-card.purple { background: #faf5ff; border-color: #e9d5ff; }
+        .kpi-label { font-size: 0.6875rem; color: var(--gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.375rem; }
+        .kpi-value { font-size: 1.5rem; font-weight: 700; }
+        
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        
+        .table-container { overflow-x: auto; margin: -1.25rem; margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--gray-50); padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-500); font-weight: 600; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-100); font-size: 0.8125rem; vertical-align: middle; }
+        tr:hover { background: var(--gray-50); }
+        tr.clickable { cursor: pointer; }
+        
+        .badge { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 500; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-orange { background: #ffedd5; color: #9a3412; }
+        .badge-purple { background: #f3e8ff; color: #7c3aed; }
+        .badge-red { background: #fee2e2; color: #dc2626; }
+        .badge-gray { background: var(--gray-100); color: var(--gray-700); }
+        
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-secondary { background: white; color: var(--gray-700); border-color: var(--gray-300); }
+        .btn-secondary:hover { background: var(--gray-50); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        .btn-icon { padding: 0.375rem; background: none; border: none; cursor: pointer; color: var(--gray-400); border-radius: 0.375rem; font-size: 1rem; }
+        .btn-icon:hover { background: var(--gray-100); color: var(--gray-600); }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--gray-700); margin-bottom: 0.375rem; }
+        .form-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-input:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .form-select { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; background: white; }
+        .form-textarea { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical; min-height: 100px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        
+        .search-select { position: relative; }
+        .search-select-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; }
+        .search-select-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-300); border-radius: 0.5rem; max-height: 200px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 2px; }
+        .search-select-dropdown.open { display: block; }
+        .search-select-option { padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.8125rem; }
+        .search-select-option:hover { background: #eff6ff; }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: white; border-radius: 0.75rem; width: 100%; max-width: 600px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-lg { max-width: 800px; }
+        .modal-xl { max-width: 1000px; }
+        .modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.0625rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-400); }
+        .modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 0.5rem; }
+        
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 90; display: none; }
+        .sidebar-overlay.open { display: block; }
+        .sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 480px; background: white; z-index: 100; transform: translateX(100%); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; background: var(--gray-50); }
+        .sidebar-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+        .sidebar-section { margin-bottom: 1rem; }
+        .sidebar-label { font-size: 0.6875rem; color: var(--gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem; }
+        .sidebar-value { font-size: 0.875rem; }
+        .sidebar-value a { color: var(--secondary); text-decoration: none; }
+        .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--gray-200); }
+        
+        .tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--gray-200); margin-bottom: 1rem; }
+        .tab { padding: 0.625rem 1rem; font-size: 0.8125rem; color: var(--gray-500); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+        .tab:hover { color: var(--gray-700); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: 100%; right: 0; margin-top: 0.5rem; background: white; border-radius: 0.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 320px; display: none; z-index: 60; max-height: 400px; overflow-y: auto; }
+        .dropdown-menu.open { display: block; }
+        .dropdown-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-200); font-weight: 600; font-size: 0.875rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; }
+        .dropdown-item { padding: 0.75rem 1rem; display: flex; gap: 0.75rem; cursor: pointer; border-bottom: 1px solid var(--gray-100); }
+        .dropdown-item:hover { background: var(--gray-50); }
+        .dropdown-item.unread { background: #eff6ff; }
+        .dropdown-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .dropdown-content { flex: 1; }
+        .dropdown-content strong { font-size: 0.8125rem; display: block; }
+        .dropdown-content span { font-size: 0.75rem; color: var(--gray-500); }
+        .dropdown-content small { font-size: 0.6875rem; color: var(--gray-400); display: block; margin-top: 0.25rem; }
+        
+        .kanban-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .kanban-column { background: var(--gray-100); border-radius: 0.75rem; padding: 1rem; min-height: 400px; }
+        .kanban-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid; }
+        .kanban-header.todo { border-color: var(--secondary); }
+        .kanban-header.inprogress { border-color: var(--warning); }
+        .kanban-header.urgent { border-color: var(--danger); }
+        .kanban-header.done { border-color: var(--success); }
+        .kanban-title { font-weight: 600; font-size: 0.875rem; }
+        .kanban-count { background: var(--gray-200); padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; margin-left: 0.5rem; }
+        .kanban-cards { min-height: 300px; }
+        .kanban-card { background: white; border-radius: 0.5rem; padding: 0.875rem; margin-bottom: 0.5rem; border: 1px solid var(--gray-200); cursor: grab; }
+        .kanban-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .kanban-card-title { font-weight: 500; font-size: 0.8125rem; margin-bottom: 0.5rem; }
+        .kanban-card-meta { font-size: 0.6875rem; color: var(--gray-500); display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .kanban-card-actions { display: flex; gap: 0.25rem; margin-top: 0.5rem; }
+        
+        .office-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .office-card { background: white; border: 1px solid var(--gray-200); border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .office-card:hover { border-color: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .office-card.connected { border-color: var(--success); background: #f0fdf4; }
+        .office-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .office-card h4 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .office-card p { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.5rem; }
+        .office-link { display: inline-block; padding: 0.375rem 0.75rem; background: var(--secondary); color: white; border-radius: 0.375rem; font-size: 0.75rem; text-decoration: none; margin-top: 0.5rem; }
+        .office-link:hover { background: var(--primary); }
+        
+        .calendar-event { display: flex; gap: 0.75rem; padding: 0.75rem; border-left: 3px solid var(--secondary); background: #eff6ff; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.5rem; cursor: pointer; }
+        .calendar-event:hover { background: #dbeafe; }
+        .calendar-time { font-size: 0.75rem; font-weight: 600; color: var(--primary); min-width: 50px; }
+        .calendar-info { flex: 1; }
+        .calendar-info h5 { font-size: 0.8125rem; font-weight: 500; }
+        .calendar-info p { font-size: 0.6875rem; color: var(--gray-500); }
+        .calendar-actions { display: flex; gap: 0.25rem; align-items: center; }
+        
+        .comm-item { display: flex; gap: 0.75rem; padding: 0.75rem; border-left: 3px solid; background: var(--gray-50); border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.5rem; }
+        .comm-item.email { border-color: var(--secondary); }
+        .comm-item.linkedin { border-color: #0a66c2; }
+        .comm-item.newsletter { border-color: var(--purple); }
+        .comm-item.autre { border-color: var(--gray-400); }
+        .comm-icon { font-size: 1.25rem; }
+        .comm-content { flex: 1; }
+        .comm-content strong { font-size: 0.8125rem; display: block; }
+        .comm-content span { font-size: 0.75rem; color: var(--gray-500); }
+        .comm-date { font-size: 0.6875rem; color: var(--gray-400); }
+        
+        .recipient-tag { display: inline-flex; align-items: center; gap: 0.25rem; background: var(--gray-100); padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; margin: 0.125rem; }
+        .recipient-tag button { background: none; border: none; cursor: pointer; color: var(--gray-400); font-size: 0.875rem; }
+        .recipient-tag button:hover { color: var(--danger); }
+        
+        .template-card { border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 1rem; cursor: pointer; transition: all 0.2s; }
+        .template-card:hover { border-color: var(--secondary); background: #eff6ff; }
+        .template-card h4 { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .template-card p { font-size: 0.75rem; color: var(--gray-500); }
+        
+        .note-item { background: #fefce8; border-left: 3px solid #eab308; padding: 0.75rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.5rem; }
+        .note-date { font-size: 0.6875rem; color: var(--gray-500); margin-bottom: 0.25rem; }
+        .note-text { font-size: 0.8125rem; }
+        
+        .switch { position: relative; width: 44px; height: 24px; display: inline-block; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--gray-300); border-radius: 24px; transition: 0.3s; }
+        .switch-slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+        .switch input:checked + .switch-slider { background: var(--success); }
+        .switch input:checked + .switch-slider:before { transform: translateX(20px); }
+        
+        .status-select { padding: 0.25rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 0.375rem; font-size: 0.75rem; background: white; cursor: pointer; }
+        
+        .progress { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; width: 50px; }
+        .progress-bar { height: 100%; border-radius: 3px; }
+        .progress-bar.green { background: var(--success); }
+        .progress-bar.yellow { background: var(--warning); }
+        .progress-bar.red { background: var(--danger); }
+        
+        .chart-bar-container { display: flex; align-items: flex-end; gap: 0.5rem; height: 160px; }
+        .chart-bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .chart-bar-value { font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .chart-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; }
+        .chart-bar-label { font-size: 0.625rem; color: var(--gray-500); margin-top: 0.5rem; }
+        
+        .funnel-item { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+        .funnel-label { width: 80px; font-size: 0.75rem; }
+        .funnel-bar { height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 600; color: white; }
+        
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--gray-200); padding: 0.5rem 1.5rem; display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--gray-500); z-index: 40; }
+        
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .sync-info { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 0.5rem; padding: 0.75rem; margin-top: 1rem; font-size: 0.8125rem; }
+        
+        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } .kanban-board { grid-template-columns: repeat(2, 1fr); } .office-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .grid-2, .grid-3 { grid-template-columns: 1fr; } .kanban-board { grid-template-columns: 1fr; } .sidebar { width: 100%; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎯 CRM Emch+Berger Revelio AG</h1>
+        <div class="header-right">
+            <div class="dropdown">
+                <button class="header-btn" onclick="toggleDropdown('notifDropdown')">🔔<span class="badge-count" id="notifCount">0</span></button>
+                <div class="dropdown-menu" id="notifDropdown">
+                    <div class="dropdown-header"><span>Notifications</span><button class="btn btn-sm btn-secondary" onclick="markAllNotificationsRead()">Tout lu</button></div>
+                    <div id="notifList"></div>
+                </div>
+            </div>
+            <div class="dropdown">
+                <div class="user-menu" onclick="toggleDropdown('userDropdown')">
+                    <div class="avatar" id="userAvatar">MW</div>
+                    <span style="font-size:0.8125rem;" id="userName">Michel Woupeyi</span>
+                    <span style="font-size:0.75rem;">▼</span>
+                </div>
+                <div class="dropdown-menu" id="userDropdown" style="min-width:200px;">
+                    <div class="dropdown-item" onclick="openModal('settingsModal')"><span>⚙️</span><div class="dropdown-content"><strong>Paramètres</strong></div></div>
+                    <div class="dropdown-item" onclick="openModal('profileModal')"><span>👤</span><div class="dropdown-content"><strong>Mon profil</strong></div></div>
+                    <div class="dropdown-item" onclick="openModal('officeAccountsModal')"><span>🔗</span><div class="dropdown-content"><strong>Comptes Office</strong></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="nav">
+        <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="nav-tab" data-tab="pipeline">🎯 Pipeline</button>
+        <button class="nav-tab" data-tab="contacts">👥 Contacts</button>
+        <button class="nav-tab" data-tab="offers">📋 Offres</button>
+        <button class="nav-tab" data-tab="tasks">✅ Tâches</button>
+        <button class="nav-tab" data-tab="calendar">📅 Calendrier</button>
+        <button class="nav-tab" data-tab="mailing">📧 Mailing</button>
+        <button class="nav-tab" data-tab="templates">📝 Templates</button>
+        <button class="nav-tab" data-tab="office">🔗 Office 365</button>
+    </nav>
+    
+    <main class="main">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active">
+            <div class="kpi-grid">
+                <div class="kpi-card blue"><div class="kpi-label">Total Prospects</div><div class="kpi-value" id="kpiTotal">0</div></div>
+                <div class="kpi-card blue"><div class="kpi-label">Nouveaux</div><div class="kpi-value" id="kpiNew">0</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">En Contact</div><div class="kpi-value" id="kpiContact">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Qualifiés</div><div class="kpi-value" id="kpiQualified">0</div></div>
+                <div class="kpi-card purple"><div class="kpi-label">Négociation</div><div class="kpi-value" id="kpiNegotiation">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Pipeline CHF</div><div class="kpi-value" id="kpiPipeline">0</div></div>
+            </div>
+            <div class="grid-2">
+                <div class="card"><div class="card-title">📊 Pipeline</div><div class="chart-bar-container" id="pipelineChart"></div></div>
+                <div class="card"><div class="card-title">📈 Funnel</div><div id="funnelChart"></div></div>
+            </div>
+            <div class="grid-2">
+                <div class="card"><div class="card-title">⚠️ Tâches urgentes</div><div id="dashboardTasks"></div></div>
+                <div class="card"><div class="card-title">📅 Prochains RDV</div><div id="dashboardCalendar"></div></div>
+            </div>
+        </section>
+        
+        <!-- PIPELINE -->
+        <section id="pipeline" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div style="display:flex;gap:0.75rem;">
+                    <input type="text" id="searchPipeline" placeholder="🔍 Rechercher..." class="form-input" style="width:250px;">
+                    <select id="filterSegment" class="form-select" style="width:auto;"></select>
+                    <select id="filterStatus" class="form-select" style="width:auto;"></select>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('addProspectModal')">+ Nouveau Prospect</button>
+            </div>
+            <div class="card" style="padding:0;"><div class="table-container"><table><thead><tr>
+                <th>Entreprise</th><th>Contact</th><th>Statut</th><th>Segment</th><th>Canton</th><th>Valeur</th><th>Score</th><th>Actions</th>
+            </tr></thead><tbody id="pipelineTable"></tbody></table></div></div>
+        </section>
+        
+        <!-- CONTACTS -->
+        <section id="contacts" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <h2 style="font-size:1.125rem;font-weight:600;">👥 Gestion des Contacts</h2>
+                    <input type="text" id="searchContacts" placeholder="🔍 Rechercher..." class="form-input" style="width:250px;">
+                </div>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-secondary" onclick="openModal('importModal')">📥 Importer</button>
+                    <button class="btn btn-secondary" onclick="exportContacts()">📤 Exporter</button>
+                    <button class="btn btn-primary" onclick="openModal('addProspectModal')">+ Ajouter</button>
+                </div>
+            </div>
+            <div class="card" style="padding:0;"><div class="table-container"><table><thead><tr>
+                <th style="width:60px;">ID</th><th>Entreprise</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Segment</th><th>Canton</th><th style="width:100px;">Actions</th>
+            </tr></thead><tbody id="contactsTable"></tbody></table></div></div>
+        </section>
+        
+        <!-- OFFERS -->
+        <section id="offers" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.125rem;font-weight:600;">📋 Gestion des Offres</h2>
+                <button class="btn btn-primary" onclick="openModal('addOfferModal')">+ Nouvelle Offre</button>
+            </div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="kpi-card blue"><div class="kpi-label">Total</div><div class="kpi-value" id="offersTotal">0</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">En attente</div><div class="kpi-value" id="offersPending">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Gagnées</div><div class="kpi-value" id="offersWon">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Valeur</div><div class="kpi-value" id="offersValue">0</div></div>
+            </div>
+            <div class="card" style="padding:0;"><div class="table-container"><table><thead><tr>
+                <th>N° Offre</th><th>Entreprise</th><th>Prestation</th><th>Montant</th><th>Créée</th><th>Statut</th><th style="width:120px;">Actions</th>
+            </tr></thead><tbody id="offersTable"></tbody></table></div></div>
+        </section>
+        
+        <!-- TASKS KANBAN -->
+        <section id="tasks" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.125rem;font-weight:600;">✅ Gestion des Tâches</h2>
+                <button class="btn btn-primary" onclick="openModal('addTaskModal')">+ Nouvelle Tâche</button>
+            </div>
+            <div class="kanban-board">
+                <div class="kanban-column" ondrop="dropTask(event,'todo')" ondragover="allowDrop(event)">
+                    <div class="kanban-header todo"><span class="kanban-title">📋 À Faire<span class="kanban-count" id="countTodo">0</span></span></div>
+                    <div class="kanban-cards" id="tasksTodo"></div>
+                </div>
+                <div class="kanban-column" ondrop="dropTask(event,'inprogress')" ondragover="allowDrop(event)">
+                    <div class="kanban-header inprogress"><span class="kanban-title">🔄 En Cours<span class="kanban-count" id="countInProgress">0</span></span></div>
+                    <div class="kanban-cards" id="tasksInProgress"></div>
+                </div>
+                <div class="kanban-column" ondrop="dropTask(event,'urgent')" ondragover="allowDrop(event)">
+                    <div class="kanban-header urgent"><span class="kanban-title">🔴 Urgent<span class="kanban-count" id="countUrgent">0</span></span></div>
+                    <div class="kanban-cards" id="tasksUrgent"></div>
+                </div>
+                <div class="kanban-column" ondrop="dropTask(event,'done')" ondragover="allowDrop(event)">
+                    <div class="kanban-header done"><span class="kanban-title">✅ Terminé<span class="kanban-count" id="countDone">0</span></span></div>
+                    <div class="kanban-cards" id="tasksDone"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CALENDAR -->
+        <section id="calendar" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.125rem;font-weight:600;">📅 Calendrier</h2>
+                <div style="display:flex;gap:0.5rem;">
+                    <a href="https://outlook.office.com/calendar" target="_blank" class="btn btn-secondary">📅 Ouvrir Outlook</a>
+                    <button class="btn btn-primary" onclick="openModal('addEventModal')">+ Nouveau RDV</button>
+                </div>
+            </div>
+            <div class="card" style="background:#fff3e6;border-color:#f59e0b;margin-bottom:1rem;">
+                <p style="font-size:0.875rem;"><strong>💡 Synchronisation Outlook</strong></p>
+                <p style="font-size:0.8125rem;color:var(--gray-600);">Cliquez sur 📥 pour télécharger le fichier .ics et l'importer dans Outlook, ou sur 🔗 pour ouvrir directement dans Outlook Web.</p>
+            </div>
+            <div class="grid-2">
+                <div class="card"><div class="card-title">📅 Aujourd'hui</div><div id="todayEvents"></div></div>
+                <div class="card"><div class="card-title">📆 À venir</div><div id="upcomingEvents"></div></div>
+            </div>
+        </section>
+        
+        <!-- MAILING -->
+        <section id="mailing" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.125rem;font-weight:600;">📧 Mailing & Publipostage</h2>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-secondary" onclick="openModal('mailchimpModal')">🐵 Mailchimp</button>
+                </div>
+            </div>
+            <div class="grid-3">
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="openModal('newMailingModal')">
+                    <div style="font-size:2.5rem;margin-bottom:0.5rem;">📧</div>
+                    <h4>Email de masse</h4>
+                    <p style="font-size:0.75rem;color:var(--gray-500);">Envoyer à plusieurs contacts</p>
+                </div>
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="openModal('newsletterModal')">
+                    <div style="font-size:2.5rem;margin-bottom:0.5rem;">📰</div>
+                    <h4>Newsletter</h4>
+                    <p style="font-size:0.75rem;color:var(--gray-500);">Campagne newsletter</p>
+                </div>
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="openModal('linkedinMailingModal')">
+                    <div style="font-size:2.5rem;margin-bottom:0.5rem;">💼</div>
+                    <h4>LinkedIn</h4>
+                    <p style="font-size:0.75rem;color:var(--gray-500);">Messages groupés</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📊 Historique des campagnes</div>
+                <div id="mailingHistory"></div>
+            </div>
+        </section>
+        
+        <!-- TEMPLATES -->
+        <section id="templates" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h2 style="font-size:1.125rem;font-weight:600;">📝 Templates</h2>
+                <button class="btn btn-primary" onclick="openModal('addTemplateModal')">+ Nouveau</button>
+            </div>
+            <div class="tabs">
+                <button class="tab active" data-subtab="emails">📧 Emails</button>
+                <button class="tab" data-subtab="linkedin">💼 LinkedIn</button>
+                <button class="tab" data-subtab="newsletters">📰 Newsletters</button>
+            </div>
+            <div id="emails" class="tab-content active"><div class="grid-3" id="emailTemplates"></div></div>
+            <div id="linkedin" class="tab-content"><div class="grid-3" id="linkedinTemplates"></div></div>
+            <div id="newsletters" class="tab-content"><div class="grid-3" id="newsletterTemplates"></div></div>
+        </section>
+        
+        <!-- OFFICE -->
+        <section id="office" class="section">
+            <h2 style="font-size:1.125rem;font-weight:600;margin-bottom:1rem;">🔗 Intégrations Office 365</h2>
+            <div class="card" style="background:#eff6ff;border-color:#bfdbfe;margin-bottom:1.5rem;">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <span style="font-size:2rem;">🔐</span>
+                    <div>
+                        <strong>Compte: <span id="connectedAccount">Non connecté</span></strong>
+                        <p style="font-size:0.8125rem;color:var(--gray-600);">Cliquez sur une app pour l'ouvrir</p>
+                    </div>
+                    <button class="btn btn-primary" style="margin-left:auto;" onclick="openModal('officeAccountsModal')">Gérer</button>
+                </div>
+            </div>
+            <div class="office-grid" id="officeApps"></div>
+        </section>
+    </main>
+    
+    <footer class="footer"><span>CRM Emch+Berger Revelio AG</span><span>v3.1</span></footer>
+    
+    <!-- MODALS -->
+    
+    <!-- Add Prospect -->
+    <div class="modal-overlay" id="addProspectModal">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h3>➕ Nouveau Prospect</h3><button class="modal-close" onclick="closeModal('addProspectModal')">×</button></div>
+            <div class="modal-body">
+                <form id="prospectForm">
+                    <div class="form-row"><div class="form-group"><label class="form-label">Entreprise *</label><input type="text" class="form-input" name="entreprise" required></div><div class="form-group"><label class="form-label">Contact</label><input type="text" class="form-input" name="contact"></div></div>
+                    <div class="form-row"><div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" name="email" required></div><div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-input" name="tel"></div></div>
+                    <div class="form-row-3"><div class="form-group"><label class="form-label">Segment</label><select class="form-select" name="segment"><option>Architecte</option><option>Promoteur</option><option>STEP</option><option>Distribution</option><option>Transport</option><option selected>Autre</option></select></div><div class="form-group"><label class="form-label">Canton</label><select class="form-select" name="canton"><option>VD</option><option>GE</option><option>VS</option><option>FR</option><option>NE</option><option>JU</option><option>BE</option></select></div><div class="form-group"><label class="form-label">Valeur (CHF)</label><input type="number" class="form-input" name="valeur" value="25000"></div></div>
+                    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" name="notes"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addProspectModal')">Annuler</button><button class="btn btn-primary" onclick="saveProspect()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Import -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header"><h3>📥 Importer</h3><button class="modal-close" onclick="closeModal('importModal')">×</button></div>
+            <div class="modal-body">
+                <div style="text-align:center;padding:2rem;border:2px dashed var(--gray-300);border-radius:0.5rem;">
+                    <input type="file" id="importFile" accept=".csv" style="display:none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📄 Choisir CSV</button>
+                </div>
+                <div id="importPreview" style="margin-top:1rem;display:none;"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('importModal')">Annuler</button><button class="btn btn-success" onclick="processImport()" id="btnImport" disabled>Importer</button></div>
+        </div>
+    </div>
+    
+    <!-- Add Task -->
+    <div class="modal-overlay" id="addTaskModal">
+        <div class="modal">
+            <div class="modal-header"><h3>✅ Nouvelle Tâche</h3><button class="modal-close" onclick="closeModal('addTaskModal')">×</button></div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <div class="form-group"><label class="form-label">Titre *</label><input type="text" class="form-input" name="title" required></div>
+                    <div class="form-row"><div class="form-group"><label class="form-label">Échéance</label><input type="date" class="form-input" name="dueDate"></div><div class="form-group"><label class="form-label">Statut</label><select class="form-select" name="status"><option value="todo">📋 À Faire</option><option value="inprogress">🔄 En Cours</option><option value="urgent">🔴 Urgent</option></select></div></div>
+                    <div class="form-group"><label class="form-label">Catégorie</label><select class="form-select" name="category"><option>Email</option><option>Appel</option><option>RDV</option><option>Proposition</option><option>Relance</option></select></div>
+                    <div class="form-group"><label class="form-label">Prospect</label><div class="search-select"><input type="text" class="search-select-input" id="taskProspectSearch" placeholder="🔍 Rechercher..." autocomplete="off"><input type="hidden" id="taskProspectId"><div class="search-select-dropdown" id="taskProspectDropdown"></div></div></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addTaskModal')">Annuler</button><button class="btn btn-primary" onclick="saveTask()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Edit Task -->
+    <div class="modal-overlay" id="editTaskModal">
+        <div class="modal">
+            <div class="modal-header"><h3>✏️ Modifier Tâche</h3><button class="modal-close" onclick="closeModal('editTaskModal')">×</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="editTaskId">
+                <div class="form-group"><label class="form-label">Titre</label><input type="text" class="form-input" id="editTaskTitle"></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Échéance</label><input type="date" class="form-input" id="editTaskDate"></div><div class="form-group"><label class="form-label">Statut</label><select class="form-select" id="editTaskStatus"><option value="todo">📋 À Faire</option><option value="inprogress">🔄 En Cours</option><option value="urgent">🔴 Urgent</option><option value="done">✅ Terminé</option></select></div></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" onclick="deleteTask()">🗑️</button><button class="btn btn-secondary" onclick="closeModal('editTaskModal')">Annuler</button><button class="btn btn-primary" onclick="updateTask()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Add Event -->
+    <div class="modal-overlay" id="addEventModal">
+        <div class="modal">
+            <div class="modal-header"><h3>📅 Nouveau RDV</h3><button class="modal-close" onclick="closeModal('addEventModal')">×</button></div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="form-group"><label class="form-label">Titre *</label><input type="text" class="form-input" name="title" required></div>
+                    <div class="form-row"><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" name="date"></div><div class="form-group"><label class="form-label">Heure</label><input type="time" class="form-input" name="time"></div></div>
+                    <div class="form-group"><label class="form-label">Durée (min)</label><input type="number" class="form-input" name="duration" value="60"></div>
+                    <div class="form-group"><label class="form-label">Lieu</label><input type="text" class="form-input" name="location"></div>
+                    <div class="form-group"><label class="form-label">Prospect</label><div class="search-select"><input type="text" class="search-select-input" id="eventProspectSearch" placeholder="🔍 Rechercher..." autocomplete="off"><input type="hidden" id="eventProspectId"><div class="search-select-dropdown" id="eventProspectDropdown"></div></div></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addEventModal')">Annuler</button><button class="btn btn-primary" onclick="saveEvent()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Edit Event -->
+    <div class="modal-overlay" id="editEventModal">
+        <div class="modal">
+            <div class="modal-header"><h3>✏️ Modifier RDV</h3><button class="modal-close" onclick="closeModal('editEventModal')">×</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="editEventId">
+                <div class="form-group"><label class="form-label">Titre</label><input type="text" class="form-input" id="editEventTitle"></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="editEventDate"></div><div class="form-group"><label class="form-label">Heure</label><input type="time" class="form-input" id="editEventTime"></div></div>
+                <div class="form-group"><label class="form-label">Lieu</label><input type="text" class="form-input" id="editEventLocation"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" onclick="deleteEvent()">🗑️</button><button class="btn btn-secondary" onclick="closeModal('editEventModal')">Annuler</button><button class="btn btn-primary" onclick="updateEvent()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Add Offer -->
+    <div class="modal-overlay" id="addOfferModal">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h3>📋 Nouvelle Offre</h3><button class="modal-close" onclick="closeModal('addOfferModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-row"><div class="form-group"><label class="form-label">N° Offre</label><input type="text" class="form-input" id="offerNum" readonly></div><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="offerCreatedDate"></div></div>
+                <div class="form-group"><label class="form-label">Prospect *</label><div class="search-select"><input type="text" class="search-select-input" id="offerProspectSearch" placeholder="🔍 Rechercher..." autocomplete="off"><input type="hidden" id="offerProspectId"><div class="search-select-dropdown" id="offerProspectDropdown"></div></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Prestation</label><select class="form-select" id="offerService"><option>Étude de faisabilité</option><option>Conception PV</option><option>Suivi chantier</option><option>Audit énergétique</option><option>Projet clé en main</option></select></div><div class="form-group"><label class="form-label">Montant (CHF) *</label><input type="number" class="form-input" id="offerAmount" required></div></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addOfferModal')">Annuler</button><button class="btn btn-primary" onclick="saveOffer()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Edit Offer -->
+    <div class="modal-overlay" id="editOfferModal">
+        <div class="modal">
+            <div class="modal-header"><h3>✏️ Modifier Offre</h3><button class="modal-close" onclick="closeModal('editOfferModal')">×</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="editOfferId">
+                <div class="form-group"><label class="form-label">Montant (CHF)</label><input type="number" class="form-input" id="editOfferAmount"></div>
+                <div class="form-group"><label class="form-label">Statut</label><select class="form-select" id="editOfferStatus"><option>Brouillon</option><option>Envoyée</option><option>En négociation</option><option>Acceptée</option><option>Refusée</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" onclick="deleteOffer()">🗑️</button><button class="btn btn-secondary" onclick="closeModal('editOfferModal')">Annuler</button><button class="btn btn-primary" onclick="updateOffer()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Office Accounts -->
+    <div class="modal-overlay" id="officeAccountsModal">
+        <div class="modal">
+            <div class="modal-header"><h3>🔐 Comptes Office 365</h3><button class="modal-close" onclick="closeModal('officeAccountsModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Email Microsoft</label><input type="email" class="form-input" id="officeEmail" placeholder="votre.email@outlook.com"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('officeAccountsModal')">Fermer</button><button class="btn btn-primary" onclick="saveOfficeAccount()">Connecter</button></div>
+        </div>
+    </div>
+    
+    <!-- Mailing Email -->
+    <div class="modal-overlay" id="newMailingModal">
+        <div class="modal modal-xl">
+            <div class="modal-header"><h3>📧 Email de masse</h3><button class="modal-close" onclick="closeModal('newMailingModal')">×</button></div>
+            <div class="modal-body">
+                <div class="card" style="background:#eff6ff;border-color:#3b82f6;margin-bottom:1rem;padding:0.75rem;">
+                    <p style="font-size:0.8125rem;margin-bottom:0.5rem;"><strong>💡 Deux modes disponibles :</strong></p>
+                    <p style="font-size:0.75rem;color:var(--gray-600);margin-bottom:0.25rem;">• <strong>Envoyer un par un</strong> : Ouvre Outlook pour chaque contact individuellement (personnalisé)</p>
+                    <p style="font-size:0.75rem;color:var(--gray-600);">• <strong>Export Publipostage</strong> : Génère un fichier CSV pour publipostage Word/Outlook (envoi massif)</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destinataires</label>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap;">
+                        <select class="form-select" id="mailingSegment" style="width:auto;"><option value="">Segment</option><option>Architecte</option><option>Promoteur</option><option>STEP</option><option>Distribution</option><option>Transport</option><option>Autre</option></select>
+                        <button class="btn btn-sm btn-secondary" onclick="addSegmentToMailing()">+ Segment</button>
+                        <button class="btn btn-sm btn-secondary" onclick="addAllToMailing()">+ Tous</button>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                        <input type="text" class="form-input" id="mailingContactSearch" placeholder="🔍 Ajouter contact manuellement..." style="flex:1;">
+                        <button class="btn btn-sm btn-primary" onclick="searchAndAddContact()">Ajouter</button>
+                    </div>
+                    <div id="mailingSearchResults" style="margin-bottom:0.5rem;"></div>
+                    <div id="mailingRecipients" style="border:1px solid var(--gray-200);border-radius:0.5rem;padding:0.5rem;min-height:60px;max-height:150px;overflow-y:auto;"></div>
+                    <p style="font-size:0.75rem;color:var(--gray-500);margin-top:0.25rem;"><span id="recipientCount">0</span> destinataires</p>
+                </div>
+                <div class="form-group"><label class="form-label">Objet</label><input type="text" class="form-input" id="mailingSubject"></div>
+                <div class="form-group"><label class="form-label">Template</label><select class="form-select" id="mailingTemplate" onchange="loadMailingTemplate()"><option value="">-- Choisir --</option></select></div>
+                <div class="form-group"><label class="form-label">Contenu</label><textarea class="form-textarea" id="mailingContent" style="min-height:150px;"></textarea></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('newMailingModal')">Annuler</button>
+                <button class="btn btn-secondary" onclick="exportForMailMerge()">📊 Export Publipostage</button>
+                <button class="btn btn-primary" onclick="startSequentialSend()">📧 Envoyer un par un</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Newsletter -->
+    <div class="modal-overlay" id="newsletterModal">
+        <div class="modal modal-xl">
+            <div class="modal-header"><h3>📰 Newsletter</h3><button class="modal-close" onclick="closeModal('newsletterModal')">×</button></div>
+            <div class="modal-body">
+                <div class="card" style="background:#f3e8ff;border-color:#8b5cf6;margin-bottom:1rem;padding:0.75rem;">
+                    <p style="font-size:0.8125rem;"><strong>💡 Fonctionnement</strong> : Cliquez sur "Ouvrir dans Outlook" → Outlook s'ouvre avec la newsletter prête → Cliquez "Envoyer" dans Outlook.</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destinataires</label>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap;">
+                        <select class="form-select" id="nlSegment" style="width:auto;"><option value="">Segment</option><option>Architecte</option><option>Promoteur</option><option>STEP</option><option>Distribution</option><option>Transport</option><option>Autre</option></select>
+                        <button class="btn btn-sm btn-secondary" onclick="addSegmentToNewsletter()">+ Segment</button>
+                        <button class="btn btn-sm btn-secondary" onclick="addAllToNewsletter()">+ Tous</button>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                        <input type="text" class="form-input" id="nlContactSearch" placeholder="🔍 Ajouter contact..." style="flex:1;">
+                        <button class="btn btn-sm btn-primary" onclick="searchAndAddNlContact()">Ajouter</button>
+                    </div>
+                    <div id="nlRecipients" style="border:1px solid var(--gray-200);border-radius:0.5rem;padding:0.5rem;min-height:60px;max-height:150px;overflow-y:auto;"></div>
+                    <p style="font-size:0.75rem;color:var(--gray-500);"><span id="nlRecipientCount">0</span> destinataires</p>
+                </div>
+                <div class="form-group"><label class="form-label">Objet</label><input type="text" class="form-input" id="nlSubject" value="Newsletter - "></div>
+                <div class="form-group"><label class="form-label">Template</label><select class="form-select" id="nlTemplate" onchange="loadNlTemplate()"><option value="">-- Choisir --</option></select></div>
+                <div class="form-group"><label class="form-label">Contenu</label><textarea class="form-textarea" id="nlContent" style="min-height:200px;"></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('newsletterModal')">Annuler</button><button class="btn btn-success" onclick="sendMailing('newsletter')">📧 Ouvrir dans Outlook</button></div>
+        </div>
+    </div>
+    
+    <!-- LinkedIn Mailing -->
+    <div class="modal-overlay" id="linkedinMailingModal">
+        <div class="modal modal-xl">
+            <div class="modal-header"><h3>💼 Messages LinkedIn</h3><button class="modal-close" onclick="closeModal('linkedinMailingModal')">×</button></div>
+            <div class="modal-body">
+                <div class="card" style="background:#e8f4fd;border-color:#0a66c2;margin-bottom:1rem;">
+                    <p style="font-size:0.8125rem;"><strong>💡 LinkedIn</strong></p>
+                    <p style="font-size:0.75rem;">Préparez vos messages ici, puis copiez-les pour les envoyer via LinkedIn.</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contacts ciblés</label>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                        <select class="form-select" id="liSegment" style="width:auto;"><option value="">Segment</option><option>Architecte</option><option>Promoteur</option><option>STEP</option></select>
+                        <button class="btn btn-sm btn-secondary" onclick="addSegmentToLinkedin()">+ Segment</button>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+                        <input type="text" class="form-input" id="liContactSearch" placeholder="🔍 Ajouter contact..." style="flex:1;">
+                        <button class="btn btn-sm btn-primary" onclick="searchAndAddLiContact()">Ajouter</button>
+                    </div>
+                    <div id="liRecipients" style="border:1px solid var(--gray-200);border-radius:0.5rem;padding:0.5rem;min-height:60px;"></div>
+                    <p style="font-size:0.75rem;color:var(--gray-500);"><span id="liRecipientCount">0</span> contacts</p>
+                </div>
+                <div class="form-group"><label class="form-label">Template</label><select class="form-select" id="liTemplate" onchange="loadLiTemplate()"><option value="">-- Choisir --</option></select></div>
+                <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="liContent" style="min-height:150px;"></textarea></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('linkedinMailingModal')">Fermer</button>
+                <button class="btn btn-secondary" onclick="copyLinkedinMessage()">📋 Copier message</button>
+                <button class="btn btn-success" onclick="sendMailing('linkedin')">✓ Marquer envoyé</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mailchimp -->
+    <div class="modal-overlay" id="mailchimpModal">
+        <div class="modal">
+            <div class="modal-header"><h3>🐵 Mailchimp</h3><button class="modal-close" onclick="closeModal('mailchimpModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Clé API</label><input type="text" class="form-input" id="mailchimpKey" placeholder="xxxxxxxx-us21"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('mailchimpModal')">Annuler</button><button class="btn btn-primary" onclick="connectMailchimp()">Connecter</button></div>
+        </div>
+    </div>
+    
+    <!-- Settings & Profile -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header"><h3>⚙️ Paramètres</h3><button class="modal-close" onclick="closeModal('settingsModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Langue</label><select class="form-select" id="settingsLang"><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal('settingsModal')">Fermer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <div class="modal-header"><h3>👤 Mon Profil</h3><button class="modal-close" onclick="closeModal('profileModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="profileName"></div>
+                <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="profileEmail"></div>
+                <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-input" id="profilePhone"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('profileModal')">Annuler</button><button class="btn btn-primary" onclick="saveProfile()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <!-- Template Edit -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h3 id="templateModalTitle">Template</h3><button class="modal-close" onclick="closeModal('templateModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="tplName"></div>
+                <div class="form-group" id="tplSubjectGroup"><label class="form-label">Objet</label><input type="text" class="form-input" id="tplSubject"></div>
+                <div class="form-group"><label class="form-label">Contenu</label><textarea class="form-textarea" id="tplContent" style="min-height:200px;"></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" onclick="deleteTemplate()">🗑️</button><button class="btn btn-secondary" onclick="copyTemplate()">📋</button><button class="btn btn-primary" onclick="saveTemplate()">💾</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="addTemplateModal">
+        <div class="modal">
+            <div class="modal-header"><h3>➕ Nouveau Template</h3><button class="modal-close" onclick="closeModal('addTemplateModal')">×</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="newTplType"><option value="emails">📧 Email</option><option value="linkedin">💼 LinkedIn</option><option value="newsletters">📰 Newsletter</option></select></div>
+                <div class="form-group"><label class="form-label">Nom *</label><input type="text" class="form-input" id="newTplName"></div>
+                <div class="form-group"><label class="form-label">Objet</label><input type="text" class="form-input" id="newTplSubject"></div>
+                <div class="form-group"><label class="form-label">Contenu *</label><textarea class="form-textarea" id="newTplContent"></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addTemplateModal')">Annuler</button><button class="btn btn-primary" onclick="createTemplate()">Créer</button></div>
+        </div>
+    </div>
+    
+    <!-- Sequential Sending Modal -->
+    <div class="modal-overlay" id="sequentialSendModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>📧 Envoi séquentiel - <span id="seqProgress">0/0</span></h3>
+                <button class="modal-close" onclick="closeSequentialSend()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="card" style="background:#f0fdf4;border-color:var(--success);margin-bottom:1rem;">
+                    <div style="display:flex;align-items:center;gap:1rem;">
+                        <span style="font-size:2rem;" id="seqIcon">📧</span>
+                        <div>
+                            <strong id="seqCompany">-</strong>
+                            <p style="font-size:0.875rem;color:var(--gray-600);" id="seqEmail">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Objet</label>
+                    <input type="text" class="form-input" id="seqSubject" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message (personnalisable pour ce contact)</label>
+                    <textarea class="form-textarea" id="seqContent" style="min-height:150px;"></textarea>
+                </div>
+                <div style="background:var(--gray-100);border-radius:0.5rem;padding:0.75rem;margin-top:1rem;">
+                    <p style="font-size:0.75rem;color:var(--gray-500);">Variables disponibles : <code>{entreprise}</code>, <code>{contact}</code>, <code>{email}</code></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSequentialSend()">Terminer</button>
+                <button class="btn btn-secondary" onclick="skipCurrentRecipient()">⏭️ Passer</button>
+                <button class="btn btn-success" onclick="sendCurrentAndNext()">📤 Envoyer & Suivant</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="prospectSidebar">
+        <div class="sidebar-header"><h3 id="sidebarTitle">Détails</h3><button class="modal-close" onclick="closeSidebar()">×</button></div>
+        <div class="sidebar-body">
+            <div id="sidebarBadge" style="margin-bottom:1rem;"></div>
+            <div class="tabs" style="margin-bottom:1rem;">
+                <button class="tab active" data-sidebartab="info">Infos</button>
+                <button class="tab" data-sidebartab="notes">Notes</button>
+                <button class="tab" data-sidebartab="comm">Historique</button>
+                <button class="tab" data-sidebartab="offers">Offres</button>
+            </div>
+            <div id="sidebarInfo" class="tab-content active">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+                    <div class="sidebar-section"><div class="sidebar-label">Segment</div><div class="sidebar-value" id="sidebarSegment">-</div></div>
+                    <div class="sidebar-section"><div class="sidebar-label">Canton</div><div class="sidebar-value" id="sidebarCanton">-</div></div>
+                    <div class="sidebar-section"><div class="sidebar-label">Valeur</div><div class="sidebar-value" id="sidebarValeur">-</div></div>
+                    <div class="sidebar-section"><div class="sidebar-label">Score</div><div class="sidebar-value" id="sidebarScore">-</div></div>
+                </div>
+                <div class="sidebar-section"><div class="sidebar-label">Email</div><div class="sidebar-value"><a href="#" id="sidebarEmail">-</a></div></div>
+                <div class="sidebar-section"><div class="sidebar-label">Téléphone</div><div class="sidebar-value"><a href="#" id="sidebarTel">-</a></div></div>
+            </div>
+            <div id="sidebarNotes" class="tab-content"><button class="btn btn-sm btn-primary" onclick="addNote()" style="margin-bottom:1rem;">+ Note</button><div id="sidebarNotesList"></div></div>
+            <div id="sidebarComm" class="tab-content"><button class="btn btn-sm btn-primary" onclick="addCommunication()" style="margin-bottom:1rem;">+ Ajouter</button><div id="sidebarCommList"></div></div>
+            <div id="sidebarOffers" class="tab-content"><button class="btn btn-sm btn-primary" onclick="openModal('addOfferModal')" style="margin-bottom:1rem;">+ Offre</button><div id="sidebarOffersList"></div></div>
+        </div>
+        <div class="sidebar-footer"><div style="display:flex;gap:0.5rem;"><button class="btn btn-primary" style="flex:1;" onclick="sendEmail()">✉️ Email</button><button class="btn btn-success" style="flex:1;" onclick="makeCall()">📞 Appeler</button></div></div>
+    </div>
+
+    <script>
+        // ========== DATA ==========
+        let prospects = JSON.parse(localStorage.getItem('crm_prospects')) || [
+            { id: 1, entreprise: 'SINEF SA', contact: 'Direction', email: 'step.fribourg@sinef.ch', tel: '+41 26 350 11 11', statut: 'Nouveau', segment: 'STEP', canton: 'FR', valeur: 85000, score: 85, notes: [], communications: [] },
+            { id: 2, entreprise: 'CCHE Lausanne SA', contact: '', email: 'lausanne@cche.ch', tel: '+41 21 321 44 66', statut: 'Contacté', segment: 'Architecte', canton: 'VD', valeur: 45000, score: 72, notes: [], communications: [] },
+            { id: 3, entreprise: 'Planzer Penthalaz', contact: '', email: 'penthalaz@planzer.ch', tel: '+41 21 802 64 64', statut: 'Qualifié', segment: 'Transport', canton: 'VD', valeur: 120000, score: 90, notes: [], communications: [] }
+        ];
+        let offers = JSON.parse(localStorage.getItem('crm_offers')) || [];
+        let tasks = JSON.parse(localStorage.getItem('crm_tasks')) || [{ id: 1, title: 'Appeler SINEF SA', dueDate: '2026-03-05', status: 'urgent', category: 'Appel', prospectId: 1 }];
+        let events = JSON.parse(localStorage.getItem('crm_events')) || [{ id: 1, title: 'RDV Planzer', date: '2026-03-05', time: '10:00', duration: 60, location: 'Penthalaz', prospectId: 3 }];
+        let profile = JSON.parse(localStorage.getItem('crm_profile')) || { name: 'Michel Woupeyi', email: 'm.woupeyi@revelio.ch', phone: '+41 79 932 62 01' };
+        let officeAccount = JSON.parse(localStorage.getItem('crm_office_account')) || { email: '', connected: false };
+        let notifications = JSON.parse(localStorage.getItem('crm_notifications')) || [];
+        let mailingHistory = JSON.parse(localStorage.getItem('crm_mailing_history')) || [];
+        let templates = JSON.parse(localStorage.getItem('crm_templates')) || {
+            emails: [{ id: 1, name: 'Email Architectes', subject: 'Intégration PV', content: 'Bonjour,\n\nEn tant que Chef de projet PV chez Emch+Berger Revelio AG...\n\nCordialement,\nMichel Woupeyi' }],
+            linkedin: [{ id: 1, name: 'Message connexion', content: 'Bonjour,\n\nJe serais ravi d\'échanger sur les opportunités du solaire.\n\nMichel' }],
+            newsletters: [{ id: 1, name: 'Newsletter mensuelle', content: '📰 NEWSLETTER REVELIO\n\n📌 ACTUALITÉ DU MOIS\n[Contenu]\n\n📌 PROJET DU MOIS\n[Projet]' }]
+        };
+        
+        let selectedProspectId = null, currentTplType = null, currentTplId = null, importedData = [];
+        let mailingRecipients = [], nlRecipients = [], liRecipients = [];
+
+        // ========== INIT ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            initNav();
+            initTabs();
+            initFilters();
+            initSearchSelects();
+            document.getElementById('importFile').addEventListener('change', handleFileSelect);
+            renderAll();
+        });
+
+        function loadProfile() {
+            document.getElementById('userName').textContent = profile.name;
+            document.getElementById('userAvatar').textContent = profile.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+            document.getElementById('profileName').value = profile.name;
+            document.getElementById('profileEmail').value = profile.email;
+            document.getElementById('profilePhone').value = profile.phone;
+            document.getElementById('officeEmail').value = officeAccount.email;
+            if (officeAccount.connected) document.getElementById('connectedAccount').textContent = officeAccount.email;
+        }
+
+        function renderAll() {
+            renderKPIs();
+            renderCharts();
+            renderPipelineTable();
+            renderContactsTable();
+            renderOffersTable();
+            renderKanban();
+            renderCalendar();
+            renderTemplates();
+            renderOffice();
+            renderNotifications();
+            renderMailingHistory();
+            populateFilters();
+            populateMailingTemplates();
+        }
+
+        // ========== NAVIGATION ==========
+        function initNav() {
+            document.querySelectorAll('.nav-tab').forEach(t => t.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+                document.getElementById(t.dataset.tab).classList.add('active');
+                closeAllDropdowns();
+            }));
+        }
+
+        function initTabs() {
+            document.querySelectorAll('.tab[data-subtab]').forEach(t => t.addEventListener('click', () => {
+                const p = t.closest('.section');
+                p.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+                p.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+                document.getElementById(t.dataset.subtab).classList.add('active');
+            }));
+            document.querySelectorAll('.tab[data-sidebartab]').forEach(t => t.addEventListener('click', () => {
+                document.querySelectorAll('.tab[data-sidebartab]').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('#prospectSidebar .tab-content').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+                document.getElementById('sidebar' + t.dataset.sidebartab.charAt(0).toUpperCase() + t.dataset.sidebartab.slice(1)).classList.add('active');
+            }));
+        }
+
+        function initFilters() {
+            document.getElementById('searchPipeline').addEventListener('input', filterPipeline);
+            document.getElementById('filterSegment').addEventListener('change', filterPipeline);
+            document.getElementById('filterStatus').addEventListener('change', filterPipeline);
+            document.getElementById('searchContacts').addEventListener('input', filterContacts);
+        }
+
+        function populateFilters() {
+            const segs = [...new Set(prospects.map(p => p.segment).filter(Boolean))];
+            const stats = [...new Set(prospects.map(p => p.statut).filter(Boolean))];
+            document.getElementById('filterSegment').innerHTML = '<option value="all">Tous segments</option>' + segs.map(s => `<option>${s}</option>`).join('');
+            document.getElementById('filterStatus').innerHTML = '<option value="all">Tous statuts</option>' + stats.map(s => `<option>${s}</option>`).join('');
+        }
+
+        // ========== SEARCH SELECTS ==========
+        function initSearchSelects() {
+            ['task', 'event', 'offer'].forEach(prefix => {
+                const input = document.getElementById(prefix + 'ProspectSearch');
+                const dropdown = document.getElementById(prefix + 'ProspectDropdown');
+                if (!input) return;
+                input.addEventListener('focus', () => showProspectDropdown(prefix));
+                input.addEventListener('input', () => filterProspectDropdown(prefix));
+                document.addEventListener('click', (e) => { if (!e.target.closest('.search-select')) dropdown.classList.remove('open'); });
+            });
+        }
+
+        function showProspectDropdown(prefix) {
+            const dropdown = document.getElementById(prefix + 'ProspectDropdown');
+            dropdown.innerHTML = prospects.map(p => `<div class="search-select-option" onmousedown="selectProspect('${prefix}',${p.id})">${p.entreprise}</div>`).join('');
+            dropdown.classList.add('open');
+        }
+
+        function filterProspectDropdown(prefix) {
+            const input = document.getElementById(prefix + 'ProspectSearch');
+            const dropdown = document.getElementById(prefix + 'ProspectDropdown');
+            const q = input.value.toLowerCase();
+            dropdown.innerHTML = prospects.filter(p => p.entreprise.toLowerCase().includes(q)).map(p => `<div class="search-select-option" onmousedown="selectProspect('${prefix}',${p.id})">${p.entreprise}</div>`).join('');
+        }
+
+        function selectProspect(prefix, id) {
+            const p = prospects.find(x => x.id === id);
+            document.getElementById(prefix + 'ProspectSearch').value = p.entreprise;
+            document.getElementById(prefix + 'ProspectId').value = id;
+            document.getElementById(prefix + 'ProspectDropdown').classList.remove('open');
+        }
+
+        // ========== DROPDOWNS & MODALS ==========
+        function toggleDropdown(id) { const d = document.getElementById(id); const open = d.classList.contains('open'); closeAllDropdowns(); if (!open) d.classList.add('open'); }
+        function closeAllDropdowns() { document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('open')); }
+        document.addEventListener('click', e => { if (!e.target.closest('.dropdown')) closeAllDropdowns(); });
+        function openModal(id) { document.getElementById(id).classList.add('open'); closeAllDropdowns(); if (id === 'addOfferModal') { document.getElementById('offerNum').value = 'OFF-' + (offers.length + 1).toString().padStart(4, '0'); document.getElementById('offerCreatedDate').value = new Date().toISOString().split('T')[0]; } }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        // ========== NOTIFICATIONS - FIXED PERSISTENCE ==========
+        function renderNotifications() {
+            const unread = notifications.filter(n => !n.read).length;
+            document.getElementById('notifCount').textContent = unread;
+            document.getElementById('notifCount').style.display = unread ? 'flex' : 'none';
+            document.getElementById('notifList').innerHTML = notifications.length ? notifications.map((n, i) => `
+                <div class="dropdown-item ${n.read ? '' : 'unread'}" onclick="markNotificationRead(${i})">
+                    <div class="dropdown-icon" style="background:${n.type === 'task' ? '#fee2e2' : '#dbeafe'};">${n.type === 'task' ? '⚠️' : '📅'}</div>
+                    <div class="dropdown-content"><strong>${n.title}</strong><span>${n.message}</span><small>${n.date}</small></div>
+                </div>
+            `).join('') : '<div class="dropdown-item"><span style="color:var(--gray-400);">Aucune notification</span></div>';
+        }
+
+        function markNotificationRead(index) {
+            notifications[index].read = true;
+            localStorage.setItem('crm_notifications', JSON.stringify(notifications));
+            renderNotifications();
+        }
+
+        function markAllNotificationsRead() {
+            notifications.forEach(n => n.read = true);
+            localStorage.setItem('crm_notifications', JSON.stringify(notifications));
+            renderNotifications();
+            closeAllDropdowns();
+        }
+
+        function addNotification(type, title, message) {
+            notifications.unshift({ type, title, message, read: false, date: new Date().toLocaleDateString('fr-CH') });
+            localStorage.setItem('crm_notifications', JSON.stringify(notifications));
+            renderNotifications();
+        }
+
+        // ========== SIDEBAR ==========
+        function openSidebar(id) {
+            selectedProspectId = id;
+            const p = prospects.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('sidebarTitle').textContent = p.entreprise;
+            document.getElementById('sidebarBadge').innerHTML = `<span class="badge ${getStatusClass(p.statut)}">${p.statut}</span>`;
+            document.getElementById('sidebarSegment').textContent = p.segment || '-';
+            document.getElementById('sidebarCanton').textContent = p.canton || '-';
+            document.getElementById('sidebarValeur').textContent = (p.valeur || 0).toLocaleString() + ' CHF';
+            document.getElementById('sidebarScore').textContent = (p.score || 50) + '/100';
+            document.getElementById('sidebarEmail').textContent = p.email; document.getElementById('sidebarEmail').href = 'mailto:' + p.email;
+            document.getElementById('sidebarTel').textContent = p.tel || '-'; document.getElementById('sidebarTel').href = p.tel ? 'tel:' + p.tel : '#';
+            renderSidebarNotes(p);
+            renderSidebarComm(p);
+            renderSidebarOffers(p);
+            document.getElementById('sidebarOverlay').classList.add('open');
+            document.getElementById('prospectSidebar').classList.add('open');
+        }
+        function closeSidebar() { document.getElementById('sidebarOverlay').classList.remove('open'); document.getElementById('prospectSidebar').classList.remove('open'); }
+        function renderSidebarNotes(p) { document.getElementById('sidebarNotesList').innerHTML = (p.notes || []).map(n => `<div class="note-item"><div class="note-date">${n.date}</div><div class="note-text">${n.text}</div></div>`).join('') || '<p style="color:var(--gray-400);">Aucune note</p>'; }
+        function renderSidebarComm(p) {
+            const comms = p.communications || [];
+            document.getElementById('sidebarCommList').innerHTML = comms.length ? comms.map(c => `
+                <div class="comm-item ${c.type}">
+                    <div class="comm-icon">${c.type === 'email' ? '📧' : c.type === 'linkedin' ? '💼' : c.type === 'newsletter' ? '📰' : '📝'}</div>
+                    <div class="comm-content"><strong>${c.subject || c.type}</strong><span>${c.message || ''}</span></div>
+                    <div class="comm-date">${c.date}</div>
+                </div>
+            `).join('') : '<p style="color:var(--gray-400);">Aucune communication</p>';
+        }
+        function renderSidebarOffers(p) {
+            const list = offers.filter(o => o.prospectId === p.id);
+            document.getElementById('sidebarOffersList').innerHTML = list.length ? list.map(o => `<div class="card" style="padding:0.75rem;margin-bottom:0.5rem;"><strong>${o.offerNum}</strong><div style="font-size:1rem;font-weight:600;color:var(--success);">${o.amount.toLocaleString()} CHF</div><span class="badge ${getOfferStatusClass(o.status)}">${o.status}</span></div>`).join('') : '<p style="color:var(--gray-400);">Aucune offre</p>';
+        }
+
+        // ========== KPIs & CHARTS ==========
+        function renderKPIs() {
+            document.getElementById('kpiTotal').textContent = prospects.length;
+            document.getElementById('kpiNew').textContent = prospects.filter(p => p.statut === 'Nouveau').length;
+            document.getElementById('kpiContact').textContent = prospects.filter(p => p.statut === 'Contacté').length;
+            document.getElementById('kpiQualified').textContent = prospects.filter(p => p.statut === 'Qualifié').length;
+            document.getElementById('kpiNegotiation').textContent = prospects.filter(p => ['Proposition', 'Négociation'].includes(p.statut)).length;
+            document.getElementById('kpiPipeline').textContent = (prospects.reduce((s, p) => s + (p.valeur || 0), 0) / 1000).toFixed(0) + 'K';
+            document.getElementById('offersTotal').textContent = offers.length;
+            document.getElementById('offersPending').textContent = offers.filter(o => ['Envoyée', 'En négociation'].includes(o.status)).length;
+            document.getElementById('offersWon').textContent = offers.filter(o => o.status === 'Acceptée').length;
+            document.getElementById('offersValue').textContent = offers.filter(o => o.status === 'Acceptée').reduce((s, o) => s + o.amount, 0).toLocaleString();
+        }
+
+        function renderCharts() {
+            const data = [{ l: 'Nouveau', v: prospects.filter(p => p.statut === 'Nouveau').length, c: '#93c5fd' }, { l: 'Contacté', v: prospects.filter(p => p.statut === 'Contacté').length, c: '#fde047' }, { l: 'Qualifié', v: prospects.filter(p => p.statut === 'Qualifié').length, c: '#86efac' }, { l: 'Proposition', v: prospects.filter(p => p.statut === 'Proposition').length, c: '#fdba74' }, { l: 'Négo', v: prospects.filter(p => p.statut === 'Négociation').length, c: '#c4b5fd' }, { l: 'Gagné', v: prospects.filter(p => p.statut === 'Gagné').length, c: '#4ade80' }];
+            const max = Math.max(...data.map(d => d.v), 1);
+            document.getElementById('pipelineChart').innerHTML = data.map(d => `<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.v}</div><div class="chart-bar" style="height:${(d.v/max)*120}px;background:${d.c};"></div><div class="chart-bar-label">${d.l}</div></div>`).join('');
+            document.getElementById('funnelChart').innerHTML = data.map(d => `<div class="funnel-item"><span class="funnel-label">${d.l}</span><div class="funnel-bar" style="width:${(d.v/max)*100}%;background:${d.c};">${d.v}</div></div>`).join('');
+            document.getElementById('dashboardTasks').innerHTML = tasks.filter(t => t.status === 'urgent').slice(0, 3).map(t => `<div class="kanban-card"><div class="kanban-card-title">${t.title}</div><div class="kanban-card-meta">${formatDate(t.dueDate)}</div></div>`).join('') || '<p style="color:var(--gray-400);">Aucune</p>';
+            document.getElementById('dashboardCalendar').innerHTML = events.slice(0, 3).map(e => `<div class="calendar-event" style="cursor:default;"><div class="calendar-time">${e.time}</div><div class="calendar-info"><h5>${e.title}</h5><p>${formatDate(e.date)}</p></div></div>`).join('') || '<p style="color:var(--gray-400);">Aucun</p>';
+        }
+
+        // ========== TABLES ==========
+        function renderPipelineTable() {
+            document.getElementById('pipelineTable').innerHTML = prospects.map(p => `
+                <tr class="clickable" onclick="openSidebar(${p.id})">
+                    <td><strong>${p.entreprise}</strong><br><span style="color:var(--gray-400);font-size:0.75rem;">${p.email}</span></td>
+                    <td>${p.contact || '-'}</td>
+                    <td><select class="status-select" onclick="event.stopPropagation();" onchange="updateProspectStatus(${p.id},this.value)">${['Nouveau','Contacté','Qualifié','Proposition','Négociation','Gagné','Perdu'].map(s => `<option ${p.statut===s?'selected':''}>${s}</option>`).join('')}</select></td>
+                    <td><span class="badge badge-gray">${p.segment}</span></td>
+                    <td>${p.canton}</td>
+                    <td><strong>${(p.valeur||0).toLocaleString()} CHF</strong></td>
+                    <td><div style="display:flex;align-items:center;gap:0.5rem;"><div class="progress"><div class="progress-bar ${(p.score||50)>=80?'green':(p.score||50)>=60?'yellow':'red'}" style="width:${p.score||50}%;"></div></div><span style="font-size:0.75rem;">${p.score||50}</span></div></td>
+                    <td onclick="event.stopPropagation();"><button class="btn-icon" onclick="sendEmailTo(${p.id})">✉️</button><button class="btn-icon" onclick="callProspect(${p.id})">📞</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderContactsTable() {
+            document.getElementById('contactsTable').innerHTML = prospects.map((p, i) => `
+                <tr class="clickable" onclick="openSidebar(${p.id})">
+                    <td style="font-size:0.75rem;color:var(--gray-500);">ACC-${String(i+1).padStart(3,'0')}</td>
+                    <td><strong>${p.entreprise}</strong></td>
+                    <td>${p.contact || '-'}</td>
+                    <td><a href="mailto:${p.email}" onclick="event.stopPropagation();">${p.email}</a></td>
+                    <td>${p.tel || '-'}</td>
+                    <td><span class="badge badge-gray">${p.segment}</span></td>
+                    <td>${p.canton}</td>
+                    <td onclick="event.stopPropagation();"><button class="btn-icon" onclick="deleteProspect(${p.id})">🗑️</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderOffersTable() {
+            document.getElementById('offersTable').innerHTML = offers.map(o => {
+                const p = prospects.find(x => x.id === o.prospectId);
+                return `<tr>
+                    <td><strong>${o.offerNum}</strong></td>
+                    <td>${p ? p.entreprise : '-'}</td>
+                    <td>${o.serviceType}</td>
+                    <td><strong>${o.amount.toLocaleString()} CHF</strong></td>
+                    <td>${formatDate(o.createdDate)}</td>
+                    <td><span class="badge ${getOfferStatusClass(o.status)}">${o.status}</span></td>
+                    <td><button class="btn-icon" onclick="editOffer(${o.id})">✏️</button><button class="btn-icon" onclick="confirmDeleteOffer(${o.id})">🗑️</button></td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ========== KANBAN ==========
+        function allowDrop(e) { e.preventDefault(); }
+        function dragTask(e, id) { e.dataTransfer.setData('taskId', id); }
+        function dropTask(e, newStatus) {
+            e.preventDefault();
+            const id = parseInt(e.dataTransfer.getData('taskId'));
+            const task = tasks.find(t => t.id === id);
+            if (task) { task.status = newStatus; saveData(); renderKanban(); }
+        }
+
+        function renderKanban() {
+            const todo = tasks.filter(t => t.status === 'todo');
+            const inprogress = tasks.filter(t => t.status === 'inprogress');
+            const urgent = tasks.filter(t => t.status === 'urgent');
+            const done = tasks.filter(t => t.status === 'done');
+            document.getElementById('countTodo').textContent = todo.length;
+            document.getElementById('countInProgress').textContent = inprogress.length;
+            document.getElementById('countUrgent').textContent = urgent.length;
+            document.getElementById('countDone').textContent = done.length;
+            document.getElementById('tasksTodo').innerHTML = todo.map(t => renderKanbanCard(t)).join('') || '<p style="color:var(--gray-400);text-align:center;padding:1rem;">Vide</p>';
+            document.getElementById('tasksInProgress').innerHTML = inprogress.map(t => renderKanbanCard(t)).join('') || '<p style="color:var(--gray-400);text-align:center;padding:1rem;">Vide</p>';
+            document.getElementById('tasksUrgent').innerHTML = urgent.map(t => renderKanbanCard(t)).join('') || '<p style="color:var(--gray-400);text-align:center;padding:1rem;">Vide</p>';
+            document.getElementById('tasksDone').innerHTML = done.map(t => renderKanbanCard(t)).join('') || '<p style="color:var(--gray-400);text-align:center;padding:1rem;">Vide</p>';
+        }
+
+        function renderKanbanCard(t) {
+            const p = t.prospectId ? prospects.find(x => x.id === t.prospectId) : null;
+            return `<div class="kanban-card" draggable="true" ondragstart="dragTask(event,${t.id})">
+                <div class="kanban-card-title">${t.title}</div>
+                <div class="kanban-card-meta"><span>📅 ${formatDate(t.dueDate)}</span><span>📁 ${t.category}</span>${p ? `<span>🏢 ${p.entreprise}</span>` : ''}</div>
+                <div class="kanban-card-actions"><button class="btn btn-sm btn-secondary" onclick="editTask(${t.id})">✏️</button><button class="btn btn-sm btn-secondary" onclick="moveTaskStatus(${t.id})">→</button></div>
+            </div>`;
+        }
+
+        function moveTaskStatus(id) {
+            const t = tasks.find(x => x.id === id);
+            if (!t) return;
+            const order = ['todo', 'inprogress', 'urgent', 'done'];
+            t.status = order[(order.indexOf(t.status) + 1) % order.length];
+            saveData(); renderKanban();
+        }
+
+        function editTask(id) {
+            const t = tasks.find(x => x.id === id);
+            if (!t) return;
+            document.getElementById('editTaskId').value = id;
+            document.getElementById('editTaskTitle').value = t.title;
+            document.getElementById('editTaskDate').value = t.dueDate;
+            document.getElementById('editTaskStatus').value = t.status;
+            openModal('editTaskModal');
+        }
+
+        function updateTask() {
+            const id = parseInt(document.getElementById('editTaskId').value);
+            const t = tasks.find(x => x.id === id);
+            if (t) { t.title = document.getElementById('editTaskTitle').value; t.dueDate = document.getElementById('editTaskDate').value; t.status = document.getElementById('editTaskStatus').value; saveData(); closeModal('editTaskModal'); renderKanban(); }
+        }
+
+        function deleteTask() {
+            const id = parseInt(document.getElementById('editTaskId').value);
+            if (confirm('Supprimer?')) { tasks = tasks.filter(t => t.id !== id); saveData(); closeModal('editTaskModal'); renderKanban(); }
+        }
+
+        // ========== CALENDAR WITH ICS EXPORT ==========
+        function renderCalendar() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('todayEvents').innerHTML = events.filter(e => e.date === today).map(e => renderEventItem(e)).join('') || '<p style="color:var(--gray-400);">Aucun</p>';
+            document.getElementById('upcomingEvents').innerHTML = events.filter(e => e.date > today).slice(0, 5).map(e => renderEventItem(e)).join('') || '<p style="color:var(--gray-400);">Aucun</p>';
+        }
+
+        function renderEventItem(e) {
+            const p = e.prospectId ? prospects.find(x => x.id === e.prospectId) : null;
+            return `<div class="calendar-event">
+                <div class="calendar-time">${e.time}<br><span style="font-size:0.625rem;">${formatDate(e.date)}</span></div>
+                <div class="calendar-info"><h5>${e.title}</h5><p>📍 ${e.location || '-'}${p ? ' • ' + p.entreprise : ''}</p></div>
+                <div class="calendar-actions">
+                    <button class="btn-icon" onclick="event.stopPropagation();downloadICS(${e.id})" title="Télécharger .ics">📥</button>
+                    <button class="btn-icon" onclick="event.stopPropagation();openInOutlook(${e.id})" title="Ouvrir Outlook">🔗</button>
+                    <button class="btn-icon" onclick="event.stopPropagation();editEvent(${e.id})">✏️</button>
+                    <button class="btn-icon" onclick="event.stopPropagation();confirmDeleteEvent(${e.id})">🗑️</button>
+                </div>
+            </div>`;
+        }
+
+        function downloadICS(id) {
+            const e = events.find(x => x.id === id);
+            if (!e) return;
+            const start = new Date(e.date + 'T' + e.time + ':00');
+            const end = new Date(start.getTime() + (e.duration || 60) * 60000);
+            const formatICS = d => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//CRM Emch+Berger//FR
+BEGIN:VEVENT
+UID:${e.id}@crm-revelio
+DTSTAMP:${formatICS(new Date())}
+DTSTART:${formatICS(start)}
+DTEND:${formatICS(end)}
+SUMMARY:${e.title}
+LOCATION:${e.location || ''}
+DESCRIPTION:RDV créé depuis CRM Emch+Berger Revelio AG
+END:VEVENT
+END:VCALENDAR`;
+            const blob = new Blob([ics], { type: 'text/calendar' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `rdv_${e.title.replace(/\s+/g, '_')}.ics`;
+            a.click();
+        }
+
+        function openInOutlook(id) {
+            const e = events.find(x => x.id === id);
+            if (!e) return;
+            const start = e.date + 'T' + e.time + ':00';
+            const end = new Date(new Date(start).getTime() + (e.duration || 60) * 60000).toISOString().slice(0, 19);
+            const url = `https://outlook.office.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(e.title)}&startdt=${start}&enddt=${end}&location=${encodeURIComponent(e.location || '')}&body=${encodeURIComponent('RDV CRM Emch+Berger')}`;
+            window.open(url, '_blank');
+        }
+
+        function editEvent(id) {
+            const e = events.find(x => x.id === id);
+            if (!e) return;
+            document.getElementById('editEventId').value = id;
+            document.getElementById('editEventTitle').value = e.title;
+            document.getElementById('editEventDate').value = e.date;
+            document.getElementById('editEventTime').value = e.time;
+            document.getElementById('editEventLocation').value = e.location || '';
+            openModal('editEventModal');
+        }
+
+        function updateEvent() {
+            const id = parseInt(document.getElementById('editEventId').value);
+            const e = events.find(x => x.id === id);
+            if (e) { e.title = document.getElementById('editEventTitle').value; e.date = document.getElementById('editEventDate').value; e.time = document.getElementById('editEventTime').value; e.location = document.getElementById('editEventLocation').value; saveData(); closeModal('editEventModal'); renderCalendar(); }
+        }
+
+        function deleteEvent() { const id = parseInt(document.getElementById('editEventId').value); if (confirm('Supprimer?')) { events = events.filter(e => e.id !== id); saveData(); closeModal('editEventModal'); renderCalendar(); } }
+        function confirmDeleteEvent(id) { if (confirm('Supprimer?')) { events = events.filter(e => e.id !== id); saveData(); renderCalendar(); } }
+
+        // ========== OFFERS ==========
+        function editOffer(id) {
+            const o = offers.find(x => x.id === id);
+            if (!o) return;
+            document.getElementById('editOfferId').value = id;
+            document.getElementById('editOfferAmount').value = o.amount;
+            document.getElementById('editOfferStatus').value = o.status;
+            openModal('editOfferModal');
+        }
+        function updateOffer() { const id = parseInt(document.getElementById('editOfferId').value); const o = offers.find(x => x.id === id); if (o) { o.amount = parseInt(document.getElementById('editOfferAmount').value) || 0; o.status = document.getElementById('editOfferStatus').value; saveData(); closeModal('editOfferModal'); renderOffersTable(); renderKPIs(); } }
+        function deleteOffer() { const id = parseInt(document.getElementById('editOfferId').value); if (confirm('Supprimer?')) { offers = offers.filter(o => o.id !== id); saveData(); closeModal('editOfferModal'); renderOffersTable(); renderKPIs(); } }
+        function confirmDeleteOffer(id) { if (confirm('Supprimer?')) { offers = offers.filter(o => o.id !== id); saveData(); renderOffersTable(); renderKPIs(); } }
+
+        // ========== OFFICE ==========
+        function renderOffice() {
+            const apps = [
+                { name: 'Outlook', icon: '📧', url: 'https://outlook.office.com/mail' },
+                { name: 'Calendrier', icon: '📅', url: 'https://outlook.office.com/calendar' },
+                { name: 'Word', icon: '📝', url: 'https://www.office.com/launch/word' },
+                { name: 'Excel', icon: '📊', url: 'https://www.office.com/launch/excel' },
+                { name: 'Teams', icon: '💬', url: 'https://teams.microsoft.com' },
+                { name: 'OneDrive', icon: '☁️', url: 'https://onedrive.live.com' }
+            ];
+            document.getElementById('officeApps').innerHTML = apps.map(a => `
+                <div class="office-card ${officeAccount.connected ? 'connected' : ''}">
+                    <div class="office-icon">${a.icon}</div>
+                    <h4>${a.name}</h4>
+                    <a href="${a.url}" target="_blank" class="office-link">Ouvrir</a>
+                </div>
+            `).join('');
+        }
+
+        function saveOfficeAccount() {
+            const email = document.getElementById('officeEmail').value;
+            if (!email) { alert('Entrez un email'); return; }
+            officeAccount = { email, connected: true };
+            localStorage.setItem('crm_office_account', JSON.stringify(officeAccount));
+            document.getElementById('connectedAccount').textContent = email;
+            closeModal('officeAccountsModal');
+            renderOffice();
+            alert('✅ Compte connecté: ' + email);
+        }
+
+        // ========== MAILING ==========
+        function populateMailingTemplates() {
+            document.getElementById('mailingTemplate').innerHTML = '<option value="">-- Choisir --</option>' + templates.emails.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            document.getElementById('nlTemplate').innerHTML = '<option value="">-- Choisir --</option>' + templates.newsletters.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            document.getElementById('liTemplate').innerHTML = '<option value="">-- Choisir --</option>' + templates.linkedin.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        }
+
+        function loadMailingTemplate() { const id = parseInt(document.getElementById('mailingTemplate').value); const t = templates.emails.find(x => x.id === id); if (t) { document.getElementById('mailingSubject').value = t.subject || ''; document.getElementById('mailingContent').value = t.content || ''; } }
+        function loadNlTemplate() { const id = parseInt(document.getElementById('nlTemplate').value); const t = templates.newsletters.find(x => x.id === id); if (t) { document.getElementById('nlContent').value = t.content || ''; } }
+        function loadLiTemplate() { const id = parseInt(document.getElementById('liTemplate').value); const t = templates.linkedin.find(x => x.id === id); if (t) { document.getElementById('liContent').value = t.content || ''; } }
+
+        // Email mailing
+        function addSegmentToMailing() { const seg = document.getElementById('mailingSegment').value; if (!seg) return; mailingRecipients = [...mailingRecipients, ...prospects.filter(p => p.segment === seg && !mailingRecipients.find(r => r.id === p.id))]; renderMailingRecipients(); }
+        function addAllToMailing() { mailingRecipients = [...prospects]; renderMailingRecipients(); }
+        function searchAndAddContact() {
+            const q = document.getElementById('mailingContactSearch').value.toLowerCase();
+            const found = prospects.filter(p => p.entreprise.toLowerCase().includes(q) || p.email.toLowerCase().includes(q));
+            if (found.length === 1) { if (!mailingRecipients.find(r => r.id === found[0].id)) { mailingRecipients.push(found[0]); renderMailingRecipients(); } document.getElementById('mailingContactSearch').value = ''; }
+            else if (found.length > 1) { document.getElementById('mailingSearchResults').innerHTML = found.slice(0,5).map(p => `<span class="recipient-tag" style="cursor:pointer;" onclick="addSpecificContact(${p.id},'mailing')">${p.entreprise}</span>`).join(''); }
+            else { alert('Aucun contact trouvé'); }
+        }
+        function addSpecificContact(id, type) {
+            const p = prospects.find(x => x.id === id);
+            if (type === 'mailing' && !mailingRecipients.find(r => r.id === id)) { mailingRecipients.push(p); renderMailingRecipients(); document.getElementById('mailingSearchResults').innerHTML = ''; }
+            else if (type === 'nl' && !nlRecipients.find(r => r.id === id)) { nlRecipients.push(p); renderNlRecipients(); }
+            else if (type === 'li' && !liRecipients.find(r => r.id === id)) { liRecipients.push(p); renderLiRecipients(); }
+        }
+        function removeRecipient(id) { mailingRecipients = mailingRecipients.filter(r => r.id !== id); renderMailingRecipients(); }
+        function renderMailingRecipients() { document.getElementById('mailingRecipients').innerHTML = mailingRecipients.map(r => `<span class="recipient-tag">${r.entreprise} <button onclick="removeRecipient(${r.id})">×</button></span>`).join(''); document.getElementById('recipientCount').textContent = mailingRecipients.length; }
+
+        // Newsletter
+        function addSegmentToNewsletter() { const seg = document.getElementById('nlSegment').value; if (!seg) return; nlRecipients = [...nlRecipients, ...prospects.filter(p => p.segment === seg && !nlRecipients.find(r => r.id === p.id))]; renderNlRecipients(); }
+        function addAllToNewsletter() { nlRecipients = [...prospects]; renderNlRecipients(); }
+        function searchAndAddNlContact() {
+            const q = document.getElementById('nlContactSearch').value.toLowerCase();
+            const found = prospects.filter(p => p.entreprise.toLowerCase().includes(q));
+            if (found.length >= 1) { found.forEach(p => { if (!nlRecipients.find(r => r.id === p.id)) nlRecipients.push(p); }); renderNlRecipients(); document.getElementById('nlContactSearch').value = ''; }
+        }
+        function removeNlRecipient(id) { nlRecipients = nlRecipients.filter(r => r.id !== id); renderNlRecipients(); }
+        function renderNlRecipients() { document.getElementById('nlRecipients').innerHTML = nlRecipients.map(r => `<span class="recipient-tag">${r.entreprise} <button onclick="removeNlRecipient(${r.id})">×</button></span>`).join(''); document.getElementById('nlRecipientCount').textContent = nlRecipients.length; }
+
+        // LinkedIn
+        function addSegmentToLinkedin() { const seg = document.getElementById('liSegment').value; if (!seg) return; liRecipients = [...liRecipients, ...prospects.filter(p => p.segment === seg && !liRecipients.find(r => r.id === p.id))]; renderLiRecipients(); }
+        function searchAndAddLiContact() {
+            const q = document.getElementById('liContactSearch').value.toLowerCase();
+            const found = prospects.filter(p => p.entreprise.toLowerCase().includes(q));
+            if (found.length >= 1) { found.forEach(p => { if (!liRecipients.find(r => r.id === p.id)) liRecipients.push(p); }); renderLiRecipients(); document.getElementById('liContactSearch').value = ''; }
+        }
+        function removeLiRecipient(id) { liRecipients = liRecipients.filter(r => r.id !== id); renderLiRecipients(); }
+        function renderLiRecipients() { document.getElementById('liRecipients').innerHTML = liRecipients.map(r => `<span class="recipient-tag">${r.entreprise} <button onclick="removeLiRecipient(${r.id})">×</button></span>`).join(''); document.getElementById('liRecipientCount').textContent = liRecipients.length; }
+        function copyLinkedinMessage() { navigator.clipboard.writeText(document.getElementById('liContent').value); alert('📋 Message copié!'); }
+
+        function sendMailing(type) {
+            let recipients, subject, content;
+            if (type === 'email') { recipients = mailingRecipients; subject = document.getElementById('mailingSubject').value; content = document.getElementById('mailingContent').value; }
+            else if (type === 'newsletter') { recipients = nlRecipients; subject = document.getElementById('nlSubject').value; content = document.getElementById('nlContent').value; }
+            else if (type === 'linkedin') { recipients = liRecipients; subject = 'Message LinkedIn'; content = document.getElementById('liContent').value; }
+            
+            if (!recipients.length) { alert('Ajoutez des destinataires'); return; }
+            if (type !== 'linkedin' && (!subject || !content)) { alert('Remplissez l\'objet et le contenu'); return; }
+            
+            // Pour LinkedIn, on copie juste le message
+            if (type === 'linkedin') {
+                navigator.clipboard.writeText(content);
+                alert('📋 Message copié!\n\nOuvrez LinkedIn et collez le message à vos contacts.');
+            } else {
+                // Ouvrir Outlook via mailto: avec BCC pour confidentialité
+                const emails = recipients.map(r => r.email).join(',');
+                const bccEmails = recipients.map(r => r.email).join(',');
+                
+                // Construire le lien mailto
+                // On met le premier en "to" et les autres en "bcc" pour plus de discrétion
+                const firstEmail = recipients[0].email;
+                const otherEmails = recipients.slice(1).map(r => r.email).join(',');
+                
+                let mailtoUrl = `mailto:${firstEmail}`;
+                if (otherEmails) mailtoUrl += `?bcc=${encodeURIComponent(otherEmails)}`;
+                mailtoUrl += (otherEmails ? '&' : '?') + `subject=${encodeURIComponent(subject)}`;
+                mailtoUrl += `&body=${encodeURIComponent(content)}`;
+                
+                // Ouvrir Outlook
+                window.open(mailtoUrl, '_blank');
+            }
+            
+            // Enregistrer dans l'historique
+            mailingHistory.unshift({ id: Date.now(), date: new Date().toISOString(), subject, recipients: recipients.length, type });
+            localStorage.setItem('crm_mailing_history', JSON.stringify(mailingHistory));
+            
+            // Ajouter la communication à chaque contact
+            recipients.forEach(r => {
+                const p = prospects.find(x => x.id === r.id);
+                if (p) { if (!p.communications) p.communications = []; p.communications.unshift({ type, subject, message: `Envoyé via ${type}`, date: new Date().toLocaleDateString('fr-CH') }); }
+            });
+            saveData();
+            
+            // Fermer le modal et reset
+            if (type === 'email') { closeModal('newMailingModal'); mailingRecipients = []; document.getElementById('mailingRecipients').innerHTML = ''; document.getElementById('recipientCount').textContent = '0'; }
+            else if (type === 'newsletter') { closeModal('newsletterModal'); nlRecipients = []; document.getElementById('nlRecipients').innerHTML = ''; document.getElementById('nlRecipientCount').textContent = '0'; }
+            else if (type === 'linkedin') { closeModal('linkedinMailingModal'); liRecipients = []; document.getElementById('liRecipients').innerHTML = ''; document.getElementById('liRecipientCount').textContent = '0'; }
+            
+            renderMailingHistory();
+            addNotification('email', `${type.charAt(0).toUpperCase() + type.slice(1)}`, `${recipients.length} destinataires`);
+            
+            if (type !== 'linkedin') {
+                alert(`✅ Outlook ouvert avec ${recipients.length} destinataires!\n\nCliquez sur "Envoyer" dans Outlook pour finaliser.`);
+            }
+        }
+
+        // ========== SEQUENTIAL SENDING ==========
+        let seqRecipients = [];
+        let seqCurrentIndex = 0;
+        let seqSubject = '';
+        let seqTemplate = '';
+
+        function startSequentialSend() {
+            if (!mailingRecipients.length) { alert('Ajoutez des destinataires'); return; }
+            const subject = document.getElementById('mailingSubject').value;
+            const content = document.getElementById('mailingContent').value;
+            if (!subject || !content) { alert('Remplissez l\'objet et le contenu'); return; }
+            
+            seqRecipients = [...mailingRecipients];
+            seqCurrentIndex = 0;
+            seqSubject = subject;
+            seqTemplate = content;
+            
+            closeModal('newMailingModal');
+            openModal('sequentialSendModal');
+            showCurrentRecipient();
+        }
+
+        function showCurrentRecipient() {
+            if (seqCurrentIndex >= seqRecipients.length) {
+                closeSequentialSend();
+                alert(`✅ Terminé! ${seqCurrentIndex} emails envoyés.`);
+                return;
+            }
+            
+            const r = seqRecipients[seqCurrentIndex];
+            const p = prospects.find(x => x.id === r.id) || r;
+            
+            document.getElementById('seqProgress').textContent = `${seqCurrentIndex + 1}/${seqRecipients.length}`;
+            document.getElementById('seqCompany').textContent = p.entreprise;
+            document.getElementById('seqEmail').textContent = p.email;
+            document.getElementById('seqSubject').value = seqSubject;
+            
+            // Personnaliser le contenu avec les variables
+            let personalizedContent = seqTemplate
+                .replace(/\{entreprise\}/g, p.entreprise || '')
+                .replace(/\{contact\}/g, p.contact || '')
+                .replace(/\{email\}/g, p.email || '');
+            
+            document.getElementById('seqContent').value = personalizedContent;
+            document.getElementById('seqIcon').textContent = '📧';
+        }
+
+        function sendCurrentAndNext() {
+            const r = seqRecipients[seqCurrentIndex];
+            const p = prospects.find(x => x.id === r.id) || r;
+            const subject = document.getElementById('seqSubject').value;
+            const content = document.getElementById('seqContent').value;
+            
+            // Ouvrir mailto pour ce contact
+            const mailtoUrl = `mailto:${p.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
+            window.open(mailtoUrl, '_blank');
+            
+            // Enregistrer la communication
+            if (p.id) {
+                const prospect = prospects.find(x => x.id === p.id);
+                if (prospect) {
+                    if (!prospect.communications) prospect.communications = [];
+                    prospect.communications.unshift({ type: 'email', subject, message: 'Email individuel', date: new Date().toLocaleDateString('fr-CH') });
+                }
+            }
+            
+            document.getElementById('seqIcon').textContent = '✅';
+            
+            // Passer au suivant après un court délai
+            setTimeout(() => {
+                seqCurrentIndex++;
+                showCurrentRecipient();
+            }, 500);
+        }
+
+        function skipCurrentRecipient() {
+            seqCurrentIndex++;
+            showCurrentRecipient();
+        }
+
+        function closeSequentialSend() {
+            closeModal('sequentialSendModal');
+            
+            // Enregistrer dans l'historique si des emails ont été envoyés
+            if (seqCurrentIndex > 0) {
+                mailingHistory.unshift({ id: Date.now(), date: new Date().toISOString(), subject: seqSubject, recipients: seqCurrentIndex, type: 'email (individuel)' });
+                localStorage.setItem('crm_mailing_history', JSON.stringify(mailingHistory));
+                saveData();
+                renderMailingHistory();
+            }
+            
+            // Reset
+            mailingRecipients = [];
+            document.getElementById('mailingRecipients').innerHTML = '';
+            document.getElementById('recipientCount').textContent = '0';
+            seqRecipients = [];
+            seqCurrentIndex = 0;
+        }
+
+        // ========== MAIL MERGE EXPORT ==========
+        function exportForMailMerge() {
+            if (!mailingRecipients.length) { alert('Ajoutez des destinataires'); return; }
+            const subject = document.getElementById('mailingSubject').value;
+            const content = document.getElementById('mailingContent').value;
+            if (!subject) { alert('Remplissez l\'objet'); return; }
+            
+            // Générer le fichier CSV pour publipostage
+            let csv = 'Email,Entreprise,Contact,Objet,Message\n';
+            mailingRecipients.forEach(r => {
+                const p = prospects.find(x => x.id === r.id) || r;
+                // Personnaliser le contenu
+                let personalizedContent = content
+                    .replace(/\{entreprise\}/g, p.entreprise || '')
+                    .replace(/\{contact\}/g, p.contact || '')
+                    .replace(/\{email\}/g, p.email || '');
+                
+                csv += `"${p.email}","${p.entreprise}","${p.contact || ''}","${subject}","${personalizedContent.replace(/"/g, '""').replace(/\n/g, ' ')}"\n`;
+            });
+            
+            // Télécharger le CSV
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `publipostage_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            
+            // Enregistrer dans l'historique
+            mailingHistory.unshift({ id: Date.now(), date: new Date().toISOString(), subject: subject + ' (export)', recipients: mailingRecipients.length, type: 'publipostage' });
+            localStorage.setItem('crm_mailing_history', JSON.stringify(mailingHistory));
+            
+            // Afficher les instructions
+            alert(`✅ Fichier CSV téléchargé avec ${mailingRecipients.length} contacts!\n\n📝 INSTRUCTIONS PUBLIPOSTAGE OUTLOOK:\n\n1. Ouvrez Word\n2. Onglet "Publipostage" → "Démarrer la fusion"\n3. Sélectionnez "Messages électroniques"\n4. "Sélection des destinataires" → "Utiliser fichier existant"\n5. Choisissez le fichier CSV téléchargé\n6. Rédigez votre email avec les champs de fusion\n7. "Terminer et fusionner" → "Envoyer des emails"`);
+            
+            closeModal('newMailingModal');
+            mailingRecipients = [];
+            document.getElementById('mailingRecipients').innerHTML = '';
+            document.getElementById('recipientCount').textContent = '0';
+            renderMailingHistory();
+        }
+
+        function renderMailingHistory() {
+            document.getElementById('mailingHistory').innerHTML = mailingHistory.length ? mailingHistory.slice(0, 10).map(m => `
+                <div style="display:flex;justify-content:space-between;padding:0.75rem;border-bottom:1px solid var(--gray-100);">
+                    <div><span class="badge ${m.type === 'email' ? 'badge-blue' : m.type === 'newsletter' ? 'badge-purple' : 'badge-gray'}">${m.type}</span> <strong>${m.subject}</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">${new Date(m.date).toLocaleString('fr-CH')}</span></div>
+                    <div><span class="badge badge-green">${m.recipients} dest.</span></div>
+                </div>
+            `).join('') : '<p style="color:var(--gray-400);padding:1rem;">Aucune campagne</p>';
+        }
+
+        function connectMailchimp() { const key = document.getElementById('mailchimpKey').value; if (!key) { alert('Entrez votre clé API'); return; } localStorage.setItem('crm_mailchimp', key); closeModal('mailchimpModal'); alert('✅ Mailchimp connecté!'); }
+
+        // ========== TEMPLATES ==========
+        function renderTemplates() {
+            document.getElementById('emailTemplates').innerHTML = templates.emails.map(t => `<div class="template-card" onclick="viewTemplate('emails',${t.id})"><h4>📧 ${t.name}</h4><p>${(t.subject || '').substring(0, 40)}...</p></div>`).join('');
+            document.getElementById('linkedinTemplates').innerHTML = templates.linkedin.map(t => `<div class="template-card" onclick="viewTemplate('linkedin',${t.id})"><h4>💼 ${t.name}</h4><p>${(t.content || '').substring(0, 50)}...</p></div>`).join('');
+            document.getElementById('newsletterTemplates').innerHTML = templates.newsletters.map(t => `<div class="template-card" onclick="viewTemplate('newsletters',${t.id})"><h4>📰 ${t.name}</h4><p>${(t.content || '').substring(0, 50)}...</p></div>`).join('');
+        }
+        function viewTemplate(type, id) { currentTplType = type; currentTplId = id; const t = templates[type].find(x => x.id === id); if (!t) return; document.getElementById('templateModalTitle').textContent = t.name; document.getElementById('tplName').value = t.name; document.getElementById('tplSubject').value = t.subject || ''; document.getElementById('tplContent').value = t.content; document.getElementById('tplSubjectGroup').style.display = type === 'emails' ? 'block' : 'none'; openModal('templateModal'); }
+        function saveTemplate() { if (!currentTplType || !currentTplId) return; const t = templates[currentTplType].find(x => x.id === currentTplId); t.name = document.getElementById('tplName').value; t.subject = document.getElementById('tplSubject').value; t.content = document.getElementById('tplContent').value; localStorage.setItem('crm_templates', JSON.stringify(templates)); renderTemplates(); populateMailingTemplates(); alert('✅ Enregistré!'); }
+        function copyTemplate() { navigator.clipboard.writeText(document.getElementById('tplContent').value); alert('📋 Copié!'); }
+        function deleteTemplate() { if (!confirm('Supprimer?')) return; templates[currentTplType] = templates[currentTplType].filter(t => t.id !== currentTplId); localStorage.setItem('crm_templates', JSON.stringify(templates)); closeModal('templateModal'); renderTemplates(); }
+        function createTemplate() { const type = document.getElementById('newTplType').value; const name = document.getElementById('newTplName').value; if (!name) { alert('Nom requis'); return; } templates[type].push({ id: Math.max(...templates[type].map(t => t.id), 0) + 1, name, subject: document.getElementById('newTplSubject').value, content: document.getElementById('newTplContent').value }); localStorage.setItem('crm_templates', JSON.stringify(templates)); closeModal('addTemplateModal'); renderTemplates(); populateMailingTemplates(); }
+
+        // ========== SAVE FUNCTIONS ==========
+        function saveProspect() {
+            const form = document.getElementById('prospectForm');
+            const fd = new FormData(form);
+            prospects.push({ id: prospects.length + 1, entreprise: fd.get('entreprise'), contact: fd.get('contact'), email: fd.get('email'), tel: fd.get('tel'), segment: fd.get('segment'), canton: fd.get('canton'), valeur: parseInt(fd.get('valeur')) || 25000, statut: 'Nouveau', score: 50, notes: fd.get('notes') ? [{ date: new Date().toLocaleDateString('fr-CH'), text: fd.get('notes') }] : [], communications: [] });
+            saveData(); closeModal('addProspectModal'); form.reset(); renderAll();
+        }
+
+        function saveTask() {
+            const form = document.getElementById('taskForm');
+            const fd = new FormData(form);
+            tasks.push({ id: tasks.length + 1, title: fd.get('title'), dueDate: fd.get('dueDate'), status: fd.get('status'), category: fd.get('category'), prospectId: document.getElementById('taskProspectId').value ? parseInt(document.getElementById('taskProspectId').value) : null });
+            saveData(); closeModal('addTaskModal'); form.reset(); document.getElementById('taskProspectSearch').value = ''; renderKanban();
+            if (fd.get('status') === 'urgent') addNotification('task', 'Nouvelle tâche urgente', fd.get('title'));
+        }
+
+        function saveEvent() {
+            const form = document.getElementById('eventForm');
+            const fd = new FormData(form);
+            const newEvent = { id: events.length + 1, title: fd.get('title'), date: fd.get('date'), time: fd.get('time'), duration: parseInt(fd.get('duration')) || 60, location: fd.get('location'), prospectId: document.getElementById('eventProspectId').value ? parseInt(document.getElementById('eventProspectId').value) : null };
+            events.push(newEvent);
+            saveData(); closeModal('addEventModal'); form.reset(); document.getElementById('eventProspectSearch').value = ''; renderCalendar();
+            addNotification('event', 'Nouveau RDV', `${fd.get('title')} - ${formatDate(fd.get('date'))}`);
+            
+            // Propose to download ICS
+            if (confirm('📅 RDV créé! Voulez-vous l\'ajouter à Outlook?')) { downloadICS(newEvent.id); }
+        }
+
+        function saveOffer() {
+            const pId = parseInt(document.getElementById('offerProspectId').value);
+            if (!pId) { alert('Sélectionnez un prospect'); return; }
+            offers.push({ id: offers.length + 1, offerNum: document.getElementById('offerNum').value, prospectId: pId, serviceType: document.getElementById('offerService').value, amount: parseInt(document.getElementById('offerAmount').value) || 0, createdDate: document.getElementById('offerCreatedDate').value, status: 'Brouillon' });
+            const p = prospects.find(x => x.id === pId);
+            if (p && p.statut === 'Qualifié') p.statut = 'Proposition';
+            saveData(); closeModal('addOfferModal'); document.getElementById('offerProspectSearch').value = ''; renderAll();
+        }
+
+        function saveProfile() {
+            profile.name = document.getElementById('profileName').value;
+            profile.email = document.getElementById('profileEmail').value;
+            profile.phone = document.getElementById('profilePhone').value;
+            localStorage.setItem('crm_profile', JSON.stringify(profile));
+            loadProfile(); closeModal('profileModal'); alert('✅ Profil enregistré!');
+        }
+
+        function saveData() {
+            localStorage.setItem('crm_prospects', JSON.stringify(prospects));
+            localStorage.setItem('crm_offers', JSON.stringify(offers));
+            localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+            localStorage.setItem('crm_events', JSON.stringify(events));
+        }
+
+        // ========== ACTIONS ==========
+        function updateProspectStatus(id, status) { const p = prospects.find(x => x.id === id); if (p) { p.statut = status; saveData(); renderAll(); } }
+        function addNote() { if (!selectedProspectId) return; const text = prompt('Note:'); if (!text) return; const p = prospects.find(x => x.id === selectedProspectId); if (!p.notes) p.notes = []; p.notes.unshift({ date: new Date().toLocaleDateString('fr-CH'), text }); saveData(); renderSidebarNotes(p); }
+        function addCommunication() {
+            if (!selectedProspectId) return;
+            const type = prompt('Type (email/linkedin/newsletter/autre):') || 'autre';
+            const subject = prompt('Sujet:');
+            if (!subject) return;
+            const p = prospects.find(x => x.id === selectedProspectId);
+            if (!p.communications) p.communications = [];
+            p.communications.unshift({ type, subject, date: new Date().toLocaleDateString('fr-CH') });
+            saveData(); renderSidebarComm(p);
+        }
+        function sendEmailTo(id) { const p = prospects.find(x => x.id === id); if (p) window.open('mailto:' + p.email); }
+        function callProspect(id) { const p = prospects.find(x => x.id === id); if (p && p.tel) window.open('tel:' + p.tel); }
+        function sendEmail() { const p = prospects.find(x => x.id === selectedProspectId); if (p) window.open('mailto:' + p.email); }
+        function makeCall() { const p = prospects.find(x => x.id === selectedProspectId); if (p && p.tel) window.open('tel:' + p.tel); }
+        function deleteProspect(id) { if (confirm('Supprimer?')) { prospects = prospects.filter(p => p.id !== id); saveData(); renderAll(); } }
+
+        // ========== IMPORT ==========
+        function handleFileSelect(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const text = ev.target.result.replace(/^\uFEFF/, '');
+                importedData = parseCSV(text);
+                if (importedData.length) { document.getElementById('importPreview').style.display = 'block'; document.getElementById('importPreview').innerHTML = `<div class="card"><strong>${file.name}</strong> — ${importedData.length} contacts</div>`; document.getElementById('btnImport').disabled = false; }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(l => l.trim()); if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            return lines.slice(1).map(line => { const vals = []; let cur = '', inQ = false; for (let c of line) { if (c === '"') inQ = !inQ; else if (c === ',' && !inQ) { vals.push(cur.trim()); cur = ''; } else cur += c; } vals.push(cur.trim()); const row = {}; headers.forEach((h, i) => row[h] = vals[i] || ''); return row.Email && row.Email.includes('@') ? row : null; }).filter(Boolean);
+        }
+
+        function processImport() {
+            if (!importedData.length) return;
+            let count = 0;
+            const emails = prospects.map(p => p.email.toLowerCase());
+            importedData.forEach(r => { if (emails.includes(r.Email.toLowerCase())) return; prospects.push({ id: prospects.length + 1, entreprise: r.Entreprise || '', contact: r.Contact || '', email: r.Email, tel: r.Telephone || '', segment: r.Segment || 'Autre', canton: r.Canton || '', valeur: parseInt(r.Valeur) || 25000, statut: 'Nouveau', score: 50, notes: [], communications: [] }); emails.push(r.Email.toLowerCase()); count++; });
+            saveData(); closeModal('importModal'); document.getElementById('importFile').value = ''; importedData = []; document.getElementById('btnImport').disabled = true; renderAll();
+            alert(`✅ ${count} contacts importés! Total: ${prospects.length}`);
+        }
+
+        function exportContacts() {
+            let csv = 'Entreprise,Contact,Email,Telephone,Segment,Canton,Valeur,Statut\n';
+            prospects.forEach(p => { csv += `"${p.entreprise}","${p.contact}","${p.email}","${p.tel}","${p.segment}","${p.canton}",${p.valeur},"${p.statut}"\n`; });
+            const a = document.createElement('a'); a.href = 'data:text/csv,' + encodeURIComponent(csv); a.download = 'export_contacts.csv'; a.click();
+        }
+
+        // ========== FILTERS ==========
+        function filterPipeline() { const q = document.getElementById('searchPipeline').value.toLowerCase(); const seg = document.getElementById('filterSegment').value; const stat = document.getElementById('filterStatus').value; document.querySelectorAll('#pipelineTable tr').forEach((row, i) => { const p = prospects[i]; if (!p) return; row.style.display = (p.entreprise.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)) && (seg === 'all' || p.segment === seg) && (stat === 'all' || p.statut === stat) ? '' : 'none'; }); }
+        function filterContacts() { const q = document.getElementById('searchContacts').value.toLowerCase(); document.querySelectorAll('#contactsTable tr').forEach((row, i) => { const p = prospects[i]; if (!p) return; row.style.display = (p.entreprise.toLowerCase().includes(q) || p.email.toLowerCase().includes(q) || (p.contact || '').toLowerCase().includes(q)) ? '' : 'none'; }); }
+
+        // ========== HELPERS ==========
+        function getStatusClass(s) { return { 'Nouveau': 'badge-blue', 'Contacté': 'badge-yellow', 'Qualifié': 'badge-green', 'Proposition': 'badge-orange', 'Négociation': 'badge-purple', 'Gagné': 'badge-green', 'Perdu': 'badge-red' }[s] || 'badge-gray'; }
+        function getOfferStatusClass(s) { return { 'Brouillon': 'badge-gray', 'Envoyée': 'badge-blue', 'En négociation': 'badge-purple', 'Acceptée': 'badge-green', 'Refusée': 'badge-red' }[s] || 'badge-gray'; }
+        function formatDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('fr-CH'); }
+    </script>
+</body>
+</html>
