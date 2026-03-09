@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Emch+Berger Revelio AG</title>
+    <style>
+        :root { --primary: #1e3a5f; --secondary: #3b82f6; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --purple: #8b5cf6; --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); }
+        .header { background: var(--primary); color: white; padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .header h1 { font-size: 1.125rem; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .header-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; position: relative; }
+        .badge-count { position: absolute; top: -4px; right: -4px; background: var(--danger); font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .user-menu { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.5rem; }
+        .avatar { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .nav { background: var(--primary); padding: 0 1.5rem; display: flex; gap: 0.25rem; border-top: 1px solid rgba(255,255,255,0.1); overflow-x: auto; }
+        .nav-tab { padding: 0.625rem 1rem; color: rgba(255,255,255,0.7); cursor: pointer; border: none; background: none; font-size: 0.8125rem; border-radius: 0.5rem 0.5rem 0 0; white-space: nowrap; }
+        .nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-tab.active { background: white; color: var(--primary); font-weight: 600; }
+        .main { padding: 1.5rem; max-width: 1700px; margin: 0 auto; padding-bottom: 4rem; }
+        .card { background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid var(--gray-200); margin-bottom: 1rem; }
+        .card-title { font-size: 0.9375rem; font-weight: 600; margin-bottom: 1rem; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .kpi-card { background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--gray-200); }
+        .kpi-card.blue { background: #eff6ff; border-color: #bfdbfe; }
+        .kpi-card.green { background: #f0fdf4; border-color: #bbf7d0; }
+        .kpi-card.yellow { background: #fefce8; border-color: #fef08a; }
+        .kpi-card.purple { background: #faf5ff; border-color: #e9d5ff; }
+        .kpi-label { font-size: 0.6875rem; color: var(--gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem; }
+        .kpi-value { font-size: 1.5rem; font-weight: 700; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--gray-50); padding: 0.75rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-500); font-weight: 600; border-bottom: 1px solid var(--gray-200); }
+        td { padding: 0.75rem; border-bottom: 1px solid var(--gray-100); font-size: 0.8125rem; }
+        tr:hover { background: var(--gray-50); }
+        .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 500; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-orange { background: #ffedd5; color: #9a3412; }
+        .badge-purple { background: #f3e8ff; color: #7c3aed; }
+        .badge-red { background: #fee2e2; color: #dc2626; }
+        .badge-gray { background: var(--gray-100); color: var(--gray-700); }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 0.375rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: white; color: var(--gray-700); border-color: var(--gray-300); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        .btn-icon { padding: 0.375rem; background: none; border: none; cursor: pointer; color: var(--gray-400); border-radius: 0.375rem; }
+        .btn-icon:hover { background: var(--gray-100); color: var(--gray-600); }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--gray-700); margin-bottom: 0.375rem; }
+        .form-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-input:focus { outline: none; border-color: var(--secondary); }
+        .form-select { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; background: white; }
+        .form-textarea { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: white; border-radius: 0.75rem; width: 100%; max-width: 600px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-lg { max-width: 800px; }
+        .modal-xl { max-width: 1000px; }
+        .modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-400); }
+        .modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 0.5rem; }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 90; display: none; }
+        .sidebar-overlay.open { display: block; }
+        .sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 380px; background: white; z-index: 100; transform: translateX(100%); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { padding: 1rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; background: var(--gray-50); }
+        .sidebar-body { padding: 1rem; overflow-y: auto; flex: 1; }
+        .sidebar-footer { padding: 1rem; border-top: 1px solid var(--gray-200); }
+        .dropdown { position: relative; }
+        .dropdown-menu { position: absolute; top: 100%; right: 0; margin-top: 0.5rem; background: white; border-radius: 0.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 200px; display: none; z-index: 60; }
+        .dropdown-menu.open { display: block; }
+        .dropdown-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-200); font-weight: 600; font-size: 0.875rem; display: flex; justify-content: space-between; align-items: center; }
+        .dropdown-item { padding: 0.5rem 1rem; cursor: pointer; font-size: 0.8125rem; border-bottom: 1px solid var(--gray-100); }
+        .dropdown-item:hover { background: var(--gray-50); }
+        .kanban-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .kanban-column { background: var(--gray-100); border-radius: 0.75rem; padding: 1rem; min-height: 220px; }
+        .kanban-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--secondary); font-weight: 600; font-size: 0.875rem; }
+        .kanban-count { background: var(--gray-200); padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; }
+        .kanban-card { background: white; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid var(--gray-200); cursor: pointer; font-size: 0.8125rem; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200); border-radius: 0.5rem; overflow: hidden; }
+        .calendar-header { background: var(--primary); color: white; padding: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; }
+        .calendar-day { background: white; min-height: 60px; padding: 0.25rem; font-size: 0.75rem; cursor: pointer; }
+        .calendar-day:hover { background: #eff6ff; }
+        .calendar-day.other-month { background: var(--gray-50); color: var(--gray-400); }
+        .calendar-day.today { background: #dbeafe; }
+        .calendar-day-num { font-weight: 600; margin-bottom: 0.25rem; }
+        .calendar-event { background: var(--secondary); color: white; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.5rem; margin-bottom: 0.125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .week-grid { display: grid; grid-template-columns: 40px repeat(7, 1fr); gap: 1px; background: var(--gray-200); border: 1px solid var(--gray-200); border-radius: 0.5rem; overflow: hidden; }
+        .week-header { background: var(--primary); color: white; padding: 0.25rem; text-align: center; font-size: 0.5625rem; font-weight: 600; }
+        .week-time { background: var(--gray-50); padding: 0.125rem; font-size: 0.5rem; color: var(--gray-500); text-align: right; }
+        .week-cell { background: white; min-height: 24px; cursor: pointer; position: relative; }
+        .week-cell:hover { background: #eff6ff; }
+        .week-event { position: absolute; left: 1px; right: 1px; top: 1px; background: var(--secondary); color: white; padding: 0.125rem; border-radius: 0.25rem; font-size: 0.4375rem; overflow: hidden; }
+        .chart-container { height: 140px; display: flex; align-items: flex-end; gap: 0.5rem; }
+        .chart-bar { flex: 1; background: var(--secondary); border-radius: 4px 4px 0 0; min-height: 4px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 0.25rem; }
+        .chart-bar-value { font-size: 0.5625rem; font-weight: 600; color: white; }
+        .chart-bar-label { font-size: 0.5rem; color: var(--gray-500); text-align: center; margin-top: 0.25rem; }
+        .progress-bar { background: var(--gray-200); border-radius: 9999px; height: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 9999px; }
+        .recipient-tag { display: inline-flex; align-items: center; gap: 0.25rem; background: var(--gray-100); padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; margin: 0.125rem; }
+        .recipient-tag button { background: none; border: none; cursor: pointer; color: var(--gray-400); font-size: 1rem; line-height: 1; }
+        .note-item { background: #fefce8; border-left: 3px solid #eab308; padding: 0.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.5rem; font-size: 0.8125rem; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--gray-200); padding: 0.5rem 1.5rem; display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--gray-500); z-index: 40; }
+        .storage-warning { position: fixed; top: 0; left: 0; right: 0; background: #fef3c7; border-bottom: 2px solid #f59e0b; padding: 0.75rem 1.5rem; z-index: 200; text-align: center; display: none; }
+        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } .kanban-board { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .grid-2, .grid-3 { grid-template-columns: 1fr; } .kanban-board { grid-template-columns: 1fr; } .sidebar { width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="storage-warning" id="storageWarning">⚠️ <strong>LocalStorage indisponible!</strong> Utilisez la sauvegarde JSON. <button class="btn btn-sm btn-primary" onclick="openModal('modalBackup')" style="margin-left:1rem;">💾 Sauvegarde</button></div>
+
+    <header class="header">
+        <h1>🎯 CRM Emch+Berger Revelio AG</h1>
+        <div class="header-right">
+            <button class="header-btn" onclick="openModal('modalBackup')" title="Sauvegarde">💾</button>
+            <div class="dropdown">
+                <button class="header-btn" onclick="toggleDropdown('notifDropdown')">🔔<span class="badge-count" id="notifCount" style="display:none;">0</span></button>
+                <div class="dropdown-menu" id="notifDropdown">
+                    <div class="dropdown-header"><span>Notifications</span><button class="btn btn-sm btn-secondary" onclick="markAllRead()">Tout lu</button></div>
+                    <div id="notifList"></div>
+                </div>
+            </div>
+            <div class="dropdown">
+                <div class="user-menu" onclick="toggleDropdown('userDropdown')">
+                    <div class="avatar" id="userAvatar">MW</div>
+                    <span style="font-size:0.8125rem;" id="userName">Michel W.</span>
+                </div>
+                <div class="dropdown-menu" id="userDropdown">
+                    <div class="dropdown-item" onclick="openModal('modalProfile');closeDropdowns();">👤 Profil</div>
+                    <div class="dropdown-item" onclick="openModal('modalMailchimp');closeDropdowns();">🐵 Mailchimp</div>
+                    <div class="dropdown-item" onclick="openModal('modalBackup');closeDropdowns();">💾 Sauvegarde</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="nav">
+        <button class="nav-tab active" onclick="showTab('dashboard',this)">📊 Dashboard</button>
+        <button class="nav-tab" onclick="showTab('pipeline',this)">🎯 Pipeline</button>
+        <button class="nav-tab" onclick="showTab('contacts',this)">👥 Contacts</button>
+        <button class="nav-tab" onclick="showTab('offers',this)">📋 Offres</button>
+        <button class="nav-tab" onclick="showTab('tasks',this)">✅ Tâches</button>
+        <button class="nav-tab" onclick="showTab('calendar',this)">📅 Calendrier</button>
+        <button class="nav-tab" onclick="showTab('mailing',this)">📧 Mailing</button>
+    </nav>
+    
+    <main class="main">
+        <section id="dashboard" class="section active">
+            <div class="kpi-grid">
+                <div class="kpi-card blue"><div class="kpi-label">Total</div><div class="kpi-value" id="kpiTotal">0</div></div>
+                <div class="kpi-card blue"><div class="kpi-label">Nouveaux</div><div class="kpi-value" id="kpiNew">0</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">Contactés</div><div class="kpi-value" id="kpiContact">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Qualifiés</div><div class="kpi-value" id="kpiQualified">0</div></div>
+                <div class="kpi-card purple"><div class="kpi-label">Potentiel</div><div class="kpi-value" id="kpiPotential">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Réalisé</div><div class="kpi-value" id="kpiRealized">0</div></div>
+            </div>
+            <div class="grid-2">
+                <div class="card"><div class="card-title">📊 Activité</div><div class="chart-container" id="weeklyChart"></div></div>
+                <div class="card"><div class="card-title">📈 Communications</div>
+                    <div class="grid-4" style="text-align:center;padding:1rem 0;">
+                        <div><div style="font-size:1.5rem;font-weight:700;color:var(--secondary);" id="statEmails">0</div><div style="font-size:0.75rem;color:var(--gray-500);">Emails</div></div>
+                        <div><div style="font-size:1.5rem;font-weight:700;color:var(--purple);" id="statNewsletter">0</div><div style="font-size:0.75rem;color:var(--gray-500);">Newsletter</div></div>
+                        <div><div style="font-size:1.5rem;font-weight:700;color:#0a66c2;" id="statLinkedin">0</div><div style="font-size:0.75rem;color:var(--gray-500);">LinkedIn</div></div>
+                        <div><div style="font-size:1.5rem;font-weight:700;color:var(--success);" id="statTotal">0</div><div style="font-size:0.75rem;color:var(--gray-500);">Total</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card"><div class="card-title">💰 Pipeline</div>
+                    <div style="margin-bottom:1rem;"><div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;"><span>Potentiel</span><span style="font-weight:600;" id="finPotential">0 CHF</span></div><div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--secondary);"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;"><span>Réalisé</span><span style="font-weight:600;color:var(--success);" id="finRealized">0 CHF</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--success);" id="finRealizedBar"></div></div></div>
+                </div>
+                <div class="card"><div class="card-title">⚠️ Tâches urgentes</div><div id="dashboardTasks"></div></div>
+            </div>
+        </section>
+        
+        <section id="pipeline" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <input type="text" id="searchPipeline" placeholder="🔍 Rechercher..." class="form-input" style="width:150px;" onkeyup="renderPipeline()">
+                    <select id="filterSegment" class="form-select" style="width:auto;" onchange="renderPipeline()"></select>
+                    <select id="filterStatus" class="form-select" style="width:auto;" onchange="renderPipeline()"></select>
+                </div>
+                <button class="btn btn-primary" onclick="openProspectModal()">+ Nouveau</button>
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;"><table><thead><tr><th>Entreprise</th><th>Contact</th><th>Statut</th><th>Segment</th><th>Canton</th><th>PL/VL</th><th>Offre TTC</th><th>Commande TTC</th><th>Actions</th></tr></thead><tbody id="pipelineTable"></tbody></table></div>
+        </section>
+        
+        <section id="contacts" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                    <h2 style="font-size:1rem;">👥 Contacts</h2>
+                    <input type="text" id="searchContacts" placeholder="🔍 Rechercher..." class="form-input" style="width:140px;" onkeyup="renderContacts()">
+                    <select id="filterContactSegment" class="form-select" style="width:auto;" onchange="renderContacts()"><option value="">Segments</option></select>
+                    <select id="filterContactCanton" class="form-select" style="width:auto;" onchange="renderContacts()"><option value="">Tous</option></select>
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <button class="btn btn-secondary" onclick="openModal('modalImport')">📥 Import</button>
+                    <button class="btn btn-secondary" onclick="exportContacts()">📤 Export</button>
+                    <button class="btn btn-secondary" onclick="downloadTemplate()">📄 Template</button>
+                    <button class="btn btn-primary" onclick="openProspectModal()">+ Ajouter</button>
+                </div>
+            </div>
+            <div id="bulkActions" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.5rem;padding:0.75rem;margin-bottom:1rem;">
+                <span id="selectedCount" style="font-weight:600;margin-right:1rem;">0 sélectionné(s)</span>
+                <button class="btn btn-sm btn-secondary" onclick="exportSelectedContacts()">📤 Export CSV</button>
+                <button class="btn btn-sm btn-secondary" onclick="bulkMailing()">📧 Mailing</button>
+                <button class="btn btn-sm btn-secondary" onclick="bulkTask()">✅ Tâche</button>
+                <button class="btn btn-sm btn-danger" onclick="bulkDelete()">🗑️ Supprimer</button>
+                <button class="btn btn-sm" onclick="clearSelection()" style="margin-left:0.5rem;">✕ Annuler</button>
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;"><table><thead><tr><th style="width:30px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th><th>Entreprise</th><th>Contact</th><th>Email</th><th>Téléphone</th><th>Commune</th><th>Canton</th><th>Segment</th><th>Actions</th></tr></thead><tbody id="contactsTable"></tbody></table></div>
+        </section>
+        
+        <section id="offers" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;"><h2 style="font-size:1rem;">📋 Offres</h2><button class="btn btn-primary" onclick="openOfferModal()">+ Offre</button></div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="kpi-card blue"><div class="kpi-label">Total</div><div class="kpi-value" id="offersTotal">0</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">En attente</div><div class="kpi-value" id="offersPending">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Gagnées</div><div class="kpi-value" id="offersWon">0</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Valeur</div><div class="kpi-value" id="offersValue">0</div></div>
+            </div>
+            <div class="card" style="padding:0;overflow-x:auto;"><table><thead><tr><th>N°</th><th>Entreprise</th><th>Prestation</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="offersTable"></tbody></table></div>
+        </section>
+        
+        <section id="tasks" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;"><h2 style="font-size:1rem;">✅ Tâches</h2><button class="btn btn-primary" onclick="openTaskModal()">+ Tâche</button></div>
+            <div class="kanban-board">
+                <div class="kanban-column"><div class="kanban-header">📋 À Faire <span class="kanban-count" id="countTodo">0</span></div><div id="tasksTodo"></div></div>
+                <div class="kanban-column"><div class="kanban-header" style="border-color:var(--warning);">🔄 En Cours <span class="kanban-count" id="countInProgress">0</span></div><div id="tasksInProgress"></div></div>
+                <div class="kanban-column"><div class="kanban-header" style="border-color:var(--danger);">🔴 Urgent <span class="kanban-count" id="countUrgent">0</span></div><div id="tasksUrgent"></div></div>
+                <div class="kanban-column"><div class="kanban-header" style="border-color:var(--success);">✅ Terminé <span class="kanban-count" id="countDone">0</span></div><div id="tasksDone"></div></div>
+            </div>
+        </section>
+        
+        <section id="calendar" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                <div style="display:flex;align-items:center;gap:0.5rem;"><h2 style="font-size:1rem;">📅</h2><button class="btn btn-sm" id="btnCalMonth" onclick="setCalView('month')" style="background:var(--primary);color:white;">Mois</button><button class="btn btn-sm btn-secondary" id="btnCalWeek" onclick="setCalView('week')">Semaine</button></div>
+                <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <button class="btn btn-secondary btn-sm" onclick="calPrev()">◀</button>
+                    <span id="calTitle" style="font-weight:600;min-width:110px;text-align:center;">-</span>
+                    <button class="btn btn-secondary btn-sm" onclick="calNext()">▶</button>
+                    <button class="btn btn-secondary btn-sm" onclick="calToday()">Aujourd'hui</button>
+                    <button class="btn btn-primary" onclick="openEventModal()">+ RDV</button>
+                </div>
+            </div>
+            <div class="card" id="calendarContainer"></div>
+        </section>
+        
+        <section id="mailing" class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;"><h2 style="font-size:1rem;">📧 Mailing</h2><div id="mailchimpStatus"><span class="badge badge-gray">Non connecté</span></div></div>
+            <div class="grid-3">
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="openMailingModal('email')"><div style="font-size:2rem;">📧</div><h4>Email</h4></div>
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="openMailingModal('newsletter')"><div style="font-size:2rem;">📰</div><h4>Newsletter</h4></div>
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="openMailingModal('linkedin')"><div style="font-size:2rem;">💼</div><h4>LinkedIn</h4></div>
+            </div>
+            <div class="card"><div class="card-title">📊 Historique</div><div id="mailingHistory"></div></div>
+        </section>
+    </main>
+    
+    <footer class="footer"><span>CRM Emch+Berger Revelio AG</span><span id="dataStatus"></span><span>v4.2</span></footer>
+    
+    <!-- MODALS -->
+    <div class="modal-overlay" id="modalBackup">
+        <div class="modal">
+            <div class="modal-header"><h3>💾 Sauvegarde / Restauration</h3><button class="modal-close" onclick="closeModal('modalBackup')">&times;</button></div>
+            <div class="modal-body">
+                <div class="card" style="background:#fef3c7;border-color:var(--warning);margin-bottom:1rem;padding:0.75rem;">
+                    <p style="font-size:0.8125rem;">⚠️ Si vous ouvrez ce fichier en local (file://), utilisez la sauvegarde JSON pour ne pas perdre vos données.</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📥 Exporter les données</label>
+                    <button class="btn btn-primary" onclick="exportBackup()" style="width:100%;">Télécharger sauvegarde JSON</button>
+                </div>
+                <div class="form-group" style="margin-top:1.5rem;">
+                    <label class="form-label">📤 Importer les données</label>
+                    <input type="file" id="backupFile" accept=".json" style="display:none;" onchange="importBackup(this)">
+                    <button class="btn btn-secondary" onclick="document.getElementById('backupFile').click()" style="width:100%;">Choisir fichier JSON</button>
+                </div>
+                <div id="backupStatus" style="margin-top:1rem;"></div>
+                <div class="form-group" style="margin-top:1.5rem;border-top:1px solid var(--gray-200);padding-top:1rem;">
+                    <label class="form-label">🔧 Outils</label>
+                    <button class="btn btn-danger" onclick="resetAllValues()" style="width:100%;margin-bottom:0.5rem;">Remettre toutes les valeurs à 0</button>
+                    <button class="btn btn-secondary" onclick="fixCantons()" style="width:100%;">🔧 Réparer les cantons manquants</button>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modalBackup')">Fermer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalProspect">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h3 id="prospectModalTitle">Contact</h3><button class="modal-close" onclick="closeModal('modalProspect')">&times;</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="prospectId">
+                <div class="form-row"><div class="form-group"><label class="form-label">Entreprise *</label><input type="text" class="form-input" id="prospectEntreprise"></div><div class="form-group"><label class="form-label">Contact</label><input type="text" class="form-input" id="prospectContact"></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="prospectEmail"></div><div class="form-group"><label class="form-label">Site web</label><input type="url" class="form-input" id="prospectWebsite" placeholder="https://"></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Téléphone fixe</label><input type="tel" class="form-input" id="prospectTel"></div><div class="form-group"><label class="form-label">Mobile</label><input type="tel" class="form-input" id="prospectMobile"></div></div>
+                <div class="form-group"><label class="form-label">Adresse</label><input type="text" class="form-input" id="prospectAdresse" placeholder="Rue et numéro"></div>
+                <div class="form-row-3"><div class="form-group"><label class="form-label">NPA</label><input type="text" class="form-input" id="prospectNPA" placeholder="1000"></div><div class="form-group"><label class="form-label">Commune</label><input type="text" class="form-input" id="prospectCommune"></div><div class="form-group"><label class="form-label">Canton</label><select class="form-select" id="prospectCanton"><option value="">-</option><option>AG</option><option>AI</option><option>AR</option><option>BE</option><option>BL</option><option>BS</option><option>FR</option><option>GE</option><option>GL</option><option>GR</option><option>JU</option><option>LU</option><option>NE</option><option>NW</option><option>OW</option><option>SG</option><option>SH</option><option>SO</option><option>SZ</option><option>TG</option><option>TI</option><option>UR</option><option>VD</option><option>VS</option><option>ZG</option><option>ZH</option></select></div></div>
+                <div class="form-row-3"><div class="form-group"><label class="form-label">Segment</label><select class="form-select" id="prospectSegment"><option>Architecte</option><option>Promoteur</option><option>STEP</option><option>Distribution</option><option>Transport</option><option selected>Autre</option></select></div><div class="form-group"><label class="form-label">Statut</label><select class="form-select" id="prospectStatut"><option>Nouveau</option><option>Contacté</option><option>Qualifié</option><option>Proposition</option><option>Négociation</option><option>Gagné</option><option>Perdu</option></select></div><div class="form-group"><label class="form-label">PL / VL</label><div class="form-row"><input type="text" class="form-input" id="prospectPL" placeholder="PL" style="width:48%;"><input type="text" class="form-input" id="prospectVL" placeholder="VL" style="width:48%;"></div></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Montant offre TTC (CHF)</label><input type="number" class="form-input" id="prospectMontantOffre" value="0.00"></div><div class="form-group"><label class="form-label">Montant commande TTC (CHF)</label><input type="number" class="form-input" id="prospectMontantCommande" value="0.00"></div></div>
+                <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="prospectNotes"></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" id="btnDeleteProspect" onclick="deleteProspect()" style="margin-right:auto;display:none;">🗑️</button><button class="btn btn-secondary" onclick="closeModal('modalProspect')">Annuler</button><button class="btn btn-primary" onclick="saveProspect()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalTask">
+        <div class="modal">
+            <div class="modal-header"><h3 id="taskModalTitle">Tâche</h3><button class="modal-close" onclick="closeModal('modalTask')">&times;</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="taskId">
+                <div class="form-group"><label class="form-label">Titre *</label><input type="text" class="form-input" id="taskTitle"></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Échéance</label><input type="date" class="form-input" id="taskDate"></div><div class="form-group"><label class="form-label">Statut</label><select class="form-select" id="taskStatus"><option value="todo">À Faire</option><option value="inprogress">En Cours</option><option value="urgent">Urgent</option><option value="done">Terminé</option></select></div></div>
+                <div class="form-group"><label class="form-label">Prospect</label><select class="form-select" id="taskProspect"><option value="">-- Aucun --</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" id="btnDeleteTask" onclick="deleteTask()" style="margin-right:auto;display:none;">🗑️</button><button class="btn btn-secondary" onclick="closeModal('modalTask')">Annuler</button><button class="btn btn-primary" onclick="saveTask()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalEvent">
+        <div class="modal">
+            <div class="modal-header"><h3 id="eventModalTitle">RDV</h3><button class="modal-close" onclick="closeModal('modalEvent')">&times;</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="eventId">
+                <div class="form-group"><label class="form-label">Titre *</label><input type="text" class="form-input" id="eventTitle"></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="eventDate"></div><div class="form-group"><label class="form-label">Heure</label><input type="time" class="form-input" id="eventTime"></div></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Durée (min)</label><input type="number" class="form-input" id="eventDuration" value="60"></div><div class="form-group"><label class="form-label">Lieu</label><input type="text" class="form-input" id="eventLocation"></div></div>
+                <div class="form-group"><label class="form-label">Prospect</label><select class="form-select" id="eventProspect"><option value="">-- Aucun --</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" id="btnDeleteEvent" onclick="deleteEvent()" style="margin-right:auto;display:none;">🗑️</button><button class="btn btn-secondary" id="btnExportICS" onclick="exportICS()" style="display:none;">📥 ICS</button><button class="btn btn-secondary" onclick="closeModal('modalEvent')">Annuler</button><button class="btn btn-primary" onclick="saveEvent()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalOffer">
+        <div class="modal">
+            <div class="modal-header"><h3 id="offerModalTitle">Offre</h3><button class="modal-close" onclick="closeModal('modalOffer')">&times;</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="offerId">
+                <div class="form-row"><div class="form-group"><label class="form-label">N° Offre</label><input type="text" class="form-input" id="offerNum" readonly></div><div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="offerDate"></div></div>
+                <div class="form-group"><label class="form-label">Prospect *</label><select class="form-select" id="offerProspect"><option value="">-- Choisir --</option></select></div>
+                <div class="form-row"><div class="form-group"><label class="form-label">Prestation</label><select class="form-select" id="offerService"><option>Étude faisabilité</option><option>Conception PV</option><option>Suivi chantier</option><option>Audit énergétique</option><option>Projet clé en main</option></select></div><div class="form-group"><label class="form-label">Montant CHF</label><input type="number" class="form-input" id="offerAmount" value="0.00"></div></div>
+                <div class="form-group"><label class="form-label">Statut</label><select class="form-select" id="offerStatus"><option>Brouillon</option><option>Envoyée</option><option>En négociation</option><option>Acceptée</option><option>Refusée</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-danger" id="btnDeleteOffer" onclick="deleteOffer()" style="margin-right:auto;display:none;">🗑️</button><button class="btn btn-secondary" onclick="closeModal('modalOffer')">Annuler</button><button class="btn btn-primary" onclick="saveOffer()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalImport">
+        <div class="modal">
+            <div class="modal-header"><h3>📥 Importer CSV</h3><button class="modal-close" onclick="closeModal('modalImport')">&times;</button></div>
+            <div class="modal-body">
+                <div style="text-align:center;padding:2rem;border:2px dashed var(--gray-300);border-radius:0.5rem;">
+                    <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="handleFileSelect(this)">
+                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📄 Choisir CSV</button>
+                    <p style="margin-top:1rem;font-size:0.75rem;color:var(--gray-500);">Format: Entreprise,Contact,Email,Telephone,Segment,Canton,Valeur</p>
+                </div>
+                <div id="importPreview" style="margin-top:1rem;"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modalImport')">Annuler</button><button class="btn btn-success" id="btnProcessImport" onclick="processImport()" disabled>Importer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalMailing">
+        <div class="modal modal-xl">
+            <div class="modal-header"><h3 id="mailingModalTitle">📧 Mailing</h3><button class="modal-close" onclick="closeModal('modalMailing')">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Destinataires</label>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;flex-wrap:wrap;">
+                        <select class="form-select" id="mailingSegment" style="width:auto;"><option value="">Segment</option><option>Architecte</option><option>Promoteur</option><option>STEP</option><option>Distribution</option><option>Transport</option><option>Autre</option></select>
+                        <button class="btn btn-sm btn-secondary" onclick="addSegmentToMailing()">+ Segment</button>
+                        <button class="btn btn-sm btn-secondary" onclick="addAllToMailing()">+ Tous</button>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;"><input type="text" class="form-input" id="mailingSearch" placeholder="🔍 Rechercher..." style="flex:1;"><button class="btn btn-sm btn-primary" onclick="addMailingContact()">Ajouter</button></div>
+                    <div id="mailingRecipients" style="border:1px solid var(--gray-200);border-radius:0.5rem;padding:0.5rem;min-height:40px;max-height:80px;overflow-y:auto;"></div>
+                    <p style="font-size:0.75rem;color:var(--gray-500);"><span id="recipientCount">0</span> destinataires</p>
+                </div>
+                <div class="form-group"><label class="form-label">Objet</label><input type="text" class="form-input" id="mailingSubject"></div>
+                <div class="form-group"><label class="form-label">Contenu</label><textarea class="form-textarea" id="mailingContent" style="min-height:80px;"></textarea><p style="font-size:0.75rem;color:var(--gray-500);">Variables: {entreprise}, {contact}, {email}</p></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modalMailing')">Annuler</button><button class="btn btn-secondary" onclick="exportMailMerge()">📊 CSV</button><button class="btn btn-primary" onclick="startSequentialSend()">📧 Envoyer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalSequential">
+        <div class="modal modal-lg">
+            <div class="modal-header"><h3>📧 Envoi - <span id="seqProgress">0/0</span></h3><button class="modal-close" onclick="closeSequential()">&times;</button></div>
+            <div class="modal-body">
+                <div class="card" style="background:#f0fdf4;border-color:var(--success);margin-bottom:1rem;padding:0.75rem;"><strong id="seqCompany">-</strong><br><span style="color:var(--gray-500);" id="seqEmail">-</span></div>
+                <div class="form-group"><label class="form-label">Objet</label><input type="text" class="form-input" id="seqSubject" readonly></div>
+                <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="seqContent" style="min-height:80px;"></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeSequential()">Terminer</button><button class="btn btn-secondary" onclick="skipCurrent()">⏭️ Passer</button><button class="btn btn-success" onclick="sendCurrentAndNext()">📤 Envoyer</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalMailchimp">
+        <div class="modal">
+            <div class="modal-header"><h3>🐵 Mailchimp</h3><button class="modal-close" onclick="closeModal('modalMailchimp')">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Clé API</label><input type="text" class="form-input" id="mailchimpKey" placeholder="xxxxxxxx-us21"></div>
+                <div class="card" style="background:#fff3e6;border-color:var(--warning);padding:0.75rem;"><p style="font-size:0.75rem;"><strong>Procédure:</strong> mailchimp.com → Profil → Extras → API keys → Create</p></div>
+                <div id="mailchimpConnectionStatus" style="margin-top:1rem;"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modalMailchimp')">Fermer</button><button class="btn btn-primary" onclick="connectMailchimp()">Connecter</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalProfile">
+        <div class="modal">
+            <div class="modal-header"><h3>👤 Profil</h3><button class="modal-close" onclick="closeModal('modalProfile')">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="profileName"></div>
+                <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="profileEmail"></div>
+                <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-input" id="profilePhone"></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modalProfile')">Annuler</button><button class="btn btn-primary" onclick="saveProfile()">Enregistrer</button></div>
+        </div>
+    </div>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"><h3 id="sidebarTitle">Contact</h3><button class="modal-close" onclick="closeSidebar()">&times;</button></div>
+        <div class="sidebar-body" id="sidebarContent"></div>
+        <div class="sidebar-footer"><div style="display:flex;gap:0.5rem;"><button class="btn btn-secondary" style="flex:1;" onclick="editCurrentContact()">✏️</button><button class="btn btn-primary" style="flex:1;" id="btnSidebarEmail">✉️</button><button class="btn btn-success" style="flex:1;" id="btnSidebarCall">📞</button></div></div>
+    </div>
+
+<script>
+var storageAvailable = true;
+var prospects = [];
+var offers = [];
+var tasks = [];
+var events = [];
+var notifications = [];
+var mailingHistory = [];
+var profile = {name:'Michel Woupeyi',email:'m.woupeyi@revelio.ch',phone:'+41 79 932 62 01'};
+var mailchimpConfig = {key:'',connected:false};
+var currentProspectId = null;
+var calendarDate = new Date();
+var calendarView = 'month';
+var mailingRecipients = [];
+var seqRecipients = [];
+var seqIndex = 0;
+var seqSubjectText = '';
+var seqTemplate = '';
+var importedData = [];
+var selectedContacts = [];
+
+function checkStorage() {
+    try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
+function loadData() {
+    if (storageAvailable) {
+        try {
+            prospects = JSON.parse(localStorage.getItem('crm_prospects')) || [];
+            offers = JSON.parse(localStorage.getItem('crm_offers')) || [];
+            tasks = JSON.parse(localStorage.getItem('crm_tasks')) || [];
+            events = JSON.parse(localStorage.getItem('crm_events')) || [];
+            notifications = JSON.parse(localStorage.getItem('crm_notifications')) || [];
+            mailingHistory = JSON.parse(localStorage.getItem('crm_mailing_history')) || [];
+            profile = JSON.parse(localStorage.getItem('crm_profile')) || profile;
+            mailchimpConfig = JSON.parse(localStorage.getItem('crm_mailchimp')) || mailchimpConfig;
+        } catch(e) {
+            console.error('Erreur chargement:', e);
+        }
+    }
+}
+
+function saveData() {
+    if (storageAvailable) {
+        try {
+            localStorage.setItem('crm_prospects', JSON.stringify(prospects));
+            localStorage.setItem('crm_offers', JSON.stringify(offers));
+            localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+            localStorage.setItem('crm_events', JSON.stringify(events));
+            localStorage.setItem('crm_notifications', JSON.stringify(notifications));
+            localStorage.setItem('crm_mailing_history', JSON.stringify(mailingHistory));
+            localStorage.setItem('crm_profile', JSON.stringify(profile));
+            localStorage.setItem('crm_mailchimp', JSON.stringify(mailchimpConfig));
+            updateDataStatus();
+        } catch(e) {
+            console.error('Erreur sauvegarde:', e);
+        }
+    }
+}
+
+function updateDataStatus() {
+    var el = document.getElementById('dataStatus');
+    if (el) el.textContent = prospects.length + ' contacts • ' + new Date().toLocaleTimeString('fr-CH');
+}
+
+function exportBackup() {
+    var data = {
+        version: '4.2',
+        date: new Date().toISOString(),
+        prospects: prospects,
+        offers: offers,
+        tasks: tasks,
+        events: events,
+        notifications: notifications,
+        mailingHistory: mailingHistory,
+        profile: profile,
+        mailchimpConfig: mailchimpConfig
+    };
+    var json = JSON.stringify(data, null, 2);
+    var a = document.createElement('a');
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+    a.download = 'crm_backup_' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    document.getElementById('backupStatus').innerHTML = '<div style="background:#f0fdf4;border:1px solid var(--success);padding:0.75rem;border-radius:0.5rem;">✅ Sauvegarde téléchargée!</div>';
+}
+
+function importBackup(input) {
+    var file = input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            if (data.prospects) prospects = data.prospects;
+            if (data.offers) offers = data.offers;
+            if (data.tasks) tasks = data.tasks;
+            if (data.events) events = data.events;
+            if (data.notifications) notifications = data.notifications;
+            if (data.mailingHistory) mailingHistory = data.mailingHistory;
+            if (data.profile) profile = data.profile;
+            if (data.mailchimpConfig) mailchimpConfig = data.mailchimpConfig;
+            saveData();
+            loadProfile();
+            renderAll();
+            document.getElementById('backupStatus').innerHTML = '<div style="background:#f0fdf4;border:1px solid var(--success);padding:0.75rem;border-radius:0.5rem;">✅ ' + prospects.length + ' contacts restaurés!</div>';
+        } catch(err) {
+            document.getElementById('backupStatus').innerHTML = '<div style="background:#fee2e2;border:1px solid var(--danger);padding:0.75rem;border-radius:0.5rem;">❌ Fichier invalide</div>';
+        }
+    };
+    reader.readAsText(file);
+}
+
+window.onload = function() {
+    storageAvailable = checkStorage();
+    if (!storageAvailable) {
+        document.getElementById('storageWarning').style.display = 'block';
+        document.body.style.paddingTop = '50px';
+    }
+    loadData();
+    loadProfile();
+    renderAll();
+    updateDataStatus();
+};
+
+function loadProfile() {
+    document.getElementById('userName').textContent = profile.name.split(' ')[0];
+    document.getElementById('userAvatar').textContent = profile.name.split(' ').map(function(n){return n[0];}).join('').substring(0,2);
+    document.getElementById('profileName').value = profile.name;
+    document.getElementById('profileEmail').value = profile.email;
+    document.getElementById('profilePhone').value = profile.phone;
+    document.getElementById('mailchimpKey').value = mailchimpConfig.key || '';
+    updateMailchimpStatus();
+}
+
+function resetAllValues() {
+    if (!confirm('⚠️ Remettre TOUTES les valeurs des prospects et offres à 0 ?')) return;
+    for (var i = 0; i < prospects.length; i++) {
+        prospects[i].montantOffre = 0;
+        prospects[i].montantCommande = 0;
+    }
+    for (var i = 0; i < offers.length; i++) {
+        offers[i].amount = 0;
+    }
+    saveData();
+    renderAll();
+    document.getElementById('backupStatus').innerHTML = '<div style="background:#f0fdf4;border:1px solid var(--success);padding:0.75rem;border-radius:0.5rem;">✅ Toutes les valeurs remises à 0 !</div>';
+}
+
+function fixCantons() {
+    var fixed = 0;
+    for (var i = 0; i < prospects.length; i++) {
+        var p = prospects[i];
+        // Chercher le canton sous différents noms possibles
+        var cantonValue = p.canton || p.Canton || p.CANTON || p['Canton '] || p[' Canton'] || '';
+        // Nettoyer les espaces
+        cantonValue = cantonValue.toString().trim().toUpperCase();
+        // Valider les cantons suisses
+        var validCantons = ['VD','GE','VS','FR','NE','JU','BE','ZH','BS','BL','AG','SO','LU','ZG','SZ','OW','NW','UR','GL','SH','AR','AI','SG','GR','TG','TI'];
+        if (validCantons.indexOf(cantonValue) >= 0) {
+            if (p.canton !== cantonValue) {
+                p.canton = cantonValue;
+                fixed++;
+            }
+        } else if (!p.canton && cantonValue) {
+            p.canton = cantonValue;
+            fixed++;
+        }
+    }
+    saveData();
+    renderAll();
+    document.getElementById('backupStatus').innerHTML = '<div style="background:#f0fdf4;border:1px solid var(--success);padding:0.75rem;border-radius:0.5rem;">✅ ' + fixed + ' canton(s) corrigé(s) !</div>';
+}
+
+function showTab(id, btn) {
+    var tabs = document.querySelectorAll('.nav-tab');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    var sections = document.querySelectorAll('.section');
+    for (var i = 0; i < sections.length; i++) sections[i].classList.remove('active');
+    btn.classList.add('active');
+    document.getElementById(id).classList.add('active');
+    closeDropdowns();
+}
+
+function toggleDropdown(id) {
+    var dd = document.getElementById(id);
+    var isOpen = dd.classList.contains('open');
+    closeDropdowns();
+    if (!isOpen) dd.classList.add('open');
+}
+function closeDropdowns() {
+    var dds = document.querySelectorAll('.dropdown-menu');
+    for (var i = 0; i < dds.length; i++) dds[i].classList.remove('open');
+}
+document.onclick = function(e) { if (!e.target.closest('.dropdown')) closeDropdowns(); };
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function renderAll() {
+    renderKPIs();
+    renderDashboard();
+    renderPipeline();
+    renderContacts();
+    renderOffers();
+    renderKanban();
+    renderCalendar();
+    renderNotifications();
+    renderMailingHistory();
+    populateSelects();
+}
+
+function renderKPIs() {
+    document.getElementById('kpiTotal').textContent = prospects.length;
+    var n=0,c=0,q=0,pot=0,real=0;
+    for(var i=0;i<prospects.length;i++){var p=prospects[i];if(p.statut==='Nouveau')n++;if(p.statut==='Contacté')c++;if(p.statut==='Qualifié')q++;pot+=parseFloat(p.montantOffre)||0;if(p.statut==='Gagné')real+=parseFloat(p.montantCommande)||0;}
+    document.getElementById('kpiNew').textContent=n;document.getElementById('kpiContact').textContent=c;document.getElementById('kpiQualified').textContent=q;
+    document.getElementById('kpiPotential').textContent=Math.round(pot/1000)+'K';document.getElementById('kpiRealized').textContent=Math.round(real/1000)+'K';
+    document.getElementById('finPotential').textContent=pot.toLocaleString('fr-CH')+' CHF';document.getElementById('finRealized').textContent=real.toLocaleString('fr-CH')+' CHF';
+    document.getElementById('finRealizedBar').style.width=(pot>0?(real/pot*100):0)+'%';
+    var ot=offers.length,op=0,ow=0,ov=0;for(var i=0;i<offers.length;i++){var o=offers[i];if(o.status==='Envoyée'||o.status==='En négociation')op++;if(o.status==='Acceptée'){ow++;ov+=parseFloat(o.amount)||0;}}
+    document.getElementById('offersTotal').textContent=ot;document.getElementById('offersPending').textContent=op;document.getElementById('offersWon').textContent=ow;document.getElementById('offersValue').textContent=Math.round(ov/1000)+'K';
+}
+
+function renderDashboard() {
+    var days=['L','M','M','J','V','S','D'];var today=new Date();var ws=new Date(today);ws.setDate(today.getDate()-today.getDay()+1);var data=[];
+    for(var i=0;i<7;i++){var d=new Date(ws);d.setDate(ws.getDate()+i);var ds=d.toISOString().split('T')[0];var cnt=tasks.filter(function(t){return t.dueDate===ds;}).length+events.filter(function(e){return e.date===ds;}).length;data.push({day:days[i],count:cnt});}
+    var max=1;for(var i=0;i<data.length;i++)if(data[i].count>max)max=data[i].count;
+    document.getElementById('weeklyChart').innerHTML=data.map(function(d){return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="flex:1;width:100%;display:flex;align-items:flex-end;"><div class="chart-bar" style="width:100%;height:'+(d.count/max*120)+'px;">'+(d.count>0?'<span class="chart-bar-value">'+d.count+'</span>':'')+'</div></div><div class="chart-bar-label">'+d.day+'</div></div>';}).join('');
+    var tm=new Date().toISOString().slice(0,7);var mh=mailingHistory.filter(function(h){return h.date&&h.date.indexOf(tm)===0;});var se=0,sn=0,sl=0;
+    for(var i=0;i<mh.length;i++){if(mh[i].type.indexOf('email')>=0)se+=mh[i].recipients;if(mh[i].type==='newsletter')sn+=mh[i].recipients;if(mh[i].type==='linkedin')sl+=mh[i].recipients;}
+    document.getElementById('statEmails').textContent=se;document.getElementById('statNewsletter').textContent=sn;document.getElementById('statLinkedin').textContent=sl;document.getElementById('statTotal').textContent=se+sn+sl;
+    var urgent=tasks.filter(function(t){return t.status==='urgent';}).slice(0,3);
+    document.getElementById('dashboardTasks').innerHTML=urgent.length?urgent.map(function(t){return '<div class="kanban-card" onclick="openTaskModal('+t.id+')"><strong>'+t.title+'</strong></div>';}).join(''):'<p style="color:var(--gray-400);">Aucune</p>';
+}
+
+function renderPipeline() {
+    var seg=document.getElementById('filterSegment').value;var stat=document.getElementById('filterStatus').value;var q=document.getElementById('searchPipeline').value.toLowerCase();
+    var filtered=prospects.filter(function(p){return (!seg||p.segment===seg)&&(!stat||p.statut===stat)&&(!q||p.entreprise.toLowerCase().indexOf(q)>=0||p.email.toLowerCase().indexOf(q)>=0);});
+    var statuts=['Nouveau','Contacté','Qualifié','Proposition','Négociation','Gagné','Perdu'];
+    document.getElementById('pipelineTable').innerHTML=filtered.map(function(p){
+        var statusOptions=statuts.map(function(s){return '<option value="'+s+'"'+(p.statut===s?' selected':'')+'>'+s+'</option>';}).join('');
+        return '<tr style="cursor:pointer;" onclick="openSidebar('+p.id+')"><td><strong>'+p.entreprise+'</strong><br><span style="color:var(--gray-400);font-size:0.7rem;">'+p.email+'</span></td><td>'+(p.contact||'-')+'</td><td onclick="event.stopPropagation();"><select class="form-select" style="padding:0.2rem;font-size:0.75rem;width:auto;" onchange="updateProspectStatus('+p.id+',this.value)">'+statusOptions+'</select></td><td><span class="badge badge-gray">'+(p.segment||'-')+'</span></td><td>'+(p.canton||'-')+'</td><td style="font-size:0.75rem;">'+(p.pl||'-')+' / '+(p.vl||'-')+'</td><td><input type="number" class="form-input" style="width:80px;padding:0.2rem;" value="'+(parseFloat(p.montantOffre)||0).toFixed(2)+'" onclick="event.stopPropagation();" onchange="updateProspectMontantOffre('+p.id+',this.value)"></td><td><input type="number" class="form-input" style="width:80px;padding:0.2rem;" value="'+(parseFloat(p.montantCommande)||0).toFixed(2)+'" onclick="event.stopPropagation();" onchange="updateProspectMontantCommande('+p.id+',this.value)"></td><td onclick="event.stopPropagation();"><button class="btn-icon" onclick="openProspectModal('+p.id+')">✏️</button></td></tr>';
+    }).join('');
+}
+
+function renderContacts() {
+    var q=document.getElementById('searchContacts').value.toLowerCase();
+    var seg=document.getElementById('filterContactSegment').value;
+    var canton=document.getElementById('filterContactCanton').value;
+    var filtered=prospects.filter(function(p){
+        var matchQ=!q||p.entreprise.toLowerCase().indexOf(q)>=0||p.email.toLowerCase().indexOf(q)>=0||(p.contact||'').toLowerCase().indexOf(q)>=0||(p.commune||'').toLowerCase().indexOf(q)>=0;
+        var matchSeg=!seg||p.segment===seg;
+        var matchCanton=!canton||p.canton===canton;
+        return matchQ&&matchSeg&&matchCanton;
+    });
+    document.getElementById('contactsTable').innerHTML=filtered.map(function(p){
+        var isSelected=selectedContacts.indexOf(p.id)>=0;
+        return '<tr style="cursor:pointer;'+(isSelected?'background:#eff6ff;':'')+'" onclick="openSidebar('+p.id+')"><td onclick="event.stopPropagation();"><input type="checkbox" '+(isSelected?'checked':'')+' onchange="toggleSelect('+p.id+')"></td><td><strong>'+p.entreprise+'</strong></td><td>'+(p.contact||'-')+'</td><td><a href="mailto:'+p.email+'" onclick="event.stopPropagation();">'+p.email+'</a></td><td>'+(p.mobile||p.tel||'-')+'</td><td>'+(p.commune||'-')+'</td><td>'+(p.canton||'-')+'</td><td><span class="badge badge-gray">'+(p.segment||'-')+'</span></td><td onclick="event.stopPropagation();"><button class="btn-icon" onclick="openProspectModal('+p.id+')">✏️</button><button class="btn-icon" onclick="confirmDeleteProspect('+p.id+')">🗑️</button></td></tr>';
+    }).join('');
+    updateBulkActions();
+}
+
+function toggleSelect(id) {
+    var idx=selectedContacts.indexOf(id);
+    if(idx>=0)selectedContacts.splice(idx,1);
+    else selectedContacts.push(id);
+    renderContacts();
+}
+
+function toggleSelectAll() {
+    var selectAllBox=document.getElementById('selectAll');
+    if(selectAllBox.checked){
+        var q=document.getElementById('searchContacts').value.toLowerCase();
+        var seg=document.getElementById('filterContactSegment').value;
+        var canton=document.getElementById('filterContactCanton').value;
+        selectedContacts=prospects.filter(function(p){
+            var matchQ=!q||p.entreprise.toLowerCase().indexOf(q)>=0||p.email.toLowerCase().indexOf(q)>=0||(p.contact||'').toLowerCase().indexOf(q)>=0;
+            var matchSeg=!seg||p.segment===seg;
+            var matchCanton=!canton||p.canton===canton;
+            return matchQ&&matchSeg&&matchCanton;
+        }).map(function(p){return p.id;});
+    }else{
+        selectedContacts=[];
+    }
+    renderContacts();
+}
+
+function clearSelection() {
+    selectedContacts=[];
+    document.getElementById('selectAll').checked=false;
+    renderContacts();
+}
+
+function updateBulkActions() {
+    var bulkDiv=document.getElementById('bulkActions');
+    var countSpan=document.getElementById('selectedCount');
+    if(selectedContacts.length>0){
+        bulkDiv.style.display='block';
+        countSpan.textContent=selectedContacts.length+' sélectionné(s)';
+    }else{
+        bulkDiv.style.display='none';
+    }
+}
+
+function exportSelectedContacts() {
+    var selected=prospects.filter(function(p){return selectedContacts.indexOf(p.id)>=0;});
+    if(!selected.length){alert('Aucun contact sélectionné');return;}
+    var csv='Entreprise,Contact,Email,Telephone,Mobile,Adresse,NPA,Commune,Canton,Site Web,Segment,PL,VL,Montant Offre TTC,Montant Commande TTC,Statut\n';
+    for(var i=0;i<selected.length;i++){
+        var p=selected[i];
+        csv+='"'+p.entreprise+'","'+(p.contact||'')+'","'+p.email+'","'+(p.tel||'')+'","'+(p.mobile||'')+'","'+(p.adresse||'')+'","'+(p.npa||'')+'","'+(p.commune||'')+'","'+(p.canton||'')+'","'+(p.website||'')+'","'+(p.segment||'')+'","'+(p.pl||'')+'","'+(p.vl||'')+'",'+((p.montantOffre)||0)+','+((p.montantCommande)||0)+',"'+(p.statut||'')+'"\n';
+    }
+    var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+csv);a.download='contacts_selection.csv';a.click();
+    alert('✅ '+selected.length+' contacts exportés!');
+}
+
+function bulkMailing() {
+    if(!selectedContacts.length){alert('Aucun contact sélectionné');return;}
+    mailingRecipients=prospects.filter(function(p){return selectedContacts.indexOf(p.id)>=0;});
+    clearSelection();
+    document.getElementById('mailingModalTitle').textContent='📧 Mailing ('+mailingRecipients.length+' contacts)';
+    renderMailingRecipients();
+    document.getElementById('mailingSubject').value='';
+    document.getElementById('mailingContent').value='';
+    openModal('modalMailing');
+}
+
+function bulkTask() {
+    if(!selectedContacts.length){alert('Aucun contact sélectionné');return;}
+    var title=prompt('Titre de la tâche pour '+selectedContacts.length+' contacts:');
+    if(!title)return;
+    var dueDate=new Date().toISOString().split('T')[0];
+    for(var i=0;i<selectedContacts.length;i++){
+        var pid=selectedContacts[i];
+        var p=prospects.find(function(x){return x.id===pid;});
+        var newId=tasks.length?Math.max.apply(null,tasks.map(function(t){return t.id;}))+1:1;
+        tasks.push({id:newId,title:title+' - '+p.entreprise,dueDate:dueDate,status:'todo',prospectId:pid});
+    }
+    saveData();
+    clearSelection();
+    renderAll();
+    alert('✅ '+selectedContacts.length+' tâches créées!');
+}
+
+function bulkDelete() {
+    if(!selectedContacts.length){alert('Aucun contact sélectionné');return;}
+    if(!confirm('⚠️ Supprimer '+selectedContacts.length+' contacts définitivement?'))return;
+    prospects=prospects.filter(function(p){return selectedContacts.indexOf(p.id)<0;});
+    saveData();
+    clearSelection();
+    renderAll();
+    alert('✅ Contacts supprimés!');
+}
+
+function renderOffers() {
+    document.getElementById('offersTable').innerHTML=offers.map(function(o){var p=prospects.find(function(x){return x.id===o.prospectId;});return '<tr><td><strong>'+o.offerNum+'</strong></td><td>'+(p?p.entreprise:'-')+'</td><td>'+(o.serviceType||'-')+'</td><td>'+(parseFloat(o.amount)||0).toFixed(2).toLocaleString('fr-CH')+' CHF</td><td><span class="badge '+getOfferStatusClass(o.status)+'">'+(o.status||'Brouillon')+'</span></td><td><button class="btn-icon" onclick="openOfferModal('+o.id+')">✏️</button><button class="btn-icon" onclick="confirmDeleteOffer('+o.id+')">🗑️</button></td></tr>';}).join('');
+}
+
+function renderKanban() {
+    var st=['todo','inprogress','urgent','done'];var ids=['Todo','InProgress','Urgent','Done'];
+    for(var s=0;s<4;s++){var list=tasks.filter(function(t){return t.status===st[s];});document.getElementById('count'+ids[s]).textContent=list.length;document.getElementById('tasks'+ids[s]).innerHTML=list.map(function(t){return '<div class="kanban-card" onclick="openTaskModal('+t.id+')"><strong>'+t.title+'</strong><br><span style="font-size:0.65rem;color:var(--gray-500);">'+formatDate(t.dueDate)+'</span></div>';}).join('')||'<p style="color:var(--gray-400);text-align:center;font-size:0.7rem;">Vide</p>';}
+}
+
+function renderCalendar() {var c=document.getElementById('calendarContainer');if(calendarView==='month')renderMonthCalendar(c);else renderWeekCalendar(c);}
+
+function renderMonthCalendar(c) {
+    var y=calendarDate.getFullYear();var m=calendarDate.getMonth();document.getElementById('calTitle').textContent=new Date(y,m).toLocaleDateString('fr-CH',{month:'long',year:'numeric'});
+    var fd=new Date(y,m,1);var ld=new Date(y,m+1,0);var sd=fd.getDay()||7;var days=['L','M','M','J','V','S','D'];
+    var html='<div class="calendar-grid">';for(var i=0;i<days.length;i++)html+='<div class="calendar-header">'+days[i]+'</div>';
+    for(var i=1;i<sd;i++){var d=new Date(y,m,1-(sd-i));html+='<div class="calendar-day other-month"><div class="calendar-day-num">'+d.getDate()+'</div></div>';}
+    var today=new Date().toISOString().split('T')[0];
+    for(var d=1;d<=ld.getDate();d++){var ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');var isToday=ds===today;var de=events.filter(function(e){return e.date===ds;});html+='<div class="calendar-day'+(isToday?' today':'')+'" onclick="openEventModal(null,\''+ds+'\')"><div class="calendar-day-num">'+d+'</div>';for(var j=0;j<Math.min(de.length,2);j++)html+='<div class="calendar-event" onclick="event.stopPropagation();openEventModal('+de[j].id+')">'+de[j].title+'</div>';if(de.length>2)html+='<div style="font-size:0.5rem;color:var(--gray-500);">+'+(de.length-2)+'</div>';html+='</div>';}
+    var rem=42-(sd-1+ld.getDate());for(var d=1;d<=rem&&rem<14;d++)html+='<div class="calendar-day other-month"><div class="calendar-day-num">'+d+'</div></div>';
+    html+='</div>';c.innerHTML=html;
+}
+
+function renderWeekCalendar(c) {
+    var ws=new Date(calendarDate);ws.setDate(calendarDate.getDate()-calendarDate.getDay()+1);document.getElementById('calTitle').textContent='Sem. '+ws.toLocaleDateString('fr-CH');
+    var days=[];for(var i=0;i<7;i++){var d=new Date(ws);d.setDate(ws.getDate()+i);days.push(d);}
+    var html='<div class="week-grid" style="grid-template-rows:auto repeat(12,24px);"><div class="week-header"></div>';
+    for(var i=0;i<days.length;i++)html+='<div class="week-header">'+days[i].toLocaleDateString('fr-CH',{weekday:'short',day:'numeric'})+'</div>';
+    for(var h=8;h<20;h++){html+='<div class="week-time">'+h+'h</div>';for(var i=0;i<days.length;i++){var ds=days[i].toISOString().split('T')[0];var he=events.filter(function(e){return e.date===ds&&e.time&&parseInt(e.time.split(':')[0])===h;});html+='<div class="week-cell" onclick="openEventModal(null,\''+ds+'\',\''+String(h).padStart(2,'0')+':00\')">';for(var j=0;j<he.length;j++)html+='<div class="week-event" onclick="event.stopPropagation();openEventModal('+he[j].id+')">'+he[j].title+'</div>';html+='</div>';}}
+    html+='</div>';c.innerHTML=html;
+}
+
+function setCalView(v){calendarView=v;document.getElementById('btnCalMonth').style.background=v==='month'?'var(--primary)':'white';document.getElementById('btnCalMonth').style.color=v==='month'?'white':'var(--gray-700)';document.getElementById('btnCalWeek').style.background=v==='week'?'var(--primary)':'white';document.getElementById('btnCalWeek').style.color=v==='week'?'white':'var(--gray-700)';renderCalendar();}
+function calPrev(){if(calendarView==='month')calendarDate.setMonth(calendarDate.getMonth()-1);else calendarDate.setDate(calendarDate.getDate()-7);renderCalendar();}
+function calNext(){if(calendarView==='month')calendarDate.setMonth(calendarDate.getMonth()+1);else calendarDate.setDate(calendarDate.getDate()+7);renderCalendar();}
+function calToday(){calendarDate=new Date();renderCalendar();}
+
+function renderNotifications() {
+    var unread=notifications.filter(function(n){return !n.read;}).length;document.getElementById('notifCount').textContent=unread;document.getElementById('notifCount').style.display=unread?'flex':'none';
+    document.getElementById('notifList').innerHTML=notifications.length?notifications.slice(0,6).map(function(n,i){return '<div class="dropdown-item" onclick="markNotifRead('+i+')"><strong>'+n.title+'</strong><br><span style="font-size:0.7rem;color:var(--gray-500);">'+n.message+'</span></div>';}).join(''):'<div class="dropdown-item" style="color:var(--gray-400);">Aucune</div>';
+}
+function markNotifRead(i){notifications[i].read=true;saveData();renderNotifications();}
+function markAllRead(){for(var i=0;i<notifications.length;i++)notifications[i].read=true;saveData();renderNotifications();closeDropdowns();}
+
+function renderMailingHistory() {
+    document.getElementById('mailingHistory').innerHTML=mailingHistory.length?mailingHistory.slice(0,6).map(function(h){return '<div style="display:flex;justify-content:space-between;padding:0.5rem;border-bottom:1px solid var(--gray-100);font-size:0.8rem;"><div><span class="badge '+(h.type.indexOf('email')>=0?'badge-blue':'badge-purple')+'">'+h.type+'</span> '+h.subject+'</div><span class="badge badge-green">'+h.recipients+'</span></div>';}).join(''):'<p style="color:var(--gray-400);">Aucune</p>';
+}
+
+function populateSelects() {
+    var segs=[],stats=[],cantons=[];
+    for(var i=0;i<prospects.length;i++){
+        if(prospects[i].segment&&segs.indexOf(prospects[i].segment)<0)segs.push(prospects[i].segment);
+        if(prospects[i].statut&&stats.indexOf(prospects[i].statut)<0)stats.push(prospects[i].statut);
+        if(prospects[i].canton&&cantons.indexOf(prospects[i].canton)<0)cantons.push(prospects[i].canton);
+    }
+    document.getElementById('filterSegment').innerHTML='<option value="">Segments</option>'+segs.map(function(s){return '<option>'+s+'</option>';}).join('');
+    document.getElementById('filterStatus').innerHTML='<option value="">Statuts</option>'+stats.map(function(s){return '<option>'+s+'</option>';}).join('');
+    document.getElementById('filterContactSegment').innerHTML='<option value="">Segments</option>'+segs.map(function(s){return '<option>'+s+'</option>';}).join('');
+    document.getElementById('filterContactCanton').innerHTML='<option value="">Tous</option>'+cantons.sort().map(function(c){return '<option>'+c+'</option>';}).join('');
+    var opts='<option value="">-- Aucun --</option>'+prospects.map(function(p){return '<option value="'+p.id+'">'+p.entreprise+'</option>';}).join('');
+    document.getElementById('taskProspect').innerHTML=opts;document.getElementById('eventProspect').innerHTML=opts;
+    document.getElementById('offerProspect').innerHTML='<option value="">-- Choisir --</option>'+prospects.map(function(p){return '<option value="'+p.id+'">'+p.entreprise+'</option>';}).join('');
+}
+
+function openSidebar(id) {
+    currentProspectId=id;var p=prospects.find(function(x){return x.id===id;});if(!p)return;
+    document.getElementById('sidebarTitle').textContent=p.entreprise;
+    var html='<div style="margin-bottom:1rem;"><span class="badge '+getStatusClass(p.statut)+'">'+(p.statut||'Nouveau')+'</span></div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Segment</div><div>'+(p.segment||'-')+'</div></div>';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Canton</div><div>'+(p.canton||'-')+'</div></div>';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">PL</div><div>'+(p.pl||'-')+'</div></div>';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">VL</div><div>'+(p.vl||'-')+'</div></div>';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Offre TTC</div><div>'+(parseFloat(p.montantOffre)||0).toFixed(2)+' CHF</div></div>';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Commande TTC</div><div>'+(parseFloat(p.montantCommande)||0).toFixed(2)+' CHF</div></div>';
+    html+='<div><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Contact</div><div>'+(p.contact||'-')+'</div></div>';
+    html+='</div>';
+    html+='<div style="margin-bottom:0.75rem;"><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Email</div><div><a href="mailto:'+p.email+'">'+p.email+'</a></div></div>';
+    html+='<div style="margin-bottom:0.75rem;"><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Téléphone</div><div>'+(p.tel?'<a href="tel:'+p.tel+'">'+p.tel+'</a>':'-')+'</div></div>';
+    if(p.mobile){html+='<div style="margin-bottom:0.75rem;"><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Mobile</div><div><a href="tel:'+p.mobile+'">'+p.mobile+'</a></div></div>';}
+    if(p.adresse||p.commune){html+='<div style="margin-bottom:0.75rem;"><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Adresse</div><div>'+(p.adresse||'')+((p.adresse&&(p.npa||p.commune))?', ':'')+(p.npa||'')+' '+(p.commune||'')+'</div></div>';}
+    if(p.website){html+='<div style="margin-bottom:0.75rem;"><div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;">Site web</div><div><a href="'+p.website+'" target="_blank">'+p.website+'</a></div></div>';}
+    html+='<div style="margin-top:1rem;border-top:1px solid var(--gray-200);padding-top:1rem;"><div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><strong>Notes</strong><button class="btn btn-sm btn-secondary" onclick="addNote()">+</button></div>';
+    html+=(p.notes||[]).map(function(n){return '<div class="note-item"><div style="font-size:0.65rem;color:var(--gray-500);">'+n.date+'</div>'+n.text+'</div>';}).join('')||'<p style="color:var(--gray-400);font-size:0.8rem;">Aucune</p>';
+    html+='</div><div style="margin-top:1rem;border-top:1px solid var(--gray-200);padding-top:1rem;"><div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><strong>Tâches</strong><button class="btn btn-sm btn-secondary" onclick="addTaskFromSidebar()">+</button></div>';
+    var ct=tasks.filter(function(t){return t.prospectId===p.id;});html+=ct.map(function(t){return '<div class="kanban-card" onclick="openTaskModal('+t.id+')"><strong>'+t.title+'</strong></div>';}).join('')||'<p style="color:var(--gray-400);font-size:0.8rem;">Aucune</p>';
+    html+='</div>';
+    document.getElementById('sidebarContent').innerHTML=html;
+    document.getElementById('btnSidebarEmail').onclick=function(){window.open('mailto:'+p.email);};
+    document.getElementById('btnSidebarCall').onclick=function(){var num=p.mobile||p.tel;if(num)window.open('tel:'+num);};
+    document.getElementById('sidebarOverlay').classList.add('open');document.getElementById('sidebar').classList.add('open');
+}
+function closeSidebar(){document.getElementById('sidebarOverlay').classList.remove('open');document.getElementById('sidebar').classList.remove('open');}
+function editCurrentContact(){if(currentProspectId){closeSidebar();openProspectModal(currentProspectId);}}
+function addNote(){var text=prompt('Note:');if(!text)return;var p=prospects.find(function(x){return x.id===currentProspectId;});if(p){if(!p.notes)p.notes=[];p.notes.unshift({date:new Date().toLocaleDateString('fr-CH'),text:text});saveData();openSidebar(currentProspectId);}}
+function addTaskFromSidebar(){closeSidebar();openTaskModal(null,currentProspectId);}
+
+function openProspectModal(id) {
+    document.getElementById('prospectId').value=id||'';document.getElementById('prospectModalTitle').textContent=id?'✏️ Modifier':'➕ Nouveau';document.getElementById('btnDeleteProspect').style.display=id?'inline-flex':'none';
+    if(id){var p=prospects.find(function(x){return x.id===id;});if(p){document.getElementById('prospectEntreprise').value=p.entreprise||'';document.getElementById('prospectContact').value=p.contact||'';document.getElementById('prospectEmail').value=p.email||'';document.getElementById('prospectWebsite').value=p.website||'';document.getElementById('prospectTel').value=p.tel||'';document.getElementById('prospectMobile').value=p.mobile||'';document.getElementById('prospectAdresse').value=p.adresse||'';document.getElementById('prospectNPA').value=p.npa||'';document.getElementById('prospectCommune').value=p.commune||'';document.getElementById('prospectSegment').value=p.segment||'Autre';document.getElementById('prospectCanton').value=p.canton||'';document.getElementById('prospectPL').value=p.pl||'';document.getElementById('prospectVL').value=p.vl||'';document.getElementById('prospectMontantOffre').value=parseFloat(p.montantOffre)||0;document.getElementById('prospectMontantCommande').value=parseFloat(p.montantCommande)||0;document.getElementById('prospectStatut').value=p.statut||'Nouveau';document.getElementById('prospectNotes').value='';}}
+    else{document.getElementById('prospectEntreprise').value='';document.getElementById('prospectContact').value='';document.getElementById('prospectEmail').value='';document.getElementById('prospectWebsite').value='';document.getElementById('prospectTel').value='';document.getElementById('prospectMobile').value='';document.getElementById('prospectAdresse').value='';document.getElementById('prospectNPA').value='';document.getElementById('prospectCommune').value='';document.getElementById('prospectSegment').value='Autre';document.getElementById('prospectCanton').value='';document.getElementById('prospectPL').value='';document.getElementById('prospectVL').value='';document.getElementById('prospectMontantOffre').value='0.00';document.getElementById('prospectMontantCommande').value='0.00';document.getElementById('prospectStatut').value='Nouveau';document.getElementById('prospectNotes').value='';}
+    openModal('modalProspect');
+}
+function saveProspect() {
+    var id=document.getElementById('prospectId').value;
+    var data={
+        entreprise:document.getElementById('prospectEntreprise').value,
+        contact:document.getElementById('prospectContact').value,
+        email:document.getElementById('prospectEmail').value,
+        website:document.getElementById('prospectWebsite').value,
+        tel:document.getElementById('prospectTel').value,
+        mobile:document.getElementById('prospectMobile').value,
+        adresse:document.getElementById('prospectAdresse').value,
+        npa:document.getElementById('prospectNPA').value,
+        commune:document.getElementById('prospectCommune').value,
+        segment:document.getElementById('prospectSegment').value,
+        canton:document.getElementById('prospectCanton').value,
+        pl:document.getElementById('prospectPL').value,
+        vl:document.getElementById('prospectVL').value,
+        montantOffre:parseFloat(document.getElementById('prospectMontantOffre').value)||0,
+        montantCommande:parseFloat(document.getElementById('prospectMontantCommande').value)||0,
+        statut:document.getElementById('prospectStatut').value
+    };
+    if(!data.entreprise||!data.email){alert('Entreprise et Email requis');return;}
+    if(id){var p=prospects.find(function(x){return x.id===parseInt(id);});if(p){p.entreprise=data.entreprise;p.contact=data.contact;p.email=data.email;p.website=data.website;p.tel=data.tel;p.mobile=data.mobile;p.adresse=data.adresse;p.npa=data.npa;p.commune=data.commune;p.segment=data.segment;p.canton=data.canton;p.pl=data.pl;p.vl=data.vl;p.montantOffre=data.montantOffre;p.montantCommande=data.montantCommande;p.statut=data.statut;}}
+    else{data.id=prospects.length?Math.max.apply(null,prospects.map(function(p){return p.id;}))+1:1;var nt=document.getElementById('prospectNotes').value;data.notes=nt?[{date:new Date().toLocaleDateString('fr-CH'),text:nt}]:[];data.communications=[];prospects.push(data);}
+    saveData();closeModal('modalProspect');renderAll();
+}
+function deleteProspect(){var id=parseInt(document.getElementById('prospectId').value);if(!id||!confirm('Supprimer?'))return;prospects=prospects.filter(function(p){return p.id!==id;});saveData();closeModal('modalProspect');closeSidebar();renderAll();}
+function confirmDeleteProspect(id){if(confirm('Supprimer?')){prospects=prospects.filter(function(p){return p.id!==id;});saveData();renderAll();}}
+function updateProspectValue(id,value){var p=prospects.find(function(x){return x.id===id;});if(p){p.valeur=parseFloat(value)||0;saveData();renderKPIs();}}
+function updateProspectStatus(id,value){var p=prospects.find(function(x){return x.id===id;});if(p){p.statut=value;saveData();renderKPIs();}}
+function updateProspectMontantOffre(id,value){var p=prospects.find(function(x){return x.id===id;});if(p){p.montantOffre=parseFloat(value)||0;saveData();renderKPIs();}}
+function updateProspectMontantCommande(id,value){var p=prospects.find(function(x){return x.id===id;});if(p){p.montantCommande=parseFloat(value)||0;saveData();renderKPIs();}}
+
+function openTaskModal(id,prospectId) {
+    document.getElementById('taskId').value=id||'';document.getElementById('taskModalTitle').textContent=id?'✏️ Modifier':'➕ Nouvelle';document.getElementById('btnDeleteTask').style.display=id?'inline-flex':'none';populateSelects();
+    if(id){var t=tasks.find(function(x){return x.id===id;});if(t){document.getElementById('taskTitle').value=t.title||'';document.getElementById('taskDate').value=t.dueDate||'';document.getElementById('taskStatus').value=t.status||'todo';document.getElementById('taskProspect').value=t.prospectId||'';}}
+    else{document.getElementById('taskTitle').value='';document.getElementById('taskDate').value=new Date().toISOString().split('T')[0];document.getElementById('taskStatus').value='todo';document.getElementById('taskProspect').value=prospectId||'';}
+    openModal('modalTask');
+}
+function saveTask() {
+    var id=document.getElementById('taskId').value;var data={title:document.getElementById('taskTitle').value,dueDate:document.getElementById('taskDate').value,status:document.getElementById('taskStatus').value,prospectId:document.getElementById('taskProspect').value?parseInt(document.getElementById('taskProspect').value):null};
+    if(!data.title){alert('Titre requis');return;}
+    if(id){var t=tasks.find(function(x){return x.id===parseInt(id);});if(t){t.title=data.title;t.dueDate=data.dueDate;t.status=data.status;t.prospectId=data.prospectId;}}
+    else{data.id=tasks.length?Math.max.apply(null,tasks.map(function(t){return t.id;}))+1:1;tasks.push(data);if(data.status==='urgent')notifications.unshift({type:'task',title:'Tâche urgente',message:data.title,read:false});}
+    saveData();closeModal('modalTask');renderAll();
+}
+function deleteTask(){var id=parseInt(document.getElementById('taskId').value);if(!id||!confirm('Supprimer?'))return;tasks=tasks.filter(function(t){return t.id!==id;});saveData();closeModal('modalTask');renderAll();}
+
+function openEventModal(id,date,time) {
+    document.getElementById('eventId').value=id||'';document.getElementById('eventModalTitle').textContent=id?'✏️ Modifier':'➕ Nouveau';document.getElementById('btnDeleteEvent').style.display=id?'inline-flex':'none';document.getElementById('btnExportICS').style.display=id?'inline-flex':'none';populateSelects();
+    if(id){var e=events.find(function(x){return x.id===id;});if(e){document.getElementById('eventTitle').value=e.title||'';document.getElementById('eventDate').value=e.date||'';document.getElementById('eventTime').value=e.time||'';document.getElementById('eventDuration').value=e.duration||60;document.getElementById('eventLocation').value=e.location||'';document.getElementById('eventProspect').value=e.prospectId||'';}}
+    else{document.getElementById('eventTitle').value='';document.getElementById('eventDate').value=date||new Date().toISOString().split('T')[0];document.getElementById('eventTime').value=time||'09:00';document.getElementById('eventDuration').value=60;document.getElementById('eventLocation').value='';document.getElementById('eventProspect').value='';}
+    openModal('modalEvent');
+}
+function saveEvent() {
+    var id=document.getElementById('eventId').value;var data={title:document.getElementById('eventTitle').value,date:document.getElementById('eventDate').value,time:document.getElementById('eventTime').value,duration:parseInt(document.getElementById('eventDuration').value)||60,location:document.getElementById('eventLocation').value,prospectId:document.getElementById('eventProspect').value?parseInt(document.getElementById('eventProspect').value):null};
+    if(!data.title){alert('Titre requis');return;}
+    var newId;if(id){var e=events.find(function(x){return x.id===parseInt(id);});if(e){e.title=data.title;e.date=data.date;e.time=data.time;e.duration=data.duration;e.location=data.location;e.prospectId=data.prospectId;}newId=parseInt(id);}
+    else{newId=events.length?Math.max.apply(null,events.map(function(e){return e.id;}))+1:1;data.id=newId;events.push(data);notifications.unshift({type:'event',title:'RDV',message:data.title,read:false});}
+    saveData();closeModal('modalEvent');renderAll();if(!id&&confirm('Ajouter à Outlook?'))exportICSById(newId);
+}
+function deleteEvent(){var id=parseInt(document.getElementById('eventId').value);if(!id||!confirm('Supprimer?'))return;events=events.filter(function(e){return e.id!==id;});saveData();closeModal('modalEvent');renderAll();}
+function exportICS(){exportICSById(parseInt(document.getElementById('eventId').value));}
+function exportICSById(id){var e=events.find(function(x){return x.id===id;});if(!e)return;var start=new Date(e.date+'T'+(e.time||'09:00')+':00');var end=new Date(start.getTime()+(e.duration||60)*60000);var fmt=function(d){return d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';};var ics='BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nUID:'+e.id+'@crm\nDTSTAMP:'+fmt(new Date())+'\nDTSTART:'+fmt(start)+'\nDTEND:'+fmt(end)+'\nSUMMARY:'+e.title+'\nLOCATION:'+(e.location||'')+'\nEND:VEVENT\nEND:VCALENDAR';var a=document.createElement('a');a.href='data:text/calendar,'+encodeURIComponent(ics);a.download='rdv.ics';a.click();}
+
+function openOfferModal(id) {
+    document.getElementById('offerId').value=id||'';document.getElementById('offerModalTitle').textContent=id?'✏️ Modifier':'➕ Nouvelle';document.getElementById('btnDeleteOffer').style.display=id?'inline-flex':'none';populateSelects();
+    if(id){var o=offers.find(function(x){return x.id===id;});if(o){document.getElementById('offerNum').value=o.offerNum||'';document.getElementById('offerDate').value=o.createdDate||'';document.getElementById('offerProspect').value=o.prospectId||'';document.getElementById('offerService').value=o.serviceType||'';document.getElementById('offerAmount').value=parseFloat(o.amount)||0;document.getElementById('offerStatus').value=o.status||'Brouillon';}}
+    else{document.getElementById('offerNum').value='OFF-'+String(offers.length+1).padStart(4,'0');document.getElementById('offerDate').value=new Date().toISOString().split('T')[0];document.getElementById('offerProspect').value='';document.getElementById('offerService').value='Étude faisabilité';document.getElementById('offerAmount').value='0.00';document.getElementById('offerStatus').value='Brouillon';}
+    openModal('modalOffer');
+}
+function saveOffer() {
+    var id=document.getElementById('offerId').value;var data={offerNum:document.getElementById('offerNum').value,createdDate:document.getElementById('offerDate').value,prospectId:document.getElementById('offerProspect').value?parseInt(document.getElementById('offerProspect').value):null,serviceType:document.getElementById('offerService').value,amount:parseFloat(document.getElementById('offerAmount').value)||0,status:document.getElementById('offerStatus').value};
+    if(!data.prospectId){alert('Sélectionnez un prospect');return;}
+    if(id){var o=offers.find(function(x){return x.id===parseInt(id);});if(o){o.offerNum=data.offerNum;o.createdDate=data.createdDate;o.prospectId=data.prospectId;o.serviceType=data.serviceType;o.amount=data.amount;o.status=data.status;}}
+    else{data.id=offers.length?Math.max.apply(null,offers.map(function(o){return o.id;}))+1:1;offers.push(data);}
+    saveData();closeModal('modalOffer');renderAll();
+}
+function deleteOffer(){var id=parseInt(document.getElementById('offerId').value);if(!id||!confirm('Supprimer?'))return;offers=offers.filter(function(o){return o.id!==id;});saveData();closeModal('modalOffer');renderAll();}
+function confirmDeleteOffer(id){if(confirm('Supprimer?')){offers=offers.filter(function(o){return o.id!==id;});saveData();renderAll();}}
+
+function handleFileSelect(input) {
+    var file=input.files[0];if(!file)return;var reader=new FileReader();
+    reader.onload=function(e){var text=e.target.result.replace(/^\uFEFF/,'');var lines=text.split('\n').filter(function(l){return l.trim();});if(lines.length<2){alert('Vide');return;}var headers=lines[0].split(',').map(function(h){return h.trim().replace(/"/g,'');});importedData=[];for(var i=1;i<lines.length;i++){var line=lines[i];var vals=[];var cur='';var inQ=false;for(var j=0;j<line.length;j++){var c=line[j];if(c==='"')inQ=!inQ;else if(c===','&&!inQ){vals.push(cur.trim());cur='';}else cur+=c;}vals.push(cur.trim());var row={};for(var j=0;j<headers.length;j++)row[headers[j]]=vals[j]||'';if(row.Email&&row.Email.indexOf('@')>=0)importedData.push(row);}document.getElementById('importPreview').innerHTML='<div class="card" style="background:var(--gray-50);padding:0.75rem;">'+file.name+' - '+importedData.length+' contacts</div>';document.getElementById('btnProcessImport').disabled=importedData.length===0;};
+    reader.readAsText(file,'UTF-8');
+}
+function processImport() {
+    if(!importedData.length)return;var emails=prospects.map(function(p){return p.email.toLowerCase();});var count=0;
+    for(var i=0;i<importedData.length;i++){
+        var r=importedData[i];
+        if(emails.indexOf(r.Email.toLowerCase())>=0)continue;
+        var id=prospects.length?Math.max.apply(null,prospects.map(function(p){return p.id;}))+1:1;
+        prospects.push({
+            id:id,
+            entreprise:r.Entreprise||'',
+            contact:r.Contact||'',
+            email:r.Email,
+            tel:r.Telephone||r.Téléphone||'',
+            mobile:r.Mobile||'',
+            adresse:r.Adresse||'',
+            npa:r.NPA||'',
+            commune:r.Commune||'',
+            website:r['Site Web']||r.Website||'',
+            segment:r.Segment||'Autre',
+            canton:r.Canton||'',
+            pl:r.PL||'',
+            vl:r.VL||'',
+            montantOffre:parseFloat(r['Montant Offre TTC'])||0,
+            montantCommande:parseFloat(r['Montant Commande TTC'])||0,
+            statut:'Nouveau',
+            notes:[],
+            communications:[]
+        });
+        emails.push(r.Email.toLowerCase());
+        count++;
+    }
+    saveData();closeModal('modalImport');importedData=[];document.getElementById('btnProcessImport').disabled=true;renderAll();alert('✅ '+count+' importés!');
+}
+function exportContacts(){
+    var csv='Entreprise,Contact,Email,Telephone,Mobile,Adresse,NPA,Commune,Canton,Site Web,Segment,PL,VL,Montant Offre TTC,Montant Commande TTC,Statut\n';
+    for(var i=0;i<prospects.length;i++){
+        var p=prospects[i];
+        csv+='"'+p.entreprise+'","'+(p.contact||'')+'","'+p.email+'","'+(p.tel||'')+'","'+(p.mobile||'')+'","'+(p.adresse||'')+'","'+(p.npa||'')+'","'+(p.commune||'')+'","'+(p.canton||'')+'","'+(p.website||'')+'","'+(p.segment||'')+'","'+(p.pl||'')+'","'+(p.vl||'')+'",'+((p.montantOffre)||0)+','+((p.montantCommande)||0)+',"'+(p.statut||'')+'"\n';
+    }
+    var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+csv);a.download='contacts.csv';a.click();
+}
+function downloadTemplate(){
+    var csv='Entreprise,Contact,Email,Telephone,Mobile,Adresse,NPA,Commune,Canton,Site Web,Segment,PL,VL,Montant Offre TTC,Montant Commande TTC\n"Exemple SA","Jean Dupont","jean@exemple.ch","+41 21 123 45 67","+41 79 123 45 67","Rue Example 1","1000","Lausanne","VD","https://exemple.ch","Architecte","MW","MW",0.00,0.00';
+    var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+csv);a.download='template.csv';a.click();
+}
+
+function openMailingModal(type){document.getElementById('mailingModalTitle').textContent=type==='email'?'📧 Email':type==='newsletter'?'📰 Newsletter':'💼 LinkedIn';mailingRecipients=[];renderMailingRecipients();document.getElementById('mailingSubject').value='';document.getElementById('mailingContent').value='';openModal('modalMailing');}
+function addSegmentToMailing(){var seg=document.getElementById('mailingSegment').value;if(!seg)return;for(var i=0;i<prospects.length;i++){var p=prospects[i];if(p.segment===seg&&!mailingRecipients.find(function(r){return r.id===p.id;}))mailingRecipients.push(p);}renderMailingRecipients();}
+function addAllToMailing(){mailingRecipients=prospects.slice();renderMailingRecipients();}
+function addMailingContact(){var q=document.getElementById('mailingSearch').value.toLowerCase();if(!q)return;for(var i=0;i<prospects.length;i++){var p=prospects[i];if((p.entreprise.toLowerCase().indexOf(q)>=0||p.email.toLowerCase().indexOf(q)>=0)&&!mailingRecipients.find(function(r){return r.id===p.id;}))mailingRecipients.push(p);}document.getElementById('mailingSearch').value='';renderMailingRecipients();}
+function removeMailingRecipient(id){mailingRecipients=mailingRecipients.filter(function(r){return r.id!==id;});renderMailingRecipients();}
+function renderMailingRecipients(){document.getElementById('mailingRecipients').innerHTML=mailingRecipients.map(function(r){return '<span class="recipient-tag">'+r.entreprise+' <button onclick="removeMailingRecipient('+r.id+')">×</button></span>';}).join('');document.getElementById('recipientCount').textContent=mailingRecipients.length;}
+function startSequentialSend(){if(!mailingRecipients.length){alert('Ajoutez des destinataires');return;}var subj=document.getElementById('mailingSubject').value;var cont=document.getElementById('mailingContent').value;if(!subj||!cont){alert('Remplissez objet et contenu');return;}seqRecipients=mailingRecipients.slice();seqIndex=0;seqSubjectText=subj;seqTemplate=cont;closeModal('modalMailing');openModal('modalSequential');showCurrentRecipient();}
+function showCurrentRecipient(){if(seqIndex>=seqRecipients.length){closeSequential();alert('✅ Terminé! '+seqIndex+' emails.');return;}var r=seqRecipients[seqIndex];document.getElementById('seqProgress').textContent=(seqIndex+1)+'/'+seqRecipients.length;document.getElementById('seqCompany').textContent=r.entreprise;document.getElementById('seqEmail').textContent=r.email;document.getElementById('seqSubject').value=seqSubjectText;document.getElementById('seqContent').value=seqTemplate.replace(/\{entreprise\}/g,r.entreprise||'').replace(/\{contact\}/g,r.contact||'').replace(/\{email\}/g,r.email||'');}
+function sendCurrentAndNext(){var r=seqRecipients[seqIndex];var subj=document.getElementById('seqSubject').value;var cont=document.getElementById('seqContent').value;window.open('mailto:'+r.email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(cont),'_blank');var p=prospects.find(function(x){return x.id===r.id;});if(p){if(!p.communications)p.communications=[];p.communications.unshift({type:'email',subject:subj,date:new Date().toLocaleDateString('fr-CH')});}seqIndex++;setTimeout(showCurrentRecipient,300);}
+function skipCurrent(){seqIndex++;showCurrentRecipient();}
+function closeSequential(){closeModal('modalSequential');if(seqIndex>0){mailingHistory.unshift({id:Date.now(),date:new Date().toISOString(),subject:seqSubjectText,recipients:seqIndex,type:'email (individuel)'});saveData();renderMailingHistory();}mailingRecipients=[];seqRecipients=[];seqIndex=0;}
+function exportMailMerge(){if(!mailingRecipients.length){alert('Ajoutez des destinataires');return;}var subj=document.getElementById('mailingSubject').value;var cont=document.getElementById('mailingContent').value;var csv='Email,Entreprise,Contact,Objet,Message\n';for(var i=0;i<mailingRecipients.length;i++){var r=mailingRecipients[i];var msg=cont.replace(/\{entreprise\}/g,r.entreprise||'').replace(/\{contact\}/g,r.contact||'').replace(/\{email\}/g,r.email||'');csv+='"'+r.email+'","'+r.entreprise+'","'+(r.contact||'')+'","'+subj+'","'+msg.replace(/"/g,'""').replace(/\n/g,' ')+'"\n';}var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+csv);a.download='publipostage.csv';a.click();mailingHistory.unshift({id:Date.now(),date:new Date().toISOString(),subject:subj+' (export)',recipients:mailingRecipients.length,type:'publipostage'});saveData();closeModal('modalMailing');mailingRecipients=[];renderMailingHistory();alert('✅ CSV!');}
+
+function connectMailchimp(){var key=document.getElementById('mailchimpKey').value.trim();if(!key){alert('Entrez la clé');return;}if(key.indexOf('-')<0){alert('Format invalide');return;}mailchimpConfig={key:key,connected:true,connectedAt:new Date().toISOString()};saveData();updateMailchimpStatus();alert('✅ Connecté!');}
+function updateMailchimpStatus(){var s=document.getElementById('mailchimpStatus');var c=document.getElementById('mailchimpConnectionStatus');if(mailchimpConfig.connected){s.innerHTML='<span class="badge badge-green">🐵 Connecté</span>';if(c)c.innerHTML='<div class="card" style="background:#f0fdf4;border-color:var(--success);padding:0.75rem;">✅ Clé: '+mailchimpConfig.key.substring(0,8)+'...</div>';}else{s.innerHTML='<span class="badge badge-gray">Non connecté</span>';if(c)c.innerHTML='';}}
+function saveProfile(){profile.name=document.getElementById('profileName').value;profile.email=document.getElementById('profileEmail').value;profile.phone=document.getElementById('profilePhone').value;saveData();loadProfile();closeModal('modalProfile');alert('✅ Profil!');}
+
+function formatDate(d){return d?new Date(d).toLocaleDateString('fr-CH'):'-';}
+function getStatusClass(s){var c={'Nouveau':'badge-blue','Contacté':'badge-yellow','Qualifié':'badge-green','Proposition':'badge-orange','Négociation':'badge-purple','Gagné':'badge-green','Perdu':'badge-red'};return c[s]||'badge-gray';}
+function getOfferStatusClass(s){var c={'Brouillon':'badge-gray','Envoyée':'badge-blue','En négociation':'badge-purple','Acceptée':'badge-green','Refusée':'badge-red'};return c[s]||'badge-gray';}
+</script>
+</body>
+</html>
